@@ -50,6 +50,26 @@
 	name={GANs},
 	description={Generative Adversarial Networks}
 }
+\newglossaryentry{ELBO}
+{
+	name={ELBO},
+	description={Evidence Lower Bound}
+}
+\newglossaryentry{DDPM}
+{
+	name={DDPM},
+	description={Denoising Diffusion Probabilistic Models}
+}
+\newglossaryentry{DDIM}
+{
+	name={DDIM},
+	description={Denoising Diffusion Implicit Models}
+}
+\newglossaryentry{MSE}
+{
+	name={MSE},
+	description={Mean Square Error}
+}
 
 \hypersetup{
     colorlinks=false,
@@ -226,6 +246,124 @@
     Tuy nhiên ma trận hiệp phương sai đẳng hướng hy sinh sức mạnh của DPMs để mô hình đơn giản hơn.
     Hơn nữa, tính tối ưu của ước lượng ma trận hiệp phương sai trong \cite{bao2021analytic} được duy trì bởi giả định là trung bình tối ưu đã biết trước,
     nhưng điều này không phù hợp trong thực tế.
+
+    Để khắc phục những hạn chế đã được nêu ở trên đồng thời cải thiện thêm khả năng của DPMs dựa trên ước lượng hợp lý và lấy mẫu hiệu quả,
+    ta xem xét ma trận hiệp phương sai đường chéo và ma trận hiệp phương sai đầy đủ để cải thiện sức mạnh sinh dữ liệu của DPMs.
+    Ta thu được trung bình và ma trận hiệp phương sai tối ưu được xác định từ ước lượng hợp lý cực đại.
+    Ta cũng sẽ hiệu chỉnh ma trận hiệp phương sai khi cho trước một trung bình không hoàn hảo (khi trung bình tối ưu được xấp xỉ và có sai lệch với giá trị lý tưởng) theo khía cạnh ước lượng hợp lý.
+    Cả ma trận hiệp phương sai tối ưu và ma trận hiệp phương sai tối ưu được hiệu chỉnh có thể được phân tích thành các thành phần là các kỳ vọng có điều kiện là hàm của nhiễu,
+    các kỳ vọng này có thể được ước lượng bằng cách hàm mục tiêu sai lệch bình phương trung bình (MSE).
+    Mặc dù lý thuyết này có thể được áp dụng cho trường hợp ma trận hiệp phương sai đầy đủ, nhưng trong các thử nghiệm thì ta chỉ xem xét ma trận hiệp phương sai đường chéo để làm giảm chi phí tính toán.
+    Bên cạnh đó ta sử dụng chiến lược chia sẻ tham số tạo sự hiệu quả khi chạy suy luận các mô hình và quá trình huấn luyện gồm hai giai đoạn được áp dụng từ các kết quả lý thuyết.
+
+    Phương pháp của chúng ta được áp dụng cho cả bước thời gian rời rạc \cite{ho2020denoising} và bước thời gian liên tục \cite{song2020score}.
+    Trong các thí nghiệm, ta sẽ so sánh phương pháp của chúng ta với nhiều phương pháp khác \cite{ho2020denoising}, \cite{song2020denoising}, \cite{bao2021analytic}, \cite{song2020score} về chất lượng dữ liệu được tạo ra và ước lượng hợp lý trong DPMs với cả trường hợp bước thời gian rời rạc và bước thời gian liên tục.
+    Với gần như cùng một chi phí tính toán, phương pháp của ta gần như luôn luôn vượt trội hơn so với các phương pháp khác trên ước lượng hợp lý.
+    Bên cạnh đó phương pháp của chúng ta cũng tạo ra các dữ liệu có chất lượng tốt hơn trong hầu hết trường hợp đặc biệt là khi số bước dùng để sinh ra dữ liệu nhỏ.
+
+    \section{Mô hình toán học của mô hình khuếch tán}
+
+    Các mô hình khuếch tán xác suất (DPMs) là một quá trình Markov đặc biệt với các bước chuyển tiếp là phân phối Gaussian:
+
+    \begin{equation}
+        p\big(\boldsymbol{x}_{0:N}\big)=p\big(\boldsymbol{x}_N\big)\prod_{n=1}^N p\big(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n\big)
+    \end{equation}
+    với
+    \begin{equation}
+        p\big(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n \big)=\mathcal{N} \big( \boldsymbol{x}_{n-1} \vert \boldsymbol{\mu}_n \big( \boldsymbol{x}_n \big), \boldsymbol{\Sigma}_n \big( \boldsymbol{x}_n \big) \big)
+    \end{equation}
+
+    Mục tiêu của ta là đảo ngược quá trình khuếch tán thuận $q\big(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0\big)$. 
+    Quá trình khuếch tán thuận đưa nhiễu vào phân phối dữ liệu $q(\boldsymbol{x}_0)$ một cách từ từ qua từng bước.
+    \cite{song2020denoising} xem xét một họ các quá trình khuếch tán thuật mà từng bước được đánh dấu bởi một vector không âm $\lambda = \big( \lambda_1, \dots, \lambda_N \big) \in \mathbb{R}_{\geq 0}^{N}$:
+
+    \begin{equation}
+        q\big(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0 \big)=q\big( \boldsymbol{x}_N \vert \boldsymbol{x}_0 \big) \prod_{n=2}^{N} q\big( \boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0 \big)
+    \end{equation}
+
+    \begin{equation}
+        q\big( \boldsymbol{x}_N \vert \boldsymbol{x}_0 \big)=\mathcal{N} \big( \boldsymbol{x}_N \vert \sqrt{\overline{\alpha}_N} \boldsymbol{x}_0, \overline{\beta}_N \boldsymbol{I} \big)
+    \end{equation}
+
+    \begin{equation}
+        q\big( \boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0 \big)=\mathcal{N} \big( \boldsymbol{x}_{n-1} \vert \tilde{\boldsymbol{\mu}}_n (\boldsymbol{x}_n, \boldsymbol{x}_0), \lambda_n^2 \boldsymbol{I} \big)
+    \end{equation}
+
+    \begin{equation}
+        \tilde{\boldsymbol{\mu}}_n \big( \boldsymbol{x}_n, \boldsymbol{x}_0 \big)=\sqrt{\overline{\alpha}_{n-1}}\boldsymbol{x}_0 + \sqrt{\overline{\beta}_{n-1} - \lambda_n^2}.\dfrac{\boldsymbol{x}_n - \sqrt{\overline{\alpha}_n}\boldsymbol{x}_0}{\sqrt{\overline{\beta}_n}}
+    \end{equation}
+
+    với $\overline{\alpha}_1, \overline{\alpha}_2, \dots, \overline{\alpha}_N \in (0, 1)$ là một dãy giảm ngặt,
+    $\overline{\beta}_n := 1 - \overline{\alpha}_n$ và $\boldsymbol{I}$ là ma trận đơn vị.
+    Ta nhận thấy $q\big( \boldsymbol{x}_n \vert \boldsymbol{x}_0 \big)=\mathcal{N} \big( \boldsymbol{x}_n \vert \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0, \overline{\beta}_n \boldsymbol{I} \big)$,
+    ta có thể lấy mẫu $\boldsymbol{x}_n$ một cách nhanh chóng khi biết trước $\boldsymbol{x}_0$ bằng cách:
+
+    \begin{equation}
+        \boldsymbol{x}_n = \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0 + \sqrt{\overline{\beta}_n} \boldsymbol{\epsilon}_n \text{ với } \boldsymbol{\epsilon}_n \sim \mathcal{N}(\boldsymbol{0}, \boldsymbol{I})
+    \end{equation}
+
+    Đặt $\alpha_n := \overline{\alpha}_n / \overline{\alpha}_{n-1}, \beta_n := 1 - \alpha_n$ và $\tilde{\beta}_n := \dfrac{\overline{\beta}_{n-1}}{\overline{\beta}_n}\beta_n$.
+    Hai quá trình khuếch tán thuật hay được sử dụng là DDPM (tương ứng với $\lambda_n^2=\tilde{\beta}_n$) \cite{ho2020denoising} và DDIM (tương ứng với $\lambda_n^2 = 0$) \cite{song2020denoising}.
+    Cụ thể quá trình khuếch tán thuận của DDPM là một quá trình Markov với chuyển tiếp Gaussian tuyến tính:
+
+    \begin{equation}
+        q\big( \boldsymbol{x}_n \vert \boldsymbol{x}_{n-1} \big)=\mathcal{N} \big( \bold{x}_n \vert \sqrt{\alpha}_n \boldsymbol{x}_{n-1}, \beta_n \boldsymbol{I} \big)
+    \end{equation}
+
+    Quá trình khuếch tán ngược được học bằng cách cực đại hóa cận dưới (ELBO): $L_{\mathrm{elbo}}=\mathbb{E}_q \log \dfrac{p(\bold{x}_{0:N})}{q(\bold{x}_{1:N}\vert \bold{x}_0)}$ hay tương đương với cực tiểu hóa độ phân kỳ Kullback-Leibler giữa quá trình khuếch tán thuận và quá trình khuếch tán ngược:
+
+    \begin{equation} \label{eq:ELBO-Maximization}
+        \max_{\lbrace \boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n \rbrace_{n=1}^N} L_{\mathrm{elbo}} \Leftrightarrow \min_{\lbrace \boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n \rbrace_{n=1}^N} D_{KL} \big( q(\boldsymbol{x}_{0:N}) \Vert p(\boldsymbol{x}_{0:N}) \big)
+    \end{equation}
+
+    Bài toán ở công thức \ref{eq:ELBO-Maximization} tối ưu hóa cả trung bình và ma trận hiệp phương sai cùng lúc. 
+    Ta gọi là bài toán tối ưu hóa chung.
+
+    Để mô hình đơn giản, các công trình trước \cite{ho2020denoising}, \cite{song2020denoising}, \cite{bao2021analytic} sử dụng ma trận hiệp phương sai đẳng hướng là $\boldsymbol{\Sigma}_n(\boldsymbol{x}_n)=\sigma_n^2 \boldsymbol{I}$ chỉ phụ thuộc vào bước thời gian thứ $n$, $\sigma_n^2$ là phương sai cho từng bước.
+    Với giả định này, \cite{bao2021analytic} đã chỉ ra cả trung bình tối ưu $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ và phương sai tối ưu có dạng giải tích tương ứng với kỳ vọng có điều kiện của nhiễu $\mathbb{E}_{q\big( \boldsymbol{x}_0 \vert \bold{x}_n \big)} \lbrack \boldsymbol{\epsilon}_n \rbrack$:
+
+    \begin{equation}
+        \boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)=\tilde{\boldsymbol{\mu}}_n \Bigg( \boldsymbol{x}_n, \dfrac{1}{\sqrt{\overline{\alpha}_n}} \Big( \boldsymbol{x}_n - \sqrt{\overline{\beta}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \Big) \Bigg)
+    \end{equation}
+
+    \begin{equation} \label{eq:Optimal-Isotropic-Variance}
+        \sigma_n^{\ast 2}=\lambda_n^2 + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \Bigg( 1 - \mathbb{E}_{q(\boldsymbol{x}_n)} \dfrac{\lVert \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack\rVert_2^2}{d} \Bigg)
+    \end{equation}
+
+    Với $\boldsymbol{\epsilon}_n = \dfrac{\boldsymbol{x}_n - \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0}{\sqrt{\overline{\beta}_n}}$ là nhiễu được dùng để tạo ra $\boldsymbol{x}_n$ từ $\boldsymbol{x}_0$, $d$ là số chiều của dữ liệu $\boldsymbol{x}_0$ và $\gamma_n = \sqrt{\overline{\alpha}_{n-1}} - \sqrt{\overline{\beta}_{n-1} - \lambda_n^2}\sqrt{\dfrac{\overline{\alpha}_n}{\overline{\beta}_n}}$.
+    \cite{ho2020denoising} ước lượng $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ sử dụng một mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$:
+
+    \begin{equation}
+        \hat{\boldsymbol{\mu}}_n(\boldsymbol{x}_n)=\tilde{\boldsymbol{\mu}}_n \Bigg( \boldsymbol{x}_n, \dfrac{1}{\sqrt{\overline{\alpha}_n}} \Big( \bold{x}_n - \sqrt{\overline{\beta}_n} \hat{\boldsymbol{\epsilon}}_n(\boldsymbol{x}_n) \Big) \Bigg)
+    \end{equation}
+
+    Mạng $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ cần phải học được kỳ vọng $\mathbb{E}_{q\big( \boldsymbol{x}_0 \vert \bold{x}_n \big)} \lbrack \boldsymbol{\epsilon}_n \rbrack$ bằng cách cực tiểu hóa hàm mục tiêu MSE:
+
+    \begin{equation} \label{eq:Noise-Prediction}
+        \min_{\lbrace \hat{\boldsymbol{\epsilon}}_n  \rbrace_{n=1}^N} \mathbb{E}_n  \mathbb{E}_{q(\boldsymbol{x}_0, \boldsymbol{x}_n)} \lVert \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \rVert_2^2
+    \end{equation}
+
+    với $n$ được lấy mẫu theo phân phối đều từ $\lbrace 1, 2, \dots, N \rbrace$.
+    Công thức \ref{eq:Noise-Prediction} chỉ ra rằng nghiệm tối ưu khi $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ cần phải học được kỳ vọng $\mathbb{E}_{q\big( \boldsymbol{x}_0 \vert \bold{x}_n \big)} \lbrack \boldsymbol{\epsilon}_n \rbrack = \mathbb{E}_{q\big( \boldsymbol{x}_0 \vert \bold{x}_n \big)} \lbrack \boldsymbol{\epsilon}_n \rbrack$ với mọi $n \in \lbrace 1, 2, \dots, N \rbrace$.
+
+    Phương sai tối ưu ở công thức \ref{eq:Optimal-Isotropic-Variance} có thể được ước lượng sử dụng mạng $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ cần phải học được kỳ vọng $\mathbb{E}_{q\big( \boldsymbol{x}_0 \vert \bold{x}_n \big)} \lbrack \boldsymbol{\epsilon}_n \rbrack$ theo \cite{bao2021analytic}:
+
+    \begin{equation}
+        \hat{\sigma}_n^{2}=\lambda_n^2 + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \Bigg( 1 - \mathbb{E}_{q(\boldsymbol{x}_n)} \dfrac{\lVert \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)\rVert_2^2}{d} \Bigg)
+    \end{equation}
+
+    \section{Phương pháp đề xuất}
+
+    Ta có thể cải thiện ước lượng của ma trận hiệp phương sai của DPMs dựa trên công trình gần đây \cite{bao2021analytic}.
+    Đầu tiên ta sẽ xem xét ma trận hiệp phương sai đường chéo và ma trận hiệp phương sai đầy đủ thay vì ma trận hiệp phương sai đẳng hướng để cải thiện khả năng sinh dữ liệu của DPMs và thu được biểu thức của nghiệm tối ưu,
+    sẽ được trình bày ở mục \ref{Optimal-Solution-Covariance-Beyond-Isotropic-Covariance}. Tiếp theo ta sẽ hiệu chỉnh ma trận hiệp phương sai tối ưu khi cho một trung bình không hoàn hảo (có xét đến sai số xấp xỉ và tối ưu hóa), sẽ được trình bày ở mục .
+    Các chứng minh sẽ được trình bày ở phụ lục .
+
+    Mặc dù các kết quả lý thuyết có thể được áp dụng cho trường ma trận hiệp phương sai đầy đủ (phụ lục ), 
+    nhưng thường tốn nhiều thời gian để thu được các mẫu dữ liệu từ các bước chuyển tiếp Gaussian với ma trận hiệp phương sai đầy đủ (ví dụ phân tích Cholesky).
+    Để cân bằng sự linh hoạt giữa thời gian và chi phí tính toán, ta tập trung vào ma trận hiệp phương sai đường chéo trong xuyên suốt các thực nghiệm.
+
+    \subsection{Lời giải tối ưu cho ma trận hiệp phương sai thay vì sử dụng ma trận hiệp phương sai đẳng hướng} \label{Optimal-Solution-Covariance-Beyond-Isotropic-Covariance}
 
 
 
