@@ -196,13 +196,40 @@
     Vậy nên hiệu năng của quá trình sinh trên một tập con của các bước thời gian là rất quan trọng,
     điều này bị ảnh hưởng rất lớn bởi ma trận hiệp phương sai được thiết kế trong DPMs.
     Trong đề tài này, ta xem xét và so sánh sự ảnh hưởng của ma trận hiệp phương sai đường chéo và ma trận hiệp phương sai đầy đủ để khải thiện đáng kể sức mạnh của DPMs.
-    Ta sẽ nhận được các kết quả tối ưu cho ma trận hiệp phương sai và điều chỉnh khi mà các trung bình của DPMs không hoàn hảo.
+    Ta sẽ nhận được các kết quả tối ưu cho ma trận hiệp phương sai và hiệu chỉnh khi mà các trung bình của DPMs không hoàn hảo.
+    Ma trận hiệp phương sai tối ưu và ma trận hiệp phương sai tối ưu đã được hiệu chỉnh đều có thể được phân tích thành các thành phần kỳ vọng có điều kiện của các hàm của nhiễu.
+    Dựa trên điều này ta sẽ đề xuất ước lượng ma trận hiệp phương sao tối ưu và ma trận hiệp phương sai tối ưu được hiệu chỉnh khi biết trung bình không hoàn hảo bằng cách học các kỳ vọng có điều kiện.
+    Phương pháp này có thể được áp dụng cho cả trường hợp bước thời gian rời rạc và bước thời gian liên tục.
+    Ta sẽ chỉ xem xét ma trận hiệp phương sai đường chéo để làm giảm chi phí tính toán.
+    Để tiến hành thực nghiệm hiệu quả, ta sử dụng chiến lược chia sẻ tham số giữa các mô hình và quá trình huấn luyện gồm hai giai đoạn.
+    Kết quả thực nghiệm cho thấy phương pháp này vượt trội hơn một lượng lớn và đa dạng các phương pháp thiết kế ma trận hiệp phương sai dựa trên ước lượng hợp lý,
+    và cải thiện chất lượng các ảnh được tạo ra đặc biệt dù chỉ trên một số lượng nhỏ bước.
     
 
         
     \newpage
 
     \section{Tổng quan về mô hình khuếch tán}
+
+    Gần đây, các mô hình khuếch tán xác suất (DPMs) \cite{sohl2015deep}, \cite{ho2020denoising}, \cite{song2020score} đã tạo ra rất nhiều hứa hẹn trong lĩnh vực các mô hình sinh.
+    Những mô hình này lần lượt đưa nhiễu vào theo từng bước thời gian vào phân phối dữ liệu gốc tạo nên một quá trình khuếch tán.
+    Bằng cách học để đảo ngược quá trình khuếch tán sử dụng mô hình Markov, DPMs có khả năng tạo ra các ảnh chất lượng cao \cite{ho2020denoising}, \cite{song2020score}, \cite{dhariwal2021diffusion},
+    các âm thanh chất lượng cao \cite{chen2020wavegrad}, \cite{kong2020diffwave}. 
+    Các mô hình này hoàn toàn có khả năng cạnh tranh với các mô hình sinh tân tiến nhất hiện tại \cite{brock2018large}, \cite{wu2019logan}, \cite{karras2020analyzing}, \cite{binkowski2019high}, \cite{kalchbrenner2018efficient}.
+
+    Tuy nhiên, quá trình sinh phải sử dụng một vòng lặp với số bước lớn và trên toàn bộ số bước của DPMs làm cho DPMs yêu cầu chi phí tính toán lớn hơn nhiều và kém hiệu quả hơn so với mô hình sinh đối kháng (GANs) \cite{goodfellow2014generative}.
+    Vì vậy khả năng và chất lượng sinh dữ liệu của DPMs trên một tập con các bước là rất quan trọng.
+    Trong trường hợp này thì quá trình khuếch tán ngược trở nên rất phức tạp \cite{xiao2021tackling} và thiết kế về ma trận hiệp phương sai trong DPMs trở thành một việc rất quan trọng \cite{nichol2021glide}, \cite{bao2021analytic}.
+    Hầu hết các công trình trước đây \cite{ho2020denoising}, \cite{song2020denoising}, \cite{bao2021analytic} sử dụng ma trận hiệp phương sai đẳng hướng mà chỉ phụ thuộc vào bước thời gian mà không phụ thuộc vào trạng thái.
+    Một bước phát triển gần đây đáng chú ý là Analytic-DPM \cite{bao2021analytic},
+    công trình này ước lượng ma trận hiệp phương sai tối ưu (theo khía cạnh ước lượng hợp lý cực đại) thay vì sử dụng giá trị đặt trước \cite{ho2020denoising}, \cite{song2020denoising} và cho thấy một bước cải thiện đáng kể trên ước lượng hợp lý và hiệu quả lấy mẫu.
+    Tuy nhiên ma trận hiệp phương sai đẳng hướng hy sinh sức mạnh của DPMs để mô hình đơn giản hơn.
+    Hơn nữa, tính tối ưu của ước lượng ma trận hiệp phương sai trong \cite{bao2021analytic} được duy trì bởi giả định là trung bình tối ưu đã biết trước,
+    nhưng điều này không phù hợp trong thực tế.
+
+
+
+
     \newpage
     \printbibliography[title={TÀI LIỆU THAM KHẢO}]
 
