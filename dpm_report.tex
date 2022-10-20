@@ -1,0 +1,209 @@
+\documentclass[14pt, a4paper]{article}
+\usepackage{minitoc}
+\usepackage[left=3.00cm, right=2.5cm, top=2.00cm, bottom=2.00cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{graphicx}
+%\usepackage{algpseudocode}
+%\usepackage{algorithm}
+\usepackage[ruled,vlined,linesnumbered,algosection]{algorithm2e}
+\usepackage{blindtext}
+\usepackage{setspace}
+\usepackage[utf8]{inputenc}
+\usepackage[utf8]{vietnam}
+\usepackage[center]{caption}
+\usepackage[shortlabels]{enumitem}
+\usepackage{fancyhdr} % header, footer
+\usepackage{hyperref} % loại bỏ border với mục lục và công thức
+\usepackage[nonumberlist, nopostdot, nogroupskip]{glossaries}
+\usepackage{glossary-superragged}
+\usepackage{tikz,tkz-tab}
+\setglossarystyle{superraggedheaderborder}
+\pagestyle{fancy}
+%\usepackage[style=numeric,sortcites]{biblatex}
+%\addbibresource{ref.bib}
+%\usepackage[numbers]{natbib}
+\usepackage{indentfirst}
+\usepackage[natbib,backend=biber,style=ieee, sorting=ynt]{biblatex}
+\bibliography{ref.bib}
+
+\graphicspath{{./figures/}}
+
+
+\makenoidxglossaries
+
+% Danh mục thuật ngữ
+\newglossaryentry{DPM}
+{
+	name={DPMs},
+	description={Diffusion Probabilistic Models}
+}
+\newglossaryentry{DGM}
+{
+	name={DGMs},
+	description={Deep Generative Models}
+}
+\newglossaryentry{GANs}
+{
+	name={GANs},
+	description={Generative Adversarial Networks}
+}
+
+\hypersetup{
+    colorlinks=false,
+    pdfborder={0 0 0},
+}
+
+
+\fancyhf{}
+\rhead{\textbf{Môn học: Học máy và khai phá dữ liệu}}
+\lhead{\textbf{GVHD: PGS. TS. Trần Trọng Hiếu}}
+\rfoot{\thepage}
+\lfoot{\textbf{Học viên thực hiện: Nguyễn Chí Thanh}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+
+\setlength{\parindent}{0.5cm}
+
+\setcounter{secnumdepth}{3} % Cho phép subsubsection trong report
+\setcounter{tocdepth}{3} % Chèn subsubsection vào bảng mục lục
+
+\newtheorem{dl}{Định lý}
+\newtheorem{md}{Mệnh đề}
+\newtheorem{bd}{Bổ đề}
+\newtheorem{dn}{Định nghĩa}
+\newtheorem{hq}{Hệ quả}
+
+\numberwithin{dl}{section}
+\numberwithin{md}{section}
+\numberwithin{bd}{section}
+\numberwithin{dn}{section}
+\numberwithin{hq}{section}
+
+\doublespacing
+
+\begin{document}
+
+    \begin{titlepage}
+
+        \newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+        \center % Center everything on the page
+
+        %----------------------------------------------------------------------------------------
+        %	HEADING SECTIONS
+        %----------------------------------------------------------------------------------------
+        \textsc{\LARGE Đại học Quốc Gia Hà Nội}\\[0.5cm]
+        \textsc{\LARGE Trường đại học Khoa học tự nhiên}\\[0.5cm] % Name of your university/college
+        \textsc{\LARGE Khoa Toán - Cơ - Tin học}\\[0.5cm]
+
+        \includegraphics[scale=0.2]{HUS-logo.jpg}\\[0.5cm]
+
+        \textsc{\Large Chuyên ngành: Khoa học dữ liệu}\\[0.5cm] % Major heading such as course name
+
+
+        %----------------------------------------------------------------------------------------
+        %	TITLE SECTION
+        %----------------------------------------------------------------------------------------
+
+        \HRule \\[0.4cm]
+        { \huge \bfseries BÀI TẬP MÔN HỌC}\\[0.4cm] % Title of your document
+        \HRule \\[1.5cm]
+
+        \textsc{\Large Môn học: Học máy và khai phá dữ liệu}\\[1cm] % Minor heading such as course title
+
+
+        \textsc{\Large Đề tài: Ước lượng ma trận hiệp phương sai tối ưu với \\ trung bình không hoàn hảo \\ trong mô hình khuếch toán xác suất}\\[2cm]
+
+
+        %----------------------------------------------------------------------------------------
+        %	AUTHOR SECTION
+        %----------------------------------------------------------------------------------------
+        \begin{minipage}{0.4\textwidth}
+            \begin{flushleft} \large
+            \emph{Giảng viên hướng dẫn:} \\
+            PGS. TS. Trần Trọng Hiếu % Supervisor's Name
+            \end{flushleft}
+        \end{minipage}\\[0.5cm]
+
+        \begin{minipage}{0.4\textwidth}
+        \begin{flushleft} \large
+        \emph{Học viên thực hiện:}\\
+        Nguyễn Chí Thanh \\
+        MSHV: 21007925 \\ % Your name
+        Lớp: Khoa học dữ liệu - K4
+        \end{flushleft}
+        \end{minipage}
+
+
+        % If you don't want a supervisor, uncomment the two lines below and remove the section above
+        %\Large \emph{Author:}\\
+        %John \textsc{Smith}\\[3cm] % Your name
+
+        %----------------------------------------------------------------------------------------
+        %	DATE SECTION
+        %----------------------------------------------------------------------------------------
+
+        % I don't want day because it is English
+        % {\large \today}\\[2cm] % Date, change the \today to a set date if you want to be precise
+
+        %----------------------------------------------------------------------------------------
+        %	LOGO SECTION
+        %----------------------------------------------------------------------------------------
+
+        %\includegraphics{logo/rsz_3logo-khtn.png}\\[1cm] % Include a department/university logo - this will require the graphicx package
+
+        %----------------------------------------------------------------------------------------
+
+        \vfill % Fill the rest of the page with whitespace
+
+    \end{titlepage}
+
+    \cleardoublepage
+    \pagenumbering{gobble}
+    \tableofcontents
+    \newpage
+    \listoffigures
+    \newpage
+    \glsaddall 
+    \renewcommand*{\glossaryname}{Danh mục các từ viết tắt}
+    \renewcommand*{\acronymname}{Danh sách từ viết tắt}
+    \renewcommand*{\entryname}{Viết tắt}
+    \renewcommand*{\descriptionname}{Viết đầy đủ}
+    \printnoidxglossary
+    \cleardoublepage
+    \pagenumbering{arabic}
+
+    %\maketitle
+
+    \newpage
+
+    \nocite{*}
+
+    \begin{center}
+    \section*{LỜI MỞ ĐẦU}
+    \end{center}
+    \addcontentsline{toc}{section}{{\bf LỜI MỞ ĐẦU}\rm}
+
+    Các mô hình khuếch tán xác suất (DPMs) là một lớp các mô hình sinh (DGMs) rất mạnh.
+    Mặc dù rất được các nhà khoa học quan tâm nhưng quá trình sinh dữ liệu sử dụng phép lặp tốn tài nguyên và ít hiệu quả về mặt tính toán hơn nhiều các mô hình sinh khác ví dụ là mô hình sinh đối kháng (GANs).
+    Vậy nên hiệu năng của quá trình sinh trên một tập con của các bước thời gian là rất quan trọng,
+    điều này bị ảnh hưởng rất lớn bởi ma trận hiệp phương sai được thiết kế trong DPMs.
+    Trong đề tài này, ta xem xét và so sánh sự ảnh hưởng của ma trận hiệp phương sai đường chéo và ma trận hiệp phương sai đầy đủ để khải thiện đáng kể sức mạnh của DPMs.
+    Ta sẽ nhận được các kết quả tối ưu cho ma trận hiệp phương sai và điều chỉnh khi mà các trung bình của DPMs không hoàn hảo.
+    
+
+        
+    \newpage
+
+    \section{Tổng quan về mô hình khuếch tán}
+    \newpage
+    \printbibliography[title={TÀI LIỆU THAM KHẢO}]
+
+\end{document}
