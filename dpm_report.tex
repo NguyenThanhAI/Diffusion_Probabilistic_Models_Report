@@ -239,7 +239,7 @@
 
     Tuy nhiên, quá trình sinh phải sử dụng một vòng lặp với số bước lớn và trên toàn bộ số bước của DPMs làm cho DPMs yêu cầu chi phí tính toán lớn hơn nhiều và kém hiệu quả hơn so với mô hình sinh đối kháng (GANs) \cite{goodfellow2014generative}.
     Vì vậy khả năng và chất lượng sinh dữ liệu của DPMs trên một tập con các bước là rất quan trọng.
-    Trong trường hợp này thì quá trình khuếch tán ngược trở nên rất phức tạp \cite{xiao2021tackling} và thiết kế về ma trận hiệp phương sai trong DPMs trở thành một việc rất quan trọng \cite{nichol2021glide}, \cite{bao2021analytic}.
+    Trong trường hợp này thì quá trình khuếch tán ngược trở nên rất phức tạp \cite{xiao2021tackling} và thiết kế về ma trận hiệp phương sai trong DPMs trở thành một việc rất quan trọng \cite{nichol2021improved}, \cite{bao2021analytic}.
     Hầu hết các công trình trước đây \cite{ho2020denoising}, \cite{song2020denoising}, \cite{bao2021analytic} sử dụng ma trận hiệp phương sai đẳng hướng mà chỉ phụ thuộc vào bước thời gian mà không phụ thuộc vào trạng thái.
     Một bước phát triển gần đây đáng chú ý là Analytic-DPM \cite{bao2021analytic},
     công trình này ước lượng ma trận hiệp phương sai tối ưu (theo khía cạnh ước lượng hợp lý cực đại) thay vì sử dụng giá trị đặt trước \cite{ho2020denoising}, \cite{song2020denoising} và cho thấy một bước cải thiện đáng kể trên ước lượng hợp lý và hiệu quả lấy mẫu.
@@ -261,7 +261,7 @@
     Với gần như cùng một chi phí tính toán, phương pháp của ta gần như luôn luôn vượt trội hơn so với các phương pháp khác trên ước lượng hợp lý.
     Bên cạnh đó phương pháp của chúng ta cũng tạo ra các dữ liệu có chất lượng tốt hơn trong hầu hết trường hợp đặc biệt là khi số bước dùng để sinh ra dữ liệu nhỏ.
 
-    \section{Mô hình toán học của mô hình khuếch tán}
+    \section{Mô hình toán học của mô hình khuếch tán} \label{Background}
 
     Các mô hình khuếch tán xác suất (DPMs) là một quá trình Markov đặc biệt với các bước chuyển tiếp là phân phối Gaussian:
 
@@ -320,9 +320,9 @@
     Ta gọi là bài toán tối ưu hóa chung.
 
     Để mô hình đơn giản, các công trình trước \cite{ho2020denoising}, \cite{song2020denoising}, \cite{bao2021analytic} sử dụng ma trận hiệp phương sai đẳng hướng là $\boldsymbol{\Sigma}_n(\boldsymbol{x}_n)=\sigma_n^2 \boldsymbol{I}$ chỉ phụ thuộc vào bước thời gian thứ $n$, $\sigma_n^2$ là phương sai cho từng bước.
-    Với giả định này, \cite{bao2021analytic} đã chỉ ra cả trung bình tối ưu $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ và phương sai tối ưu có dạng giải tích tương ứng với kỳ vọng có điều kiện của nhiễu $\mathbb{E}_{q\big( \boldsymbol{x}_0 \vert \bold{x}_n \big)} \lbrack \boldsymbol{\epsilon}_n \rbrack$:
+    Với giả định này, \cite{bao2021analytic} đã chỉ ra cả trung bình tối ưu $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ và phương sai tối ưu có dạng giải tích tương ứng với kỳ vọng có điều kiện của nhiễu $\mathbb{E}_{q( \boldsymbol{x}_0 \vert \bold{x}_n )} \lbrack \boldsymbol{\epsilon}_n \rbrack$:
 
-    \begin{equation}
+    \begin{equation} \label{eq:Optimal-Mean}
         \boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)=\tilde{\boldsymbol{\mu}}_n \Bigg( \boldsymbol{x}_n, \dfrac{1}{\sqrt{\overline{\alpha}_n}} \Big( \boldsymbol{x}_n - \sqrt{\overline{\beta}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \Big) \Bigg)
     \end{equation}
 
@@ -337,16 +337,16 @@
         \hat{\boldsymbol{\mu}}_n(\boldsymbol{x}_n)=\tilde{\boldsymbol{\mu}}_n \Bigg( \boldsymbol{x}_n, \dfrac{1}{\sqrt{\overline{\alpha}_n}} \Big( \bold{x}_n - \sqrt{\overline{\beta}_n} \hat{\boldsymbol{\epsilon}}_n(\boldsymbol{x}_n) \Big) \Bigg)
     \end{equation}
 
-    Mạng $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ cần phải học được kỳ vọng $\mathbb{E}_{q\big( \boldsymbol{x}_0 \vert \bold{x}_n \big)} \lbrack \boldsymbol{\epsilon}_n \rbrack$ bằng cách cực tiểu hóa hàm mục tiêu MSE:
+    Mạng $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ cần phải học được kỳ vọng $\mathbb{E}_{q( \boldsymbol{x}_0 \vert \bold{x}_n )} \lbrack \boldsymbol{\epsilon}_n \rbrack$ bằng cách cực tiểu hóa hàm mục tiêu MSE:
 
     \begin{equation} \label{eq:Noise-Prediction}
         \min_{\lbrace \hat{\boldsymbol{\epsilon}}_n  \rbrace_{n=1}^N} \mathbb{E}_n  \mathbb{E}_{q(\boldsymbol{x}_0, \boldsymbol{x}_n)} \lVert \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \rVert_2^2
     \end{equation}
 
-    với $n$ được lấy mẫu theo phân phối đều từ $\lbrace 1, 2, \dots, N \rbrace$.
-    Công thức \ref{eq:Noise-Prediction} chỉ ra rằng nghiệm tối ưu khi $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ cần phải học được kỳ vọng $\mathbb{E}_{q\big( \boldsymbol{x}_0 \vert \bold{x}_n \big)} \lbrack \boldsymbol{\epsilon}_n \rbrack = \mathbb{E}_{q\big( \boldsymbol{x}_0 \vert \bold{x}_n \big)} \lbrack \boldsymbol{\epsilon}_n \rbrack$ với mọi $n \in \lbrace 1, 2, \dots, N \rbrace$.
+    Với $n$ được lấy mẫu theo phân phối đều từ $\lbrace 1, 2, \dots, N \rbrace$.
+    Công thức \ref{eq:Noise-Prediction} chỉ ra rằng nghiệm tối ưu khi $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ cần phải học được kỳ vọng $\mathbb{E}_{q( \boldsymbol{x}_0 \vert \bold{x}_n )} \lbrack \boldsymbol{\epsilon}_n \rbrack = \mathbb{E}_{q( \boldsymbol{x}_0 \vert \bold{x}_n )} \lbrack \boldsymbol{\epsilon}_n \rbrack$ với mọi $n \in \lbrace 1, 2, \dots, N \rbrace$.
 
-    Phương sai tối ưu ở công thức \ref{eq:Optimal-Isotropic-Variance} có thể được ước lượng sử dụng mạng $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ cần phải học được kỳ vọng $\mathbb{E}_{q\big( \boldsymbol{x}_0 \vert \bold{x}_n \big)} \lbrack \boldsymbol{\epsilon}_n \rbrack$ theo \cite{bao2021analytic}:
+    Phương sai tối ưu ở công thức \ref{eq:Optimal-Isotropic-Variance} có thể được ước lượng sử dụng mạng $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ cần phải học được kỳ vọng $\mathbb{E}_{q( \boldsymbol{x}_0 \vert \bold{x}_n )} \lbrack \boldsymbol{\epsilon}_n \rbrack$ theo \cite{bao2021analytic}:
 
     \begin{equation}
         \hat{\sigma}_n^{2}=\lambda_n^2 + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \Bigg( 1 - \mathbb{E}_{q(\boldsymbol{x}_n)} \dfrac{\lVert \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)\rVert_2^2}{d} \Bigg)
@@ -365,9 +365,38 @@
 
     \subsection{Lời giải tối ưu cho ma trận hiệp phương sai thay vì sử dụng ma trận hiệp phương sai đẳng hướng} \label{Optimal-Solution-Covariance-Beyond-Isotropic-Covariance}
 
+    Thay vì sử dụng ma trận hiệp phương sai đẳng hướng chỉ dựa vào bước thời gian mà không xét đến trạng thái, ta sẽ xét ma trận hiệp phương sai đường chéo để cải thiện khả năng sinh dữ liệu của DPMs.
+    Ta sẽ xây dựng một ví dụ mà phân phối dữ liệu là phân phối trộn của các phân phối Gaussian.
+    Ngay cả trong trường hợp đơn giản, ta có thể chứng minh ELBO tối ưu trong \ref{eq:ELBO-Maximization} với một ma trận hiệp phương sai đường chéo luôn lớn hơn trong trường hợp sử dụng ma trận hiệp phương sai đẳng hướng.
+    Chứng minh chi tiết được trình bày trong phụ lục .
+
+    Về mặt hình thức, ta xét ma trận hiệp phương sai trong dạng $\boldsymbol{\Sigma}_n (\boldsymbol{x}_n)=\mathrm{diag}\big( \boldsymbol{\sigma}_n (\boldsymbol{x}_n)^2 \big)$,
+    với $\boldsymbol{\sigma}_n (\boldsymbol{x}_n)^2: \mathbb{R}^d \rightarrow \mathbb{R}^d$ là đường chéo của ma trận hiệp phương sai mà $\mathrm{diag} (.)$ ký hiệu là toán tử biến đổi vector thành ma trận đường chéo.
+    Một cách tự nhiên, ta sẽ tối ưu hóa bài toán ở công thức \ref{eq:ELBO-Maximization} ứng với trung bình và ma trận hiệp phương sai để thu được lời giải tối ưu,
+    được phát biểu trong định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}. Kết quả cho ma trận hiệp phương sai đầy đủ trong phụ lục .
+
+    \begin{dl} \label{dl:Optimal-Solution-To-Joint-Optimization}
+        (Nghiệm tối ưu cho bài toán tối ưu hóa chung) 
+        Với ma trận hiệp phương sai có dạng $\boldsymbol{\Sigma}_n (\boldsymbol{x}_n)=\mathrm{diag}\big( \boldsymbol{\sigma}_n (\boldsymbol{x}_n)^2 \big)$.
+        Khi đó trung bình tối ưu của bài toán trong công thức \ref{eq:ELBO-Maximization} là $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ được nêu trong công thức \ref{eq:Optimal-Mean},
+        và ma trận hiệp phương sai tối ưu của bài toán trong công thức \ref{eq:ELBO-Maximization} là:
 
 
+        \begin{equation*}
+            \boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2 = \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2 \big)
+        \end{equation*}
 
+        với $\boldsymbol{\epsilon}_n = \dfrac{\boldsymbol{x}_n - \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0}{\sqrt{\overline{\beta}_n}}$ là nhiễu được dùng để tạo ra $\boldsymbol{x}_n$ từ $\boldsymbol{x}_0$,
+        $(.)^2$ là bình phương từng phần tử của vector, $\boldsymbol{1}$ là vector mà các phần tử đều bằng một và $\gamma_n = \sqrt{\overline{\alpha}_{n-1}} - \sqrt{\overline{\beta}_{n-1} - \lambda_n^2} \sqrt{\dfrac{\overline{\alpha}_n}{\overline{\beta}_n}}$
+    \end{dl}
+
+    Ý tưởng chứng minh định lý \ref{dl:Optimal-Solution-To-Joint-Optimization} tương tự như trong định lý 1 trong \cite{bao2021analytic}, nhưng định lý này chỉ xem xét trong trường hợp ma trận hiệp phương sai đẳng hướng.
+
+    Để ước lượng ma trận hiệp phương sai tối ưu $\boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2$ trong định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}, ta cần phải ước lượng cả hai đại lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2$ và $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack$.
+
+    Như đã được đề cập ở mục \ref{Background}, mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ có mục đích ước lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack$ bằng cách cực tiểu hóa hàm mục tiêu MSE trong công thức \ref{eq:Noise-Prediction}.
+    Vì vậy ta sử dụng $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2$ để ước lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2$.
+    
     \newpage
     \printbibliography[title={TÀI LIỆU THAM KHẢO}]
 
