@@ -81,7 +81,7 @@
 \rhead{\textbf{Môn học: Học máy và khai phá dữ liệu}}
 \lhead{\textbf{GVHD: PGS. TS. Trần Trọng Hiếu}}
 \rfoot{\thepage}
-\lfoot{\textbf{Học viên thực hiện: Nguyễn Chí Thanh}}
+\lfoot{\textbf{Học viên thực hiện: Nguyễn Chí Thanh - 21007925}}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
@@ -307,7 +307,7 @@
     Cụ thể quá trình khuếch tán thuận của DDPM là một quá trình Markov với chuyển tiếp Gaussian tuyến tính:
 
     \begin{equation}
-        q\big( \boldsymbol{x}_n \vert \boldsymbol{x}_{n-1} \big)=\mathcal{N} \big( \bold{x}_n \vert \sqrt{\alpha}_n \boldsymbol{x}_{n-1}, \beta_n \boldsymbol{I} \big)
+        q\big( \boldsymbol{x}_n \vert \boldsymbol{x}_{n-1} \big)=\mathcal{N} \big( \boldsymbol{x}_n \vert \sqrt{\alpha}_n \boldsymbol{x}_{n-1}, \beta_n \boldsymbol{I} \big)
     \end{equation}
 
     Quá trình khuếch tán ngược được học bằng cách cực đại hóa cận dưới (ELBO): $L_{\mathrm{elbo}}=\mathbb{E}_q \log \dfrac{p(\bold{x}_{0:N})}{q(\bold{x}_{1:N}\vert \bold{x}_0)}$ hay tương đương với cực tiểu hóa độ phân kỳ Kullback-Leibler giữa quá trình khuếch tán thuận và quá trình khuếch tán ngược:
@@ -333,7 +333,7 @@
     Với $\boldsymbol{\epsilon}_n = \dfrac{\boldsymbol{x}_n - \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0}{\sqrt{\overline{\beta}_n}}$ là nhiễu được dùng để tạo ra $\boldsymbol{x}_n$ từ $\boldsymbol{x}_0$, $d$ là số chiều của dữ liệu $\boldsymbol{x}_0$ và $\gamma_n = \sqrt{\overline{\alpha}_{n-1}} - \sqrt{\overline{\beta}_{n-1} - \lambda_n^2}\sqrt{\dfrac{\overline{\alpha}_n}{\overline{\beta}_n}}$.
     \cite{ho2020denoising} ước lượng $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ sử dụng một mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$:
 
-    \begin{equation}
+    \begin{equation} \label{eq:Estimated-Optimal-Mean}
         \hat{\boldsymbol{\mu}}_n(\boldsymbol{x}_n)=\tilde{\boldsymbol{\mu}}_n \Bigg( \boldsymbol{x}_n, \dfrac{1}{\sqrt{\overline{\alpha}_n}} \Big( \bold{x}_n - \sqrt{\overline{\beta}_n} \hat{\boldsymbol{\epsilon}}_n(\boldsymbol{x}_n) \Big) \Bigg)
     \end{equation}
 
@@ -396,7 +396,98 @@
 
     Như đã được đề cập ở mục \ref{Background}, mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ có mục đích ước lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack$ bằng cách cực tiểu hóa hàm mục tiêu MSE trong công thức \ref{eq:Noise-Prediction}.
     Vì vậy ta sử dụng $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2$ để ước lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2$.
+    Nhưng cần chú ý rằng sai lệch của $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2$ sẽ bị khuếch đại nhiều hơn so với $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ (chi tiết xem phụ lục ).
+    Tuy nhiên ta vẫn thấy chất lượng ảnh được tạo ra vẫn khá tốt (mục ).
+
+    Đại lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack$ là kỳ vọng có điều kiện của bình phương của nhiễu (SN) $\boldsymbol{\epsilon}_n^2$ điều kiện trên $\boldsymbol{x}_n$.
+    Đại lượng kỳ vọng này có thể được ước lượng sử dụng mạng $\boldsymbol{h}_n (\boldsymbol{x}_n) \in \mathbb{R}^d$ được huấn luyện trên hàm mục tiêu MSE:
+
+    \begin{equation} \label{eq:Square-Noise-Prediction-Network-MSE-Loss}
+        \min_{\lbrace \boldsymbol{h}_n \rbrace_{n=1}^N} \mathbb{E}_n \mathbb{E}_{q(\boldsymbol{x}_0, \boldsymbol{x}_n)} \lVert \boldsymbol{\epsilon}_n^2 - \boldsymbol{h}_n (\boldsymbol{x}_n) \rVert_2^2
+    \end{equation}
+
+    Với $n$ được lấy mẫu theo phân phối đều từ $\lbrace 1, 2, \dots, N \rbrace$ và $\boldsymbol{h}_n (\boldsymbol{x}_n)$ cố gắng dự đoán bình phương của nhiễu $\boldsymbol{\epsilon}_n^2$ khi cho trước $\boldsymbol{x}_n$.
+    Ta gọi $\boldsymbol{h}_n (\boldsymbol{x}_n)$ là mạng dự đoán nhiễu bình phương (SN).
+    Công thức \ref{eq:Square-Noise-Prediction-Network-MSE-Loss} cho thấy nghiệm tối ưu xảy ra khi $\boldsymbol{h}_n (\boldsymbol{x}_n) = \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack$ với mọi $n \in \lbrace 1, 2, \dots, N \rbrace$.
+
+    Bằng cách ước lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2$ với $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2$ và $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack$ với $\boldsymbol{h}_n (\boldsymbol{x}_n)$,
+    ta có thể ước lượng:
+
+    \begin{equation} \label{eq:Sigma-SN-SPM}
+        \hat{\boldsymbol{\sigma}}_n (\boldsymbol{x}_n)^2 = \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \boldsymbol{h}_n (\boldsymbol{x}_n) - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2 \big)
+    \end{equation}
+
+    Trong tiểu luận này ta gọi công thức trên ước lượng trên là SN-DPM.
+
+    \subsection{Ma trận hiệp phương sai tối ưu với trung bình không hoàn hảo}
+
+    Ta thấy việc ước lượng $\hat{\boldsymbol{\mu}}_n (\boldsymbol{x}_n)$ và $\hat{\boldsymbol{\sigma}}_n (\boldsymbol{x}_n)^2$ là việc hoàn toàn cần thiết theo định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}.
+    Tuy nhiên, định lý \ref{dl:Optimal-Solution-To-Joint-Optimization} chỉ cho ta lời giải tối ưu $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ và $\boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2$.
+    Nhưng hai đại lượng này ta không thể tính toán được một cách chính xác do có thành phần kỳ vọng có điều kiện trên hàm của nhiễu $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack$.
+    Đại lượng này không thể được tính chính xác do sai lệch xấp xỉ và sai lệch của quá trình tối ưu hóa,
+    điều này gợi ý ta có thể cải thiện các ước lượng này khi xem xét đến sai lệch.
+
+    Ta nhận thấy rằng trong định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}, trung bình tối ưu không phù hợp với ma trận hiệp phương sai tối ưu khi mà ma trận hiệp phương sai tối ưu được biểu diễn qua trung bình tối ưu.
+    Một cách tự nhiên, ta sẽ tối ưu duy nhất trung bình để thu được ước lượng của trung bình tối ưu $\hat{\boldsymbol{\mu}}_n$ và sau đó với tối ưu ma trận hiệp phương sai khi đã biết trung bình tối ưu $\hat{\boldsymbol{\mu}}_n$.
+    Cách tiếp cận hai giai đoạn này ít nhất không tệ hơn so với cách tiếp cận ở mục \ref{Optimal-Solution-Covariance-Beyond-Isotropic-Covariance} theo khía cạnh ước lượng hợp lý bởi vì:
+
+    \begin{equation}
+        L_{\mathrm{elbo}}\big( \hat{\boldsymbol{\mu}}_n, \hat{\boldsymbol{\sigma}}_n (\boldsymbol{x}_n)^2 \big) \leq \max_{\boldsymbol{\sigma}_n (.)^2 } L_{\mathrm{elbo}} \big( \hat{\boldsymbol{\mu}}_n, \boldsymbol{\sigma}_n (.)^2 \big)
+    \end{equation}
+
+    Và dấu bằng về cơ bản không xảy ra.
+
+    Để diễn giải ý tưởng, ta thu được các lời giải tối ưu bằng cách giải hai bài toán:
+
+    \begin{equation} \label{eq:Arbitray-Covariance-Optimize-Mean}
+        \text{Cho ma trận hiệp phương sai bất kỳ } \boldsymbol{\Sigma}_n, \max_{\lbrace \boldsymbol{\mu}_n \rbrace_{n=1}^N} L_{\mathrm{elbo}}
+    \end{equation}
+
+    \begin{equation} \label{eq:Arbitrary-Mean-Optimize-Covariance}
+        \text{Cho trung bình bất kỳ } \boldsymbol{\mu}_n, \max_{\lbrace \boldsymbol{\Sigma}_n \rbrace_{n=1}^N} L_{\mathrm{elbo}}
+    \end{equation}
+
+    \begin{dl} \label{dl:Solely-Optimal-Mean}
+        (Lời giải tối ưu của bài toán tối ưu duy nhất với trung bình)
+        Với ma trận hiệp phương sai bất kỳ $\boldsymbol{\Sigma}_n$,
+        trung bình tối ưu của bài toán trong công thức \ref{eq:Arbitray-Covariance-Optimize-Mean} luôn luôn là trung bình tối ưu trong công thức \ref{eq:Optimal-Mean}:
+
+        \begin{equation*}
+            \boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)=\tilde{\boldsymbol{\mu}}_n \Bigg( \boldsymbol{x}_n, \dfrac{1}{\sqrt{\overline{\alpha}_n}} \Big( \boldsymbol{x}_n - \sqrt{\overline{\beta}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \Big) \Bigg)
+        \end{equation*}
+
+        không phù hợp với $\boldsymbol{\Sigma}_n$.
+    \end{dl}
+
+    Định lý \ref{dl:Solely-Optimal-Mean} cho thấy rằng trung bình tối ưu không phụ thuộc vào ma trận hiệp phương sai và vì vậy ta sẽ học trung bình theo công thức \ref{eq:Noise-Prediction} mà không cần biết thông tin về ma trận hiệp phương sai.
+
+    Ngược lại với trung bình, ma trận hiệp phương sai tối ưu của bài toán \ref{eq:Arbitrary-Mean-Optimize-Covariance} phụ thuộc vào trung bình sẽ được trình bày trong định lý .
+    Kết quả cho ma trận hiệp phương sai đầy đủ được trình bày chi tiết ở phụ lục .
+
+    \begin{dl} \label{dl:Solely-Optimal-Covariance}
+        (Lời giải tối ưu của bài toán tối ưu duy nhất với ma trận hiệp phương sai)
+        Ta giả định $\boldsymbol{\Sigma}_n = \mathrm{diag} \big( \boldsymbol{\sigma}_n (\boldsymbol{x}_n)^2 \big)$.
+        Với trung bình bất kỳ $\boldsymbol{\mu}_n (\boldsymbol{x}_n)$ được tham số hóa bởi mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ như trong công thức \ref{eq:Estimated-Optimal-Mean},
+        ma trận hiệp phương sai tối ưu của bài toán trong công thức \ref{eq:Arbitrary-Mean-Optimize-Covariance} là:
+
+        \begin{equation*}
+            \begin{aligned}
+                \tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2 &= \boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2 + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n) \lbrack \boldsymbol{\epsilon}_n \rbrack} \big)^2 \\
+                &= \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \Big\lbrack \big( \boldsymbol{\epsilon}_n (\boldsymbol{x}_n) - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^2 \Big\rbrack
+            \end{aligned}
+        \end{equation*}
+
+        Với $\boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2$ là ma trận hiệp phương sai tối ưu của bài toán tối ưu hóa chung ở định lý \ref{dl:Optimal-Solution-To-Joint-Optimization},
+        $\boldsymbol{\epsilon}_n = \dfrac{\boldsymbol{x}_n - \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0}{\sqrt{\overline{\beta}_n}}$ là nhiễu được dùng để tạo ra $\boldsymbol{x}_n$ từ $\boldsymbol{x}_0$,
+        $(.)^2$ là bình phương từng phần tử của vector, $\boldsymbol{1}$ là vector mà các phần tử đều bằng một và $\gamma_n = \sqrt{\overline{\alpha}_{n-1}} - \sqrt{\overline{\beta}_{n-1} - \lambda_n^2} \sqrt{\dfrac{\overline{\alpha}_n}{\overline{\beta}_n}}$.
+    \end{dl}
+
+    Chứng minh của định lý \ref{dl:Solely-Optimal-Covariance} chủ yếu dựa trên việc cực tiểu hóa độ phân kỳ Kullback-Leibler giữa mật độ xác suất mục tiêu và một hàm mật độ Gaussian có điều kiện trên trung bình cố định tương đương với đầu tiên thu được moment bậc hai của hàm mật độ xác suất mục tiêu,
+    sau đó hiệu chỉnh bằng sai lệch giữa momen bậc nhất của hai hàm mật độ xác suất.
+    Ta gọi là hàm hiệu chỉnh momen có điều kiện.
+
     
+
     \newpage
     \printbibliography[title={TÀI LIỆU THAM KHẢO}]
 
