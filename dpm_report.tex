@@ -470,12 +470,12 @@
         Với trung bình bất kỳ $\boldsymbol{\mu}_n (\boldsymbol{x}_n)$ được tham số hóa bởi mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ như trong công thức \ref{eq:Estimated-Optimal-Mean},
         ma trận hiệp phương sai tối ưu của bài toán trong công thức \ref{eq:Arbitrary-Mean-Optimize-Covariance} là:
 
-        \begin{equation*}
+        \begin{equation} \label{eq:Corrected-Optimal-Covariance}
             \begin{aligned}
                 \tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2 &= \boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2 + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n) \lbrack \boldsymbol{\epsilon}_n \rbrack} \big)^2 \\
-                &= \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \Big\lbrack \big( \boldsymbol{\epsilon}_n (\boldsymbol{x}_n) - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^2 \Big\rbrack
+                &= \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \Big\lbrack \big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^2 \Big\rbrack
             \end{aligned}
-        \end{equation*}
+        \end{equation}
 
         Với $\boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2$ là ma trận hiệp phương sai tối ưu của bài toán tối ưu hóa chung ở định lý \ref{dl:Optimal-Solution-To-Joint-Optimization},
         $\boldsymbol{\epsilon}_n = \dfrac{\boldsymbol{x}_n - \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0}{\sqrt{\overline{\beta}_n}}$ là nhiễu được dùng để tạo ra $\boldsymbol{x}_n$ từ $\boldsymbol{x}_0$,
@@ -486,6 +486,70 @@
     sau đó hiệu chỉnh bằng sai lệch giữa momen bậc nhất của hai hàm mật độ xác suất.
     Ta gọi là hàm hiệu chỉnh momen có điều kiện.
 
+    Định lý \ref{dl:Solely-Optimal-Covariance} cho ta thấy rằng ma trận hiệp phương sai tối ưu của bài toán tối ưu hóa chung trong định lý \ref{dl:Optimal-Solution-To-Joint-Optimization} cần được hiệu chỉnh vì sai lệch của mạng $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ hay $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \neq \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon} \rbrack$ là không thể tránh khỏi do sai số của quá trình tối ưu hóa của các phương pháp tối ưu hóa dựa trên đạo hàm riêng.
+
+    Công thức \ref{eq:Corrected-Optimal-Covariance}, ma trận hiệp phương sai tối ưu đã được hiệu chỉnh $\tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2$ được xác định qua $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \Big\lbrack \big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^2 \Big\rbrack$.
+    Ta học đại lượng này bằng cách huấn luyện một mạng $\boldsymbol{g}_n (\boldsymbol{x}_n) \in \mathbb{R}^d$ dự đoán $\big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^2$ khi biết $\boldsymbol{x}_n$ bằng cách cực tiểu hóa hàm mục tiêu MSE:
+
+    \begin{equation} \label{eq:Square-Noise-Residual-Prediction-Network-MSE-Loss}
+        \min_{\lbrace \boldsymbol{g}_n \rbrace_{n=1}^N} \mathbb{E}_n \mathbb{E}_{q(\boldsymbol{x}_0, \boldsymbol{x}_n)} \lVert \big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^2 - \boldsymbol{g}_n (\boldsymbol{x}_n)  \rVert_2^2
+    \end{equation}
+
+    Với $n$ được lấy mẫu theo phân phối đều từ $\lbrace 1, 2, \dots, N \rbrace$.
+    Thành phần $\big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^2$ được gọi là phần dư nhiễu (NPR),
+    hay chính là phần dư giữa nhiễu thực tế $\boldsymbol{\epsilon}_n$ và nhiễu được dự đoán bởi mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$,
+    ta gọi mạng $\boldsymbol{g}_n (\boldsymbol{x}_n)$ là mạng dự đoán phần dư nhiễu.
+    Công thức \ref{eq:Square-Noise-Residual-Prediction-Network-MSE-Loss} cho thấy lời giải tối ưu xảy ra khi $\boldsymbol{g}_n (\boldsymbol{x}_n) = \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \Big\lbrack \big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^2 \Big\rbrack$ với mọi $n \in \lbrace 1, 2, \dots, N \rbrace$.
+    Một điều cần chú ý rằng, trái với $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2$ được sử dụng trong SN-DPM,
+    mạng $\boldsymbol{g}_n (\boldsymbol{x}_n)$ không có vấn đề khuếch đại sai số (chi tiết được trình bày trong phụ lục ).
+    Với mạng dự đoán phần dư nhiễu $\boldsymbol{g}_n (\boldsymbol{x}_n)$ trong công thức \ref{eq:Square-Noise-Residual-Prediction-Network-MSE-Loss},
+    ta ước lượng $\tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2$ bằng công thức:
+
+    \begin{equation}
+        \hat{\tilde{\boldsymbol{\sigma}}}_n (\boldsymbol{x}_n)^2 = \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \boldsymbol{g}_n (\boldsymbol{x}_n)
+    \end{equation}
+
+    Trong tiểu luận ta gọi ước lượng này là SNR-DPM.
+
+    \section{Thực thi}
+
+    Trong mục này ta sẽ trình bày chi tiết thực thi SN-DPM và NPR-DPM.
+    Đặc biệt ta thiết kế chiến lược sử dụng chia sẻ tham số để tăng độ hiệu quả khi chạy suy luận trong mục \ref{Parameter-Sharing-And-Inference-Efficiency}.
+    Sử dụng định lý \ref{dl:Solely-Optimal-Mean} và định lý \ref{dl:Solely-Optimal-Covariance}, ta sử dụng quá trình huấn luyện hai giai đoạn cho cả SN-DPM và NPR-DPM trong mục .
+
+    \subsection{Chia sẻ tham số và suy luận hiệu quả} \label{Parameter-Sharing-And-Inference-Efficiency}
+
+    Trong quá trình chạy suy luận, cả SN-DPM và NPR-DPM cần được chạy cả hai mạng.
+    Để giảm chi phí tính toán, ta sử dụng phương pháp chia sẻ tham số giữa hai mạng như sau:
+
+    \begin{equation} \label{eq:Parameter-Sharing-Scheme}
+        \begin{aligned}
+        \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) &= \mathrm{NN}_1 (\mathrm{UNet}(\boldsymbol{x}_n, n ; \boldsymbol{\theta}); \boldsymbol{\phi}_1) \\
+        \boldsymbol{h}_n (\boldsymbol{x}_n) \text{ hoặc } \boldsymbol{g}_n (\boldsymbol{x}_n) &= \mathrm{NN}_2(\mathrm{UNet}(\boldsymbol{x}_n, n; \boldsymbol{\theta}); \boldsymbol{\phi}_2)
+        \end{aligned}
+    \end{equation}
+
+    Với $\mathrm{UNet}$ là một trong những cấu trong rất phổ biến trong DPMs \cite{ho2020denoising}, \cite{song2020score} và được tham số hóa bởi tham số được chia sẻ $\boldsymbol{\theta}$,
+    $\mathrm{NN}_1$ và $\mathrm{NN}_2$ là hai mạng nhỏ ví dụ mạng bao gồm một bài lớp tích chập và được tham số hóa bởi $\boldsymbol{\phi}_1$ và $\boldsymbol{\phi}_2$ tương ứng.
+
+    So với DPMs thông thường với cùng cấu trúc $\mathrm{UNet}$, cả SN-DPM và NPR-DPM đều yêu cầu thêm chi phí bộ nhớ không lớn và thêm khoảng 10\% chi phí tính toán (chi tiết ở phụ lục ).
+
+    \subsubsection{Quá trình học hai giai đoạn và tiền huấn luyện}
+
+    Ta nhắc lại trung bình tối ưu của bài toán trong công thức \ref{eq:Arbitray-Covariance-Optimize-Mean} không phù hợp với ma trận hiệp phương sai.
+    Vì vậy, một cách tự nhiên học trung bình và phương sai có thể chia làm hai giai đoạn.
+    Trong giai đoạn đầu tiên, ta học trung bình bằng cách huấn luyện mạng dự đoán nhiễu ở công thức \ref{eq:Noise-Prediction},
+    hoặc chỉ cần sử dụng một mạng đã được tiền huấn luyện từ các công trình trước.
+    Trong giai đoạn hai, ta sẽ cố định các tham số trong mạng dự đoán nhiễu, để mạng $\mathrm{UNet}$ là một mạng tiền huấn luyện và chỉ học ma trận hiệp phương sai bằng cách chỉnh định tham số $\boldsymbol{\phi}_2$ trong công thức \ref{eq:Parameter-Sharing-Scheme} của mạng SN-DPM hoặc NPR-DPM sử dụng đạo hàm riêng của công thức \ref{eq:Square-Noise-Prediction-Network-MSE-Loss} hoặc công thức \ref{eq:Square-Noise-Residual-Prediction-Network-MSE-Loss}:
+
+    \begin{equation}
+        \begin{aligned}
+        &\nabla_{\boldsymbol{\phi}_1} \mathbb{E}_n \mathbb{E}_{q(\boldsymbol{x}_0, \boldsymbol{x}_n)} \lVert \boldsymbol{\epsilon}_n^2 - \boldsymbol{h}_n (\boldsymbol{x}_n) \rVert_2^2, \text{ hoặc} \\
+        &\nabla_{\boldsymbol{\phi}_2} \mathbb{E}_n \mathbb{E}_{q(\boldsymbol{x}_0, \boldsymbol{x}_n)} \lVert \big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^2 - \boldsymbol{g}_n (\boldsymbol{x}_n) \rVert_2^2
+        \end{aligned}
+    \end{equation}
+
+    Ta cần chú ý rằng phương pháp tiền huấn luyện cho giai đoạn hai chỉ cần chỉnh định một mạng nhỏ $\mathrm{NN}_2$ mà không cần chỉnh định $\mathrm{UNet}$.
     
 
     \newpage
