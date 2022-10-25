@@ -26,6 +26,7 @@
 %\addbibresource{ref.bib}
 %\usepackage[numbers]{natbib}
 \usepackage{indentfirst}
+\usepackage{multirow}
 \usepackage[natbib,backend=biber,style=ieee, sorting=ynt]{biblatex}
 \bibliography{ref.bib}
 
@@ -737,7 +738,30 @@
     Ta đánh giá các DPMs với cả bước thời gian rời rạc và bước thời gian liên tục. Với DPMs bước thời gian rời rạc, ta sẽ đánh giá DPMs ở cả hai kiểu quá trình thuận tương ứng là DDPM và DDIM.
     \cite{watson2021learning}, \cite{bao2021analytic} kết luận rằng DPM với quỹ đạo tối ưu lại thường cho khoảng cách FID tệ hơn nên ta chỉ đánh giá ở quỹ đạo chẵn.
 
-    
+    \begin{table}
+        \small
+        \centering
+        \begin{tabular}{ lrrrrrrrrrrrrr  }
+            \hline
+            \multirow{2}{*}{\# Số bước $K$} & \multicolumn{6}{c}{CIFAR10 (LS)} & & \multicolumn{6}{c}{CIFAR10 (CS)} \\ \cline{2-7} \cline{9-14}
+            & 10 & 25 & 50 & 100 & 200 & 1000 & & 10 & 25 & 50 & 100 & 200 & 1000 \\
+            \hline
+            DDPM, $\tilde{\beta}_n$ & 44.45 & 21.83 & 15.21 & 10.94 & 8.23 & 5.11 &  & 34.76 & 16.18 & 11.11 & 8.38 & 6.66 & 4.92 \\
+            DDPM, $\beta_n$ & 233.41 & 125.05 & 66.28 & 31.36 & 12.96 & \textbf{3.04} & & 205.31 & 84.71 & 37.35 & 14.81 & 5.74 & \textbf{3.34} \\
+            A-DDPM & 34.26 & 11.60 & 7.25 & 5.40 & 4.01 & 4.03 & & 22.94 & 8.50 & 5.50 & 4.45 & 4.04 & 4.31 \\
+            NPR-DDPM & 32.35 & 10.55 & 6.18 & 4.52 & 3.57 & 4.10 & & 19.94 & 7.99 & 5.31 & 4.52 & 4.10 & 4.27 \\
+            SN-DDPM & \textbf{24.06} & \textbf{6.91} & \textbf{4.63} & \textbf{3.67} & \textbf{3.31} & 3.65 & & \textbf{16.33} & \textbf{6.05} & \textbf{4.17} & \textbf{3.83} & \textbf{3.72} & 4.07 \\
+            \hline
+            DDIM & 21.31 & 10.70 & 7.74 & 6.08 & 5.07 & 4.13 & & 34.34 & 16.68 & 10.48 & 7.94 & 6.69 & 4.89 \\
+            A-DDIM & 14.00 & 5.81 & 4.04 & 3.55 & 3.39 & 3.74 & & 26.43 & 9.96 & 6.02 & 4.88 & 4.92 & 4.66 \\
+            NPR-DDIM & 13.34 & 5.38 & 3.95 & 3.53 & 3.42 & 3.72 & & 22.81 & 9.47 & 6.04 & 5.02 & 5.06 & 4.62 \\
+            SN-DDIM & \textbf{12.19} & \textbf{4.28} & \textbf{3.39} & \textbf{3.23} & \textbf{3.22} & \textbf{3.65} & & \textbf{17.90} & \textbf{7.36} & \textbf{5.16} & \textbf{4.63} & \textbf{4.63} & \textbf{4.51} \\
+            \hline
+        \end{tabular}
+        \caption{Bảng kết quả khoảng cách FID. Tất cả các kết quả đều với cấu hình quỹ đạo chẵn (ET). A-DPM ký hiệu của Analytic-DPM. 
+        Ta cần chú ý rằng chi phí thời gian tăng thêm của mạng dự đoán phần dư nhiễu NPR hoặc mạng dự đoán bình phương nhiễu SN là không đáng kể trên tập CIFAR10, CelebA 64x64 và khoảng 4.5 \% trên tập ImageNet 64x64
+        (chi tiết ở phụ lục ). Ta có thể sử dụng số bước để so sánh tính hiệu quả của các phương pháp}
+    \end{table}
 
     \newpage
     \printbibliography[title={TÀI LIỆU THAM KHẢO}]
