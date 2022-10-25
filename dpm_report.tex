@@ -70,6 +70,41 @@
 	name={MSE},
 	description={Mean Square Error}
 }
+\newglossaryentry{SN}
+{
+	name={SN},
+	description={Square Noise}
+}
+\newglossaryentry{NPR}
+{
+	name={NPR},
+	description={Noise Prediction Residual}
+}
+\newglossaryentry{SDE}
+{
+	name={SDE},
+	description={Stochastic Differential Equation}
+}
+\newglossaryentry{ODE}
+{
+	name={ODE},
+	description={Ordinary Differential Equation}
+}
+\newglossaryentry{LS}
+{
+	name={LS},
+	description={Linear Scheduling}
+}
+\newglossaryentry{CS}
+{
+	name={CS},
+	description={Cosine Scheduling}
+}
+\newglossaryentry{FID}
+{
+	name={FID},
+	description={Frechet Inception Distance}
+}
 
 \hypersetup{
     colorlinks=false,
@@ -265,7 +300,7 @@
 
     Các mô hình khuếch tán xác suất (DPMs) là một quá trình Markov đặc biệt với các bước chuyển tiếp là phân phối Gaussian:
 
-    \begin{equation}
+    \begin{equation} \label{eq:Reverse-Process}
         p\big(\boldsymbol{x}_{0:N}\big)=p\big(\boldsymbol{x}_N\big)\prod_{n=1}^N p\big(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n\big)
     \end{equation}
     với
@@ -285,7 +320,7 @@
         q\big( \boldsymbol{x}_N \vert \boldsymbol{x}_0 \big)=\mathcal{N} \big( \boldsymbol{x}_N \vert \sqrt{\overline{\alpha}_N} \boldsymbol{x}_0, \overline{\beta}_N \boldsymbol{I} \big)
     \end{equation}
 
-    \begin{equation}
+    \begin{equation} \label{eq:Groundtruth-Reverse-Process}
         q\big( \boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0 \big)=\mathcal{N} \big( \boldsymbol{x}_{n-1} \vert \tilde{\boldsymbol{\mu}}_n (\boldsymbol{x}_n, \boldsymbol{x}_0), \lambda_n^2 \boldsymbol{I} \big)
     \end{equation}
 
@@ -511,7 +546,7 @@
 
     Trong tiểu luận ta gọi ước lượng này là SNR-DPM.
 
-    \section{Thực thi}
+    \section{Thực thi} \label{Implementation}
 
     Trong mục này ta sẽ trình bày chi tiết thực thi SN-DPM và NPR-DPM.
     Đặc biệt ta thiết kế chiến lược sử dụng chia sẻ tham số để tăng độ hiệu quả khi chạy suy luận trong mục \ref{Parameter-Sharing-And-Inference-Efficiency}.
@@ -581,14 +616,14 @@
         \label{alg:Learning-of-the-NPR-prediction-network}
     \end{algorithm}
 
-    \section{Mở rộng sang mô hình khuếch tán xác suất với bước thời gian liên tục}
+    \section{Mở rộng sang mô hình khuếch tán xác suất với bước thời gian liên tục} \label{Extension-to-DPMs-with-Continuous-Timesteps}
 
     \cite{song2020score} tổng quát hóa DPMs sang bước thời gian liên tục bằng cách sử dụng một phương trình vi phân ngẫu nhiên (SDE) $d \boldsymbol{x}=f(t) \boldsymbol{x} dt + g(t) d \boldsymbol{w}$,
     với $f(t), g(t)$ là hai hàm vô hướng biết trước và $\boldsymbol{w}$ là quá trình Wiener.
     Phương trình vi phân ngẫu nhiên SDE có thể được xem như là phiên bản liên tục của quá trình khuếch tán thuận ở công thức \ref{eq:Forward-Process}.
     Quá trình này xây dựng một quá trình khuếch tán $\lbrace \boldsymbol{x}_t \rbrace_{t=0}^T$ được đánh chỉ số bởi các bước thời gian liên tục $t \in \lbrack 0, T \rbrack$,
     với $\boldsymbol{x}_0$ tuân theo phân phối dữ liệu ban đầu $q(\boldsymbol{x}_0)$.
-    Với 2 số $s, t$ thỏa mãn: $0 \leq s < t \leq T$, phân phối có điều kiện của $\boldsymbol{x}_t$ khi biết trước $\boldsymbol{x}_s$ là: $q(\boldsymbol{x}_t \vert \boldsymbol{x}_s)=\mathcal{N}(\boldsymbol{x}_t, \sqrt{\alpha_{t \vert s}} \boldsymbol{x}_t, \beta_{t \vert s} \boldsymbol{I})$ với $\alpha_{t \vert s}=\exp(2\int_{s}^{t} f(\tau)d \tau)$ và $\beta_{t \vert s}= \int_{s}^{t} g(\tau)^2 \alpha_{t \vert \tau} d \tau$.
+    Với 2 số $s, t$ thỏa mãn: $0 \leq s < t \leq T$, phân phối có điều kiện của $\boldsymbol{x}_t$ khi biết trước $\boldsymbol{x}_s$ là: $q(\boldsymbol{x}_t \vert \boldsymbol{x}_s)=\mathcal{N}(\boldsymbol{x}_t, \sqrt{\alpha_{t \vert s}} \boldsymbol{x}_t, \beta_{t \vert s} \boldsymbol{I})$ với $\alpha_{t \vert s}=\exp\Big(2\displaystyle\int_{s}^{t} f(\tau)d \tau \Big)$ và $\beta_{t \vert s}= \displaystyle\int_{s}^{t} g(\tau)^2 \alpha_{t \vert \tau} d \tau$.
     Theo \cite{bao2021analytic}, \cite{kingma2021variational}, ta đảo ngược quá trình khuếch tán thuận từ bước thời gian $t$ đến $s$ bằng phân phối $p(\boldsymbol{x}_s \vert \boldsymbol{x}_t) = \mathcal{N}\big( \boldsymbol{x}_s \vert \boldsymbol{\mu}_{s \vert t} (\boldsymbol{x}_t), \boldsymbol{\Sigma}_{s \vert t} (\boldsymbol{x}_t) \big) (0 \leq s < t \leq T)$, được huấn luyện bằng hàm mục tiêu:
 
     \begin{equation}
@@ -610,7 +645,7 @@
     \end{equation}
 
     Ta sẽ mở rộng định lý \ref{dl:Optimal-Solution-To-Joint-Optimization} cho DPMs với bước thời gian liên tục.
-    Ta thu được lời giải toán tối ưu cho bài toán \ref{eq:ELBO-Maximization} khi $\boldsymbol{\Sigma}_{s \vert t} (\boldsymbol{x}_t)=\mathrm{diag}\big(\boldsymbol{\sigma}_{s \vert t} (\boldsymbol{x}_t)^2 \big)$ được trình bày trong mệnh đề .
+    Ta thu được lời giải toán tối ưu cho bài toán \ref{eq:ELBO-Maximization} khi $\boldsymbol{\Sigma}_{s \vert t} (\boldsymbol{x}_t)=\mathrm{diag}\big(\boldsymbol{\sigma}_{s \vert t} (\boldsymbol{x}_t)^2 \big)$ được trình bày trong mệnh đề \ref{md:Continuous-Optimal-Covariance}.
 
     \begin{md} \label{md:Continuous-Optimal-Covariance}
         Với ma trận hiệp phương sai có dạng $\boldsymbol{\Sigma}_{s \vert t} (\boldsymbol{x}_t)=\mathrm{diag}\big(\boldsymbol{\sigma}_{s \vert t} (\boldsymbol{x}_t)^2 \big)$.
@@ -636,10 +671,10 @@
     \end{equation}
 
     Trung bình tối ưu của bài toán trong công thức \ref{eq:Continuous-Arbitrary-Covariance-Optimize-Mean} cũng là công thức \ref{eq:Continuous-Optimal-Mean}, trung bình tối ưu này không phù hợp với $\boldsymbol{\Sigma}_{s \vert t}$.
-    Ma trận hiệp phương sai tối ưu của bài toán trong công thức \ref{eq:Continuous-Arbitrary-Mean-Optimize-Covariance} được trình bày trong mệnh đề .
+    Ma trận hiệp phương sai tối ưu của bài toán trong công thức \ref{eq:Continuous-Arbitrary-Mean-Optimize-Covariance} được trình bày trong mệnh đề \ref{md:Continuous-Corrected-Optimal-Covariance}.
 
     \begin{md} \label{md:Continuous-Corrected-Optimal-Covariance}
-        Ta giả định ma trận hiệp phưowng sai có dạng $\boldsymbol{\Sigma}_{s \vert t} (\boldsymbol{x}_t) = \mathrm{diag} \big( \boldsymbol{\sigma}_{s \vert t} (\boldsymbol{x}_t)^2 \big)$.
+        Ta giả định ma trận hiệp phương sai có dạng $\boldsymbol{\Sigma}_{s \vert t} (\boldsymbol{x}_t) = \mathrm{diag} \big( \boldsymbol{\sigma}_{s \vert t} (\boldsymbol{x}_t)^2 \big)$.
         Với trung bình bất kỳ $\boldsymbol{\mu}_{s \vert t}(\boldsymbol{x}_t)$ được tham số hóa bởi mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_t (\boldsymbol{x}_t)$ trong công thức \ref{eq:Estimated-Continuous-Optimal-Mean},
         ma trận hiệp phương sai tối ưu $\tilde{\boldsymbol{\sigma}}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$ của bài toán trong công thức \ref{eq:Continuous-Arbitrary-Mean-Optimize-Covariance} là:
 
@@ -657,6 +692,52 @@
     để ước lượng $\boldsymbol{\sigma}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$ và $\tilde{\boldsymbol{\sigma}}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$,
     ta có thể học các kỳ vọng có điều kiện xuất hiện trong mệnh đề \ref{md:Continuous-Optimal-Covariance} và mệnh đề \ref{md:Continuous-Corrected-Optimal-Covariance} bằng cách cực tiểu hóa hàm mục tiêu MSE.
     Chi tiết được trình bày trong phụ lục .
+
+    \section{Thực nghiệm}
+
+    Ta đánh giá SN-DPM và NPR-DPM trong DPMs với cả bước thời gian rời rạc và bước thời gian liên tục.
+
+    Với DPMs bước thời gian rời rạc (mục \ref{Background}), ta xem xét quá trình khuếch tán thuận DDPM (Denoising Diffusion Probabilistic Models) (tương ứng với $\lambda_n^2 = \tilde{\beta}_n$ ở công thức \ref{eq:Groundtruth-Reverse-Process}),v
+    và quá trình khuếch tán thuận DDIM (Denoising Diffusion Implicit Models) (tương ứng với $\lambda_n^2 = 0$ trong công thức \ref{eq:Groundtruth-Reverse-Process}).
+    Một cách tường minh ta gọi các phương pháp NPR-DDPM và NPR-DDIM (hoặc SN-DDPM và SN-DDPM). Ta so sánh các phương pháp này với các phưng pháp:
+
+    \begin{itemize}
+        \item DDPM gốc \cite{ho2020denoising}, sử dụng ma trận hiệp phương sai được đặt trước $\boldsymbol{\Sigma}_n (\boldsymbol{x}_n)=\tilde{\beta}_n \boldsymbol{I}$ hoặc $\boldsymbol{\Sigma}_n (\boldsymbol{x}_n) = \beta_n \boldsymbol{I}$.
+        \item DDIM gốc \cite{song2020denoising}, sử dụng ma trận hiệp phương sai được đặt trước $\boldsymbol{\Sigma}_n (\boldsymbol{x}_n) = \lambda_n^2 \boldsymbol{I} = \boldsymbol{0}$.
+        \item Analytic-DPM \cite{bao2021analytic} được trình bày ở mục \ref{Background}.
+    \end{itemize}
+
+    Với bước thời gian liên tục (ở mục \ref{Extension-to-DPMs-with-Continuous-Timesteps}), ta xét VP SDE \cite{song2020score} làm quá trình khuếch tán thuận.
+    Ta so sánh phương pháp đề xuất với các phương pháp sau:
+
+    \begin{itemize}
+        \item Euler-Maruyama solver \cite{song2020score}, phương pháp này đầu tiên sẽ đảo ngược quá trình khuếch tán thuận VP SDE và sau đó sẽ rời rạc hóa quá trình khuếch tán ngược sử dụng Euler-Maruyama solver.
+        \item Ancestral sampling \cite{song2020score}, phưng pháp này thiết kế một chuỗi Markov tương tự như công thức \ref{eq:Reverse-Process} và lấy mẫu từ chuỗi Markov.
+        \item Probabity flow \cite{song2020score}, xấp xỉ một phương trình vi phân thường (ODE) tương đương với phương trình vi phân ngẫu nhiên (SDE) và sau đó rời rạc hóa phương trình vi phân thừng này.
+        \item Analytic-DPM \cite{bao2021analytic} được trình bày ở mục \ref{Background}.
+        \item "Gotta Go Fast" SDE solver \cite{jolicoeur2021gotta} sử dụng độ dài bước thích nghi.
+    \end{itemize}
+
+    Vì khả năng và chất lượng sinh dữ liệu của DPMs trên một tập con các bước là rất quan trọng nên ta so sánh các phương pháp đề xuất với các phương pháp nêu trên với ràng buộc trên một quỹ đạo
+    $1 \leq \tau_1 < \dots < \tau_K = N$ với số lượng bước thời gian $K$ khác nhau \cite{song2020denoising}, \cite{bao2021analytic} (chi tiết áp dụng các phương pháp vào quỹ đạo được trình bày trong phụ lục ).
+    Theo \cite{bao2021analytic}, ta xem xét hai kiểu quỹ đạo. Kiểu đầu tiên là quỹ đạo chẵn (ET) \cite{nichol2021improved}, các bước thời gian được cách đều nhau. Kiểu thứ hai là quỹ đạo tối ưu (OT) \cite{watson2021learning}, 
+    các bước thời gian được xác định bằng quy hoạch động làm cực đại hóa ELBO.
+
+    Ta đánh giá phương pháp đề xuất trên sáu mạng dự đoán nhiễu được tiền huấn luyện từ các công trình trước \cite{ho2020denoising}, \cite{song2020denoising}, \cite{nichol2021improved}, \cite{bao2021analytic}.
+    Ba trong số các mạng trên được huấn luyện trên tập CIFAR10 \cite{krizhevsky2009learning} với lịch trình phưng sai tuyến tính (LS) của $\beta_n$ \cite{ho2020denoising},
+    lịch trình phương sai cosine (CS) của $\beta_n$ \cite{nichol2021improved} và VP SDE \cite{song2020score} tương ứng.
+    Hai cấu hình đầu tiên là CIFAR10 (LS) và CIFAR10 (CS) tương ứng có bước thời gina rời rạc, cấu hình cuối cùng là CIFAR10 (VP SDE) có bước thời gian liên tục.
+    Các mạng tiền huấn luyện còn lại được huấn luyện với bước thời gian rời rạc trên tập CelebA 64x64 \cite{liu2015deep}, ImageNet 64x64 \cite{deng2009imagenet} và LSUN Bedroom \cite{yu2015lsun} tương ứng.
+    Ta huấn luyện mạng dự đoán phần dư nhiễu NPR hoặc mạng dự đoán bình phương nhiễu SN với tất cả các mạng trên, theo cách thực thi đã được trình bày ở mục \ref{Implementation}.
+    Chi tiết của thực nghiệm được trình bày ở phụ lục .
+
+    \subsection{Chất lượng mẫu}
+
+    Trong mục này, ta so sánh chất lượng mẫu dữ liệu được sinh ra theo phương pháp định lượng, được đo lường bởi khoảng cách FID \cite{heusel2017gans}.
+    Ta đánh giá các DPMs với cả bước thời gian rời rạc và bước thời gian liên tục. Với DPMs bước thời gian rời rạc, ta sẽ đánh giá DPMs ở cả hai kiểu quá trình thuận tương ứng là DDPM và DDIM.
+    \cite{watson2021learning}, \cite{bao2021analytic} kết luận rằng DPM với quỹ đạo tối ưu lại thường cho khoảng cách FID tệ hơn nên ta chỉ đánh giá ở quỹ đạo chẵn.
+
+    
 
     \newpage
     \printbibliography[title={TÀI LIỆU THAM KHẢO}]
