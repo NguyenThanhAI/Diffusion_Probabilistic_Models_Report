@@ -277,7 +277,7 @@
     Quá trình khuếch tán thuận đưa nhiễu vào phân phối dữ liệu $q(\boldsymbol{x}_0)$ một cách từ từ qua từng bước.
     \cite{song2020denoising} xem xét một họ các quá trình khuếch tán thuật mà từng bước được đánh dấu bởi một vector không âm $\lambda = \big( \lambda_1, \dots, \lambda_N \big) \in \mathbb{R}_{\geq 0}^{N}$:
 
-    \begin{equation}
+    \begin{equation} \label{eq:Forward-Process}
         q\big(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0 \big)=q\big( \boldsymbol{x}_N \vert \boldsymbol{x}_0 \big) \prod_{n=2}^{N} q\big( \boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0 \big)
     \end{equation}
 
@@ -313,7 +313,7 @@
     Quá trình khuếch tán ngược được học bằng cách cực đại hóa cận dưới (ELBO): $L_{\mathrm{elbo}}=\mathbb{E}_q \log \dfrac{p(\bold{x}_{0:N})}{q(\bold{x}_{1:N}\vert \bold{x}_0)}$ hay tương đương với cực tiểu hóa độ phân kỳ Kullback-Leibler giữa quá trình khuếch tán thuận và quá trình khuếch tán ngược:
 
     \begin{equation} \label{eq:ELBO-Maximization}
-        \max_{\lbrace \boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n \rbrace_{n=1}^N} L_{\mathrm{elbo}} \Leftrightarrow \min_{\lbrace \boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n \rbrace_{n=1}^N} D_{KL} \big( q(\boldsymbol{x}_{0:N}) \Vert p(\boldsymbol{x}_{0:N}) \big)
+        \max_{\lbrace \boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n \rbrace_{n=1}^N} L_{\mathrm{elbo}} \Leftrightarrow \min_{\lbrace \boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n \rbrace_{n=1}^N} D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{0:N}) \Vert p(\boldsymbol{x}_{0:N}) \big)
     \end{equation}
 
     Bài toán ở công thức \ref{eq:ELBO-Maximization} tối ưu hóa cả trung bình và ma trận hiệp phương sai cùng lúc. 
@@ -439,7 +439,7 @@
 
     Để diễn giải ý tưởng, ta thu được các lời giải tối ưu bằng cách giải hai bài toán:
 
-    \begin{equation} \label{eq:Arbitray-Covariance-Optimize-Mean}
+    \begin{equation} \label{eq:Arbitrary-Covariance-Optimize-Mean}
         \text{Cho ma trận hiệp phương sai bất kỳ } \boldsymbol{\Sigma}_n, \max_{\lbrace \boldsymbol{\mu}_n \rbrace_{n=1}^N} L_{\mathrm{elbo}}
     \end{equation}
 
@@ -450,7 +450,7 @@
     \begin{dl} \label{dl:Solely-Optimal-Mean}
         (Lời giải tối ưu của bài toán tối ưu duy nhất với trung bình)
         Với ma trận hiệp phương sai bất kỳ $\boldsymbol{\Sigma}_n$,
-        trung bình tối ưu của bài toán trong công thức \ref{eq:Arbitray-Covariance-Optimize-Mean} luôn luôn là trung bình tối ưu trong công thức \ref{eq:Optimal-Mean}:
+        trung bình tối ưu của bài toán trong công thức \ref{eq:Arbitrary-Covariance-Optimize-Mean} luôn luôn là trung bình tối ưu trong công thức \ref{eq:Optimal-Mean}:
 
         \begin{equation*}
             \boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)=\tilde{\boldsymbol{\mu}}_n \Bigg( \boldsymbol{x}_n, \dfrac{1}{\sqrt{\overline{\alpha}_n}} \Big( \boldsymbol{x}_n - \sqrt{\overline{\beta}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \Big) \Bigg)
@@ -472,7 +472,7 @@
 
         \begin{equation} \label{eq:Corrected-Optimal-Covariance}
             \begin{aligned}
-                \tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2 &= \boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2 + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n) \lbrack \boldsymbol{\epsilon}_n \rbrack} \big)^2 \\
+                \tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2 &= \boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2 + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \underbrace{\big( \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n) \lbrack \boldsymbol{\epsilon}_n \rbrack} \big)^2}_{\mathrm{error}} \\
                 &= \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \Big\lbrack \big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^2 \Big\rbrack
             \end{aligned}
         \end{equation}
@@ -505,7 +505,7 @@
     Với mạng dự đoán phần dư nhiễu $\boldsymbol{g}_n (\boldsymbol{x}_n)$ trong công thức \ref{eq:Square-Noise-Residual-Prediction-Network-MSE-Loss},
     ta ước lượng $\tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2$ bằng công thức:
 
-    \begin{equation}
+    \begin{equation} \label{eq:Sigma-NPR-DPM}
         \hat{\tilde{\boldsymbol{\sigma}}}_n (\boldsymbol{x}_n)^2 = \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \boldsymbol{g}_n (\boldsymbol{x}_n)
     \end{equation}
 
@@ -536,7 +536,7 @@
 
     \subsubsection{Quá trình học hai giai đoạn và tiền huấn luyện}
 
-    Ta nhắc lại trung bình tối ưu của bài toán trong công thức \ref{eq:Arbitray-Covariance-Optimize-Mean} không phù hợp với ma trận hiệp phương sai.
+    Ta nhắc lại trung bình tối ưu của bài toán trong công thức \ref{eq:Arbitrary-Covariance-Optimize-Mean} không phù hợp với ma trận hiệp phương sai.
     Vì vậy, một cách tự nhiên học trung bình và phương sai có thể chia làm hai giai đoạn.
     Trong giai đoạn đầu tiên, ta học trung bình bằng cách huấn luyện mạng dự đoán nhiễu ở công thức \ref{eq:Noise-Prediction},
     hoặc chỉ cần sử dụng một mạng đã được tiền huấn luyện từ các công trình trước.
@@ -550,7 +550,113 @@
     \end{equation}
 
     Ta cần chú ý rằng phương pháp tiền huấn luyện cho giai đoạn hai chỉ cần chỉnh định một mạng nhỏ $\mathrm{NN}_2$ mà không cần chỉnh định $\mathrm{UNet}$.
+    Thuật toán \ref{alg:Learning-of-the-SN-prediction-network} và thuật toán \ref{alg:Learning-of-the-NPR-prediction-network} trình bày thủ tục huấn luyện hai giai đoạn.
     
+    \begin{algorithm}[h!]
+        \DontPrintSemicolon
+        \KwIn{Mạng dự đoán bình phương nhiễu (SN) $\boldsymbol{h}_n (\boldsymbol{x}_n)$ và tham số được huấn luyện $\boldsymbol{\phi}_2$}
+        \Repeat{hội tụ}{
+            $\boldsymbol{x}_0 \sim q(\boldsymbol{x}_0)$\;
+            $n \sim \mathrm{Uniform}\big( \lbrace 1, 2, \dots, N \rbrace\big)$\;
+            $\boldsymbol{\epsilon}_n \sim \mathcal{N}(\boldsymbol{0}, \boldsymbol{I})$\;
+            $\boldsymbol{x}_n \gets \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0 + \sqrt{\overline{\beta}_n} \boldsymbol{\epsilon}_n$\;
+            Chỉnh định $\boldsymbol{\phi}_2$ dựa trên đạo hàm riêng $\nabla_{\boldsymbol{\phi}_2}  \lVert \boldsymbol{\epsilon}_n^2 - \boldsymbol{h}_n (\boldsymbol{x}_n) \rVert_2^2$
+        }
+        \caption{Thủ tục huấn luyện mạng dự đoán nhiễu bình phương (SN)}
+        \label{alg:Learning-of-the-SN-prediction-network}
+    \end{algorithm}
+
+    \begin{algorithm}[h!]
+        \DontPrintSemicolon
+        \KwIn{Mạng dự đoán phần dư nhiễu (NPR) $\boldsymbol{g}_n (\boldsymbol{x}_n)$ và tham số được huấn luyện $\boldsymbol{\phi}_2$;
+        mạng dự đoán nhiễu đã được tiền huấn luyện $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$}
+        \Repeat{hội tụ}{
+            $\boldsymbol{x}_0 \sim q(\boldsymbol{x}_0)$\;
+            $n \sim \mathrm{Uniform}\big( \lbrace 1, 2, \dots, N \rbrace\big)$\;
+            $\boldsymbol{\epsilon}_n \sim \mathcal{N}(\boldsymbol{0}, \boldsymbol{I})$\;
+            $\boldsymbol{x}_n \gets \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0 + \sqrt{\overline{\beta}_n} \boldsymbol{\epsilon}_n$\;
+            Chỉnh định $\boldsymbol{\phi}_2$ dựa trên đạo hàm riêng $\nabla_{\boldsymbol{\phi}_2}  \lVert \big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^2 - \boldsymbol{g}_n (\boldsymbol{x}_n) \rVert_2^2$
+        }
+        \caption{Thủ tục huấn luyện mạng dự đoán phần dư nhiễu (NPR)}
+        \label{alg:Learning-of-the-NPR-prediction-network}
+    \end{algorithm}
+
+    \section{Mở rộng sang mô hình khuếch tán xác suất với bước thời gian liên tục}
+
+    \cite{song2020score} tổng quát hóa DPMs sang bước thời gian liên tục bằng cách sử dụng một phương trình vi phân ngẫu nhiên (SDE) $d \boldsymbol{x}=f(t) \boldsymbol{x} dt + g(t) d \boldsymbol{w}$,
+    với $f(t), g(t)$ là hai hàm vô hướng biết trước và $\boldsymbol{w}$ là quá trình Wiener.
+    Phương trình vi phân ngẫu nhiên SDE có thể được xem như là phiên bản liên tục của quá trình khuếch tán thuận ở công thức \ref{eq:Forward-Process}.
+    Quá trình này xây dựng một quá trình khuếch tán $\lbrace \boldsymbol{x}_t \rbrace_{t=0}^T$ được đánh chỉ số bởi các bước thời gian liên tục $t \in \lbrack 0, T \rbrack$,
+    với $\boldsymbol{x}_0$ tuân theo phân phối dữ liệu ban đầu $q(\boldsymbol{x}_0)$.
+    Với 2 số $s, t$ thỏa mãn: $0 \leq s < t \leq T$, phân phối có điều kiện của $\boldsymbol{x}_t$ khi biết trước $\boldsymbol{x}_s$ là: $q(\boldsymbol{x}_t \vert \boldsymbol{x}_s)=\mathcal{N}(\boldsymbol{x}_t, \sqrt{\alpha_{t \vert s}} \boldsymbol{x}_t, \beta_{t \vert s} \boldsymbol{I})$ với $\alpha_{t \vert s}=\exp(2\int_{s}^{t} f(\tau)d \tau)$ và $\beta_{t \vert s}= \int_{s}^{t} g(\tau)^2 \alpha_{t \vert \tau} d \tau$.
+    Theo \cite{bao2021analytic}, \cite{kingma2021variational}, ta đảo ngược quá trình khuếch tán thuận từ bước thời gian $t$ đến $s$ bằng phân phối $p(\boldsymbol{x}_s \vert \boldsymbol{x}_t) = \mathcal{N}\big( \boldsymbol{x}_s \vert \boldsymbol{\mu}_{s \vert t} (\boldsymbol{x}_t), \boldsymbol{\Sigma}_{s \vert t} (\boldsymbol{x}_t) \big) (0 \leq s < t \leq T)$, được huấn luyện bằng hàm mục tiêu:
+
+    \begin{equation}
+        \min_{\boldsymbol{\mu}_{s \vert t}, \boldsymbol{\Sigma}_{s \vert t}} \ell_{s, t} := \mathbb{E}_{q(\boldsymbol{x}_t)} D_{\mathrm{KL}} \big( q(\boldsymbol{x}_s \vert \boldsymbol{x}_t) \Vert p(\boldsymbol{x}_s \vert \boldsymbol{x}_t) \big)
+    \end{equation}
+    
+    Với $q(\boldsymbol{x}_t)$ là phân phối xác suất cận biên của $\boldsymbol{x}_t$. Tương tự như lời giải tối ưu trong công thức \ref{eq:Optimal-Mean} và công thức \ref{eq:Optimal-Isotropic-Variance}, \cite{bao2021analytic} thu được trung bình tối ưu:
+
+    \begin{equation} \label{eq:Continuous-Optimal-Mean}
+        \boldsymbol{\mu}_{s \vert t}^{\ast} (\boldsymbol{x}_t) = \dfrac{1}{\sqrt{\alpha_{t \vert s}}}\Big( \boldsymbol{x}_t - \dfrac{\beta_{s \vert t}}{\sqrt{\beta_{t \vert 0}}} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack \Big)
+    \end{equation}
+
+    Với $\boldsymbol{\epsilon}_t = \dfrac{\boldsymbol{x}_t - \sqrt{\alpha_{t \vert 0}} \boldsymbol{x}_0}{\sqrt{\beta_{t \vert 0}}}$ cũng như ma trận hiệp phương sai đẳng hướng tối ưu $\sigma_{s \vert t}^{\ast 2} \boldsymbol{I}$.
+    Tương tự như công thức \ref{eq:Noise-Prediction}, một mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_t (\boldsymbol{x}_t)$ được dùng để học $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)}  \lbrack \boldsymbol{\epsilon}_t \rbrack$,
+    ta thu được một ước lượng của trung bình tối ưu:
+
+    \begin{equation} \label{eq:Estimated-Continuous-Optimal-Mean}
+        \hat{\boldsymbol{\mu}}_{s \vert t} (\boldsymbol{x}_t) = \dfrac{1}{\sqrt{\alpha_{t \vert s}}} \Big( \boldsymbol{x}_t - \dfrac{\beta_{t \vert s}}{\sqrt{\beta_{t \vert 0}}} \hat{\boldsymbol{\epsilon}}_t (\boldsymbol{x}_t) \Big)
+    \end{equation}
+
+    Ta sẽ mở rộng định lý \ref{dl:Optimal-Solution-To-Joint-Optimization} cho DPMs với bước thời gian liên tục.
+    Ta thu được lời giải toán tối ưu cho bài toán \ref{eq:ELBO-Maximization} khi $\boldsymbol{\Sigma}_{s \vert t} (\boldsymbol{x}_t)=\mathrm{diag}\big(\boldsymbol{\sigma}_{s \vert t} (\boldsymbol{x}_t)^2 \big)$ được trình bày trong mệnh đề .
+
+    \begin{md} \label{md:Continuous-Optimal-Covariance}
+        Với ma trận hiệp phương sai có dạng $\boldsymbol{\Sigma}_{s \vert t} (\boldsymbol{x}_t)=\mathrm{diag}\big(\boldsymbol{\sigma}_{s \vert t} (\boldsymbol{x}_t)^2 \big)$.
+        Khi đó trung bình tối ưu của bài toán trong công thức \ref{eq:ELBO-Maximization} là $\boldsymbol{\mu}_{s \vert t}^{\ast} (\boldsymbol{x}_t)$ được nêu trong công thức \ref{eq:Continuous-Optimal-Mean} và ma trận hiệp phương sai tối ưu của bài toán trong công thức \ref{eq:ELBO-Maximization} là:
+
+        \begin{equation*}
+            \boldsymbol{\sigma}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2 = \tilde{\beta}_{s \vert t} \boldsymbol{1} + \dfrac{\beta_{t \vert s}^2}{\beta_{t \vert 0} \alpha_{t \vert s}} \Big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t^2 \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack^2 \Big)
+        \end{equation*}
+
+        Với $\boldsymbol{\epsilon}_t = \dfrac{\boldsymbol{x}_t - \sqrt{\alpha_{t \vert 0}} \boldsymbol{x}_0}{\sqrt{\beta_{t \vert 0}}}$ là nhiễu được sử dụng để tạo ra $\boldsymbol{x}_t$ từ $\boldsymbol{x}_0$ và $\tilde{\beta}_{s \vert t} = \dfrac{\beta_{s \vert 0}}{\beta_{t \vert 0}} \beta_{t \vert s}$.
+    \end{md}
+
+    Tiếp theo, ta sẽ  mở rộng định lý \ref{dl:Solely-Optimal-Covariance} cho DPMs với bước thời gian liên tục.
+    Tương tự như các bài toán ở công thức \ref{eq:Arbitrary-Covariance-Optimize-Mean} và công thức \ref{eq:Arbitrary-Mean-Optimize-Covariance},
+    ta xét hai bài toán tối ưu hóa sau với duy nhất trung bình và ma trận hiệp phương sai:
+
+    \begin{equation} \label{eq:Continuous-Arbitrary-Covariance-Optimize-Mean}
+        \text{Cho ma trận hiệp phương sai bất kỳ } \boldsymbol{\Sigma}_{s \vert t}, \min_{\boldsymbol{\mu}_{s \vert t}} \ell_{s, t}
+    \end{equation}
+
+    \begin{equation} \label{eq:Continuous-Arbitrary-Mean-Optimize-Covariance}
+        \text{Cho trung bình bất kỳ } \boldsymbol{\mu}_{s \vert t}, \min_{\boldsymbol{\Sigma}_{s \vert t}} \ell_{s, t}
+    \end{equation}
+
+    Trung bình tối ưu của bài toán trong công thức \ref{eq:Continuous-Arbitrary-Covariance-Optimize-Mean} cũng là công thức \ref{eq:Continuous-Optimal-Mean}, trung bình tối ưu này không phù hợp với $\boldsymbol{\Sigma}_{s \vert t}$.
+    Ma trận hiệp phương sai tối ưu của bài toán trong công thức \ref{eq:Continuous-Arbitrary-Mean-Optimize-Covariance} được trình bày trong mệnh đề .
+
+    \begin{md} \label{md:Continuous-Corrected-Optimal-Covariance}
+        Ta giả định ma trận hiệp phưowng sai có dạng $\boldsymbol{\Sigma}_{s \vert t} (\boldsymbol{x}_t) = \mathrm{diag} \big( \boldsymbol{\sigma}_{s \vert t} (\boldsymbol{x}_t)^2 \big)$.
+        Với trung bình bất kỳ $\boldsymbol{\mu}_{s \vert t}(\boldsymbol{x}_t)$ được tham số hóa bởi mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_t (\boldsymbol{x}_t)$ trong công thức \ref{eq:Estimated-Continuous-Optimal-Mean},
+        ma trận hiệp phương sai tối ưu $\tilde{\boldsymbol{\sigma}}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$ của bài toán trong công thức \ref{eq:Continuous-Arbitrary-Mean-Optimize-Covariance} là:
+
+        \begin{equation}
+            \begin{aligned}
+                \tilde{\boldsymbol{\sigma}}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2 &= \boldsymbol{\sigma}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2 + \dfrac{\beta_{t \vert s}^2}{\beta_{t \vert 0} \alpha_{t \vert s}} \underbrace{\big( \hat{\boldsymbol{\epsilon}}_t (\boldsymbol{x}_t) - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \epsilon_t \rbrack \big)^2}_{\mathrm{error}} \\
+                &= \tilde{\beta}_{s \vert t} \boldsymbol{1} + \dfrac{\beta_{t \vert s}^2}{\beta_{t \vert 0} \alpha_{t \vert s}} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \big \lbrack \big( \boldsymbol{\epsilon}_t - \hat{\boldsymbol{\epsilon}}_t (\boldsymbol{x}_t) \big)^2 \big \rbrack
+            \end{aligned}
+        \end{equation}
+
+        Với $\boldsymbol{\epsilon}_t = \dfrac{\boldsymbol{x}_t - \sqrt{\alpha_{t \vert 0}} \boldsymbol{x}_0}{\sqrt{\beta_{t \vert 0}}}$ là nhiễu được dùng để tạo ra $\boldsymbol{x}_t$ từ $\boldsymbol{x}_0$ và $\tilde{\beta}_{s \vert t} = \dfrac{\beta_{s \vert 0}}{\beta_{t \vert 0}} \beta_{t \vert s}$.
+    \end{md}
+
+    Tương tự như trong công thức \ref{eq:Sigma-SN-SPM} và công thức \ref{eq:Sigma-NPR-DPM},
+    để ước lượng $\boldsymbol{\sigma}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$ và $\tilde{\boldsymbol{\sigma}}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$,
+    ta có thể học các kỳ vọng có điều kiện xuất hiện trong mệnh đề \ref{md:Continuous-Optimal-Covariance} và mệnh đề \ref{md:Continuous-Corrected-Optimal-Covariance} bằng cách cực tiểu hóa hàm mục tiêu MSE.
+    Chi tiết được trình bày trong phụ lục .
 
     \newpage
     \printbibliography[title={TÀI LIỆU THAM KHẢO}]
