@@ -299,6 +299,27 @@
 
     \section{Mô hình toán học của mô hình khuếch tán} \label{Background}
 
+    \begin{table}[h!]
+        \caption{Các ký hiệu được sử dụng trong đề tài}
+        \begin{tabular} [c c c] {m{4cm}  m{2.5cm}  m{8cm}}
+            \hline
+            \multirow{5}{4cm}{Quá trình khuếch tán thuận} & $\overline{\alpha}_n, \overline{\beta}_n$ & Biểu diễn tích lũy của nhiễu Gaussian tại bước thứ $n$, $q(\boldsymbol{x}_n \vert \boldsymbol{x}_0)=\mathcal{N} \big( \boldsymbol{x}_n \vert \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0, \overline{\beta}_n \boldsymbol{I} \big)$ \\ \cline{2-3}
+            & $\lambda_n^2$ & Biểu diễn phương sai của quá trình khuếch tán ngược $q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0)$ \\ \cline{2-3}
+            & $\tilde{\boldsymbol{\mu}}_n (\boldsymbol{x}_n, \boldsymbol{x}_0)$ & Biểu diễn trung bình của quá trình khuếch tán ngược $q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0)$ \\ \cline{2-3}
+            & $\gamma_n$ & Biểu diễn hệ số của $\boldsymbol{x}_0$ trong $\tilde{\boldsymbol{\mu}}_n (\boldsymbol{x}_n, \boldsymbol{x}_0)$ \\ \cline{2-3}
+            & $\alpha_n, \beta_n$ & Biểu diễn lượng nhiễu Gaussian được thêm vào tại từng bước $n$ trong quá trình khuếch tán thuận, $q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})=\mathcal{N}\big( \boldsymbol{x}_n \vert \sqrt{\alpha_n} \boldsymbol{x}_{n-1}, \beta_n \boldsymbol{I} \big)$ \\
+            \hline
+            \multirow{2}{4cm}{Trung bình của quá trình khuếch tán ngược} & $\boldsymbol{\mu}_n (\boldsymbol{x}_n), \boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ & Biểu diễn trung bình của quá trình khuếch tán ngược $p(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)$ và trung bình tối ưu \\ \cline{2-3}
+            & $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n), \hat{\boldsymbol{\mu}}_n (\boldsymbol{x}_n)$ & Biểu diễn mạng dự đoán nhiễu và ước lượng của $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ \\
+            \hline
+            \multirow{4}{4cm}{Ma trận hiệp phương sai của quá trình khuếch tán ngược} & $\boldsymbol{\Sigma}_n (\boldsymbol{x}_n), \boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2$ & Biểu diễn ma trận hiệp phương sai của quá trình khuếch tán ngược và ma trận hiệp phương sai đường chéo tối ưu \\ \cline{2-3}
+            & $\boldsymbol{h}_n (\boldsymbol{x}_n), \hat{\boldsymbol{\sigma}}_n (\boldsymbol{x}_n)^2$ & Biểu diễn mạng dự đoán nhiễu bình phương SN và ước lượng của ma trận hiệp phương sai đường chéo tối ưu $\boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2$ \\ \cline{2-3}
+            & $\tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2$ & Biểu diễn ma trận hiệp phương sai đường chéo tối ưu với một trung bình không hoàn hảo \\ \cline{2-3}
+            & $\boldsymbol{g}_n (\boldsymbol{x}_n), \hat{\tilde{\boldsymbol{\sigma}}}_n^{\ast} (\boldsymbol{x}_n)^2$ & Biểu diễn mạng dự đoán phần dư NPR và ước lượng của $\tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2$ \\
+            \hline
+        \end{tabular}
+    \end{table}
+
     Các mô hình khuếch tán xác suất (DPMs) là một quá trình Markov đặc biệt với các bước chuyển tiếp là phân phối Gaussian:
 
     \begin{equation} \label{eq:Reverse-Process}
@@ -807,14 +828,14 @@
         Phương pháp của ta có thêm mạng dự đoán phần dư nhiễu NPR hoặc mạng dự đoán bình phương nhiễu SN vì vậy sẽ tăng thêm chi phí thời gian.
         Ta nhân kết quả với tỷ lệ chi phí thời gian trên từng bước so với các phương pháp được so sánh}
         \begin{center}
-            \resizebox{9cm}{!}{
+            \resizebox{11cm}{!}{
                 \begin{tabular}{ lrrr}
                     \hline
                     Phương pháp & CIFAR10 & CelebA 64x64 & LSUN Bedroom \\
                     \hline
                     DDPM \cite{ho2020denoising} & 90 (6.12) & > 200 & 130 (6.06) \\
                     DDIM \cite{song2020denoising} & 30 (5.85) & > 100 & BEST FID > 6 \\
-                    Improved DDPM \cite{nichol2021improved} &  45 (5.96) & Không có model & 90 (6.02) \\
+                    Improved DDPM \cite{nichol2021improved} &  45 (5.96) & Không có mô hình & 90 (6.02) \\
                     Analytic-DPM \cite{bao2021analytic} &  25 (5.81) & 55 (5.98) & 100 (6.05) \\
                     NPR-DPM &  1.002 x 23 (5.76) & 1.011 x 50 (6.04) &  1.017 x 90 (6.01) \\
                     SN-DPM &  1.005 x 17 (5.81) & 1.012 x 22 (5.96) & 1.100 x 92 (6.02) \\
