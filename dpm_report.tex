@@ -143,6 +143,7 @@
 \numberwithin{hq}{section}
 
 \doublespacing
+\AtBeginEnvironment{tabular}{\doublespacing}
 
 \begin{document}
 
@@ -759,6 +760,7 @@
     Ta đánh giá các DPMs với cả bước thời gian rời rạc và bước thời gian liên tục. Với DPMs bước thời gian rời rạc, ta sẽ đánh giá DPMs ở cả hai kiểu quá trình thuận tương ứng là DDPM và DDIM.
     \cite{watson2021learning}, \cite{bao2021analytic} kết luận rằng DPM với quỹ đạo tối ưu lại thường cho khoảng cách FID tệ hơn nên ta chỉ đánh giá ở quỹ đạo chẵn.
 
+
     \begin{table}[h!]
         %\small
         %\centering
@@ -820,7 +822,25 @@
                 \end{tabular}
             }
         \end{center}
+        \label{table:FID-CIFAR10}
     \end{table}
+
+    Ở trong bảng \ref{table:FID-CIFAR10}, cả NPR-DPM và SN-DPM vượt trội hơn hầu hết các phương pháp còn lại.
+    Đặc biêt, SN-DPM cải thiện chất lượng ảnh một cách rõ rệt trên tập CIFAR10 và tập CelebA 64x64 khi số bước được sử dụng nhỏ.
+    Hơn nữa, các phương pháp của ta tỏ ra rất tốt trong cả bước thời gian rời rạc và bước thời gian liên tục.
+
+    Theo \cite{bao2021analytic}, ta cũng so sánh số bước nhỏ nhất cần thiết để đạt được khoảng cách FID đạt khoảng 6,
+    kết quả được trình bày trong bảng \ref{table:Smallest-steps-to-achieved-FID-6}.
+    Ta nhận thấy trên tập CelebA 64x64, SN-DPM chỉ cần số bước khoảng bằng một nửa so với các phương pháp khác.
+    Trong phần phụ lục, ta sẽ so sánh khoảng cách FID sau khi tính đến chi phí tính toán tăng thêm,
+    cũng như so sánh với "Gotta Go Fast" SDE solver.
+
+    \subsection{Kết quả ước lượng hợp lý}
+
+    Trong mục này, ta sẽ đánh giá cận trên $-L_{\mathrm{elbo}}$ (công thức \ref{eq:ELBO-Maximization}) trên log-likelihood âm của DPMs với bước thời gian rời rạc.
+    \cite{bao2021analytic} đã phát biểu rằng $-L_{\mathrm{elbo}}=\infty$ trong quá trình khuếch tán thuận của DDIM, nên ta chỉ có kết quả với quá trình khuếch tán thuận của DDPM.
+
+    Trong bảng \ref{table:Upper-Bound}, phương pháp NPR-DPM hầu hết vượt trội so với các phương pháp còn lại trên tất cả các tập dữ liệu, trên các số bước thời gian và trên các kiểu quỹ đạo.
 
     \begin{table}[h!]
         \caption{Số bước nhỏ nhất để đạt được khoảng cách FID khoảng bằng 6.
@@ -843,6 +863,56 @@
                 \end{tabular}
             }
         \end{center}
+        \label{table:Smallest-steps-to-achieved-FID-6}
+    \end{table}
+
+    Ban đầu ta nhận thấy SN-DPM không tỏ ra vượt trội so với các phương pháp khác trên kết quả về ước lượng hợp lý,
+    lý do có thể ta chưa xem xét trung bình không hoàn hảo và sai số bị khuếch đại của $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2$ như đã được đề cập ở trong mục \ref{Optimal-Solution-Covariance-Beyond-Isotropic-Covariance}.
+
+
+    \begin{table}[h!]
+        \caption{Cận trên ($-L_{\mathrm{elbo}}$) của log-likelihood âm.
+        A-DPM là ký hiệu của Analytic-DPM. Cần chú ý rằng chi phí tính toán được thêm vào là không đáng kể trên các tập CIFAR10, CelebA 64x64 và khoảng 4.5 \% trên tập ImageNet 64x64.
+        Vì vậy ta có thể sử dụng số bước thời gian để so sánh độ hiệu quả của các phương pháp. Để giảm ảnh hưởng của tính ngẫu nhiên, ta cũng lặp lại với cấu hình số bước thời gian nhiều nhất và phương sai sẽ được đề cập ở phần phụ lục .}
+        \begin{center}
+            \resizebox{\columnwidth}{!}{
+                \begin{tabular}{llrrrrrrrrrrrrr}
+                    \hline
+                    \multicolumn{2}{c}{\multirow{2}{*}{\# Số bước $K$}}&\multicolumn{6}{c}{CIFAR10 (LS)} & \multicolumn{6}{c}{CIFAR10 (CS)}\\ \cline{3-8} \cline{10-15}
+                    \multicolumn{2}{c}{}& 10 & 25 & 50 & 100 & 200 & 1000 & & 10 & 25 & 50 & 100 & 200 & 1000 \\
+                    \hline
+                    \multirow{4}{*}{ET} & DDPM, $\tilde{\beta}_n$ & 74.95 & 24.98 & 12.01 & 7.08 & 5.03 & 3.73 & & 75.96 & 24.94 & 11.96 & 7.04 & 4.95 & 3.60 \\
+                    & DDIM $\beta_n$ & 6.99 & 6.11 & 5.44 & 4.86 & 4.39 & 3.75 & & 6.51 & 5.55 & 4.92 & 4.41 & 4.03 & 3.54 \\
+                    & A-DDPM & 5.47 & 4.79 & 4.38 & 4.07 & 3.84 & 3.59 & & 5.08 & 4.45 & 4.09 & 3.83 & 3.64 & 3.42 \\
+                    & NPR-DDPM & 5.40 & 4.64 & 4.25 & 3.98 & 3.79 & 3.57 & & 5.03 & 4.33 & 3.99 & 3.76 & 3.59 & 3.41 \\
+                    \hline
+                    \multirow{3}{*}{OT} & DDPM, $\tilde{\beta}_n$ & 5.38 & 4.34 & 3.97 & 3.82 & 3.77 & 3.75 & & 5.51 & 4.30 & 3.86 & 3.65 & 3.57 & 3.54 \\
+                    & A-DDPM & 4.11 & 3.68 & 3.61 & 3.59 & 3.59 & 3.59 & & 3.99 & 3.56 & 3.47 & 3.44 & 3.43 & 3.42 \\
+                    & NPR-DDPM & 3.91 & 3.64 & 3.59 & 3.58 & 3.57 & 3.57 & & 3.88 & 3.52 & 3.45 & 3.42 & 3.41 & 3.41 \\
+                    \hline
+                \end{tabular}
+            }
+        \end{center}
+        \begin{center}
+            \resizebox{\columnwidth}{!}{
+                \begin{tabular}{llrrrrrrrrrrrrr}
+                    \hline
+                    \multicolumn{2}{c}{\multirow{2}{*}{\# Số bước $K$}}&\multicolumn{6}{c}{CelebA 64x64} & \multicolumn{6}{c}{ImageNet 64x64}\\ \cline{3-8} \cline{10-15}
+                    \multicolumn{2}{c}{}& 10 & 25 & 50 & 100 & 200 & 1000 & &  25 & 50 & 100 & 200 & 400 & 4000 \\
+                    \hline
+                    \multirow{4}{*}{ET} & DDPM, $\tilde{\beta}_n$ & 33.42 & 13.09 & 7.14 & 4.60 & 3.45 & 2.71 & & 105.87 & 46.25 & 22.02 & 12.10 & 7.59 & 3.89 \\
+                    & DDIM $\beta_n$ & 6.67 & 5.72 & 4.98 & 4.31 & 3.74 & 2.93 & & 5.81 & 5.20 & 4.70 & 4.31 & 4.04 & 3.65 \\
+                    & A-DDPM & 4.54 & 3.89 & 3.48 & 3.16 & 2.92 & 2.66 & & 4.78 & 4.42 & 4.15 & 3.95 & 3.81 & 3.61 \\
+                    & NPR-DDPM & 4.46 & 3.78 & 3.40 & 3.11 & 2.89 & 2.65 & & 4.66 & 4.22 & 3.96 & 3.80 & 3.71 & 3.60 \\
+                    \hline
+                    \multirow{3}{*}{OT} & DDPM, $\tilde{\beta}_n$ & 4.76 & 3.58 & 3.16 & 2.99 & 2.94 & 2.93 & & 4.56 & 4.09 & 3.84 & 3.73 & 3.68 & 3.65 \\
+                    & A-DDPM & 2.97 & 2.71 & 2.67 & 2.66 & 2.66 & 2.66 & & 3.83 & 3.70 & 3.64 & 3.62 & 3.62 & 3.61 \\
+                    & NPR-DDPM & 2.88 & 2.69 & 2.66 & 2.66 & 2.65 & 2.65 & & 3.73 & 3.65 & 3.62 & 3.60 & 3.60 & 3.60 \\
+                    \hline
+                \end{tabular}
+            }
+        \end{center}
+        \label{table:Upper-Bound}
     \end{table}
 
     \newpage
