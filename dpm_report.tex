@@ -266,7 +266,7 @@
         
     \newpage
 
-    \section{Tổng quan về mô hình khuếch tán}
+    \section{Tổng quan về mô hình khuếch tán} \label{Introduction}
 
     Gần đây, các mô hình khuếch tán xác suất (DPMs) \cite{sohl2015deep}, \cite{ho2020denoising}, \cite{song2020score} đã tạo ra rất nhiều hứa hẹn trong lĩnh vực các mô hình sinh.
     Những mô hình này lần lượt đưa nhiễu vào theo từng bước thời gian vào phân phối dữ liệu gốc tạo nên một quá trình khuếch tán.
@@ -868,6 +868,14 @@
 
     Ban đầu ta nhận thấy SN-DPM không tỏ ra vượt trội so với các phương pháp khác trên kết quả về ước lượng hợp lý,
     lý do có thể ta chưa xem xét trung bình không hoàn hảo và sai số bị khuếch đại của $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2$ như đã được đề cập ở trong mục \ref{Optimal-Solution-Covariance-Beyond-Isotropic-Covariance}.
+    Kết quả này không nhất quán với kết quả của FID trong bảng \ref{table:FID-CIFAR10} vì đặc tính khác nhau của hai cách đánh giá này.
+    Sự khác biệt này đã được quan sát và bàn luận nhiều trong các công trình trước \cite{ho2020denoising}, \cite{nichol2021improved}, \cite{song2021maximum}, \cite{vahdat2021score}, \cite{watson2021learning}, \cite{kingma2021variational}, \cite{bao2021analytic}.
+    Ta nhận thấy tuy NPR-DPM tỏ ra tốt hơn so với SN-DPM với ước lượng hợp lý nhưng lại không tốt hơn ở độ đo khoảng cách FID.
+
+    Ta cũng so sánh Improved-DDPM \cite{nichol2021improved} theo cách đánh giá ước lượng hợp lý.
+    Với một số lượng bước thời gian sử dụng ít, phương pháp của ta có kết quả ước lượng hợp lý tốt hơn khá nhiều so với phương pháp của \cite{nichol2021improved} trên tập ImageNet 64x64.
+    Với số bước thời gian đầy đủ, hai phương pháp có kết quả ước lượng hợp lý tương đương nhau.
+    Điều này thể hiện rằng một hàm mục tiêu gián tiếp như hàm mục tiêu MSE có thể thu được kết quả ước lượng hợp lý tương đương với tối ưu hóa trực tiếp $L_{\mathrm{elbo}}$.
 
 
     \begin{table}[h!]
@@ -914,6 +922,47 @@
         \end{center}
         \label{table:Upper-Bound}
     \end{table}
+
+    \section{Các công trình liên quan}
+
+    \textbf{DPMs và các biến thể:} Ý tưởng về quá trình sinh dữ liệu được xây dựng bởi một quá trình khuếch tán ngược lần đầu tiên được đề xuất bởi \cite{sohl2015deep}.
+    Đặc biệt \cite{sohl2015deep} đảo ngược quá trình khuếch tán thuận sử dụng một chuỗi Markov với bước thời gian rời rạc, huấn luyện bằng cách cực đại hóa cận dưới ELBO.
+    \cite{ho2020denoising} đề xuất tái tham số hóa trung bình của chuỗi Markov bằng mạng dự đoán nhiễu, mạng này chia sẻ tham số giữa các bước thời gian khác sau và được huấn luyện để cực tiểu hóa hàm mục tiêu MSE.
+    \cite{song2020score} xem xét DPMs với bước thời gian rất nhỏ, có thể được biểu diễn bằng một phương trình vi phân ngẫu nhiên (SDEs).
+    Gần đây, một số biến thể của DPMs đã được đề xuất. \cite{kingma2021variational} nghiên cứu thêm về quá trình khuếch tán thuận.
+    \cite{vahdat2021score} nghiên cứu DPMs trong không gian ẩn và \cite{dockhorn2021score} đề xuất biến vận tốc phụ trợ vào quá trình khuếch tán.
+
+    Dựa trên khả năng sinh dữ liệu mạnh mẽ, DPMs đã tạo ra rất nhiều hứa hẹn trong nhiều ứng dụng như sinh dữ liệu có điều khiển \cite{choi2021ilvr}, \cite{meng2021sdedit}, \cite{sinha2021d2c}, \cite{nichol2021glide},
+    chuyển đổi giọng nói \cite{popov2021diffusion}, tăng độ phân giải ảnh \cite{saharia2021image}, \cite{li2022srdiff}, dịch ảnh \cite{sasaki2021unit}, tạo hình khối \cite{zhou20213d},
+    tạo đám mây điểm 3D \cite{luo2021diffusion} và dữ đoán chuỗi thời gian \cite{rasul2021autoregressive}.
+
+    \textbf{Thiết kế ma trận hiệp phương sai DPMs:} Như đã đề cập trong mục \ref{Introduction}, thiết kế của ma trận hiệp phương sai trong DPMs là rất quan trọng trong khả năng sinh dữ liệu với một tập con các bước thời gian,
+    một số công trình trước \cite{ho2020denoising}, \cite{song2020denoising}, \cite{bao2021analytic} sử dụng các ma trận hiệp phương sai đẳng hướng mà chỉ phụ thuộc vào bước thời gian mà không xem xét đến trạng thái.
+    Bên cạnh đó, \cite{nichol2021improved} sử dụng ma trận hiệp phương sai đường chéo có phụ thuộc vào trạng thái.
+    Điểm khác biệt giữa \cite{nichol2021improved} là trực tiếp huấn luyện mạng hiệp phương sai trên cận dưới $L_{\mathrm{elbo}}$,
+    mạng dự đoán của chúng ta được huấn luyện dựa trên hàm mục tiêu MSE dựa trên dạng của ma trận hiệp phương sai tối ưu.
+    Phương pháp của ta đạt được một kết quả ước lượng hợp lý tốt trên một số bước thời gian nhỏ, trí ngược với \cite{nichol2021improved}.
+
+    \textbf{Faster DPMs:} Trong khi nghiên cứu thiết kế ma trận hiệp phương sai trong DPMs, đã có nhiều nỗ lực về việc lấy mẫu nhanh và hiệu quả hơn.
+    Nhiều công trình nghiên cứu sử dụng quỹ đạo ngắn bằng cách áp dụng các thuật toán tìm kiếm, nhưu tìm kiếm trên lưới \cite{chen2020wavegrad},
+    quy hoạch động \cite{watson2021learning} và tìm kiếm khả vi \cite{watson2021fastsampler}.
+    Các thuật toán tìm kiếm này có thể được kết hợp với phương pháp của ta để đạt được kết quả tốt hơn.
+    Ví dụ, sự kết hợp giữa quy hoạch động và phương pháp của ta dẫn đến ột kết quả tốt hơn trong ước lượng hợp lý, được trình bày ở kết quả OT trong bảng \ref{table:Upper-Bound}.
+    Nhiều công trình thay đổi họ của mô hình trong quá trình khuếch tán ngược, thay thế mô hình Gaussian.
+    \cite{luhman2021knowledge}, \cite{salimans2021progressive} chắt lọc quá trình khuếch tán ngược ban đầu thành một mô hình có thể thực hiện quá trình ngược với một vài hoặc chỉ một bước thời gian,
+    và \cite{xiao2021tackling} mô hình hóa quá trình khuếch tán ngược là một hàm sinh có điều kiện và đề xuất để huấn luyện một hàm mục tiêu đối kháng.
+    Tuy nhiên, hàm ước lược hợp lý là không dễ dàng tìm vì sự thay đổi của họ mô hình.
+    Nhiều công trình thiết kế các bộ giải nhanh hơn \cite{jolicoeur2021gotta,popov2021diffusion} cho DPMs với bước thời gian liên tục.
+    Tuy nhiên các bộ giải này chỉ xem xét các ma trận hiệp phương sai đầy đủ trong \cite{ho2020denoising}, \cite{bao2021analytic} không linh hoạt như phương pháp của ta.
+
+    \section{Kết luận}
+
+    Ta đã xem xét ma trận hiệp phương sai đường chéo và ma trận hiệp phương sai đầy đủ để cải thiện khả năng sinh dữ liệu của DPMs.
+    Ta thu được kết quả với trung bình tối ưu và ma trận hiệp phương sai tối ưu, và cách để hiệu chỉnh ma trận hiệp phương sai sử dụng phân tích thành các thành phần kỳ vọng có điều kiện trên một hàm của nhiễu,
+    có thể ước lượng được bằng cực tiếu hóa hàm mục tiêu MSE.
+    
+
+
 
     \newpage
     \printbibliography[title={TÀI LIỆU THAM KHẢO}]
