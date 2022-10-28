@@ -968,4 +968,41 @@
     \newpage
     \printbibliography[title={TÀI LIỆU THAM KHẢO}]
 
+    \newpage
+
+    \appendix
+
+    \section{Chứng minh}
+
+    \subsection{Chứng minh định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}, \ref{dl:Solely-Optimal-Mean}, \ref{dl:Solely-Optimal-Covariance}}
+
+    \begin{bd} (Kết nối moment có điều kiện) Giả sử $q(\boldsymbol{x})$ là một hàm mật độ xác suất với trung bình $\boldsymbol{\mu}_q$ và ma trận hiệp phương sai $\boldsymbol{\Sigma}_q$ và $p(\boldsymbol{x})=\mathcal{N}(\boldsymbol{x} \vert \boldsymbol{\mu}, \mathrm{diag}(\boldsymbol{\sigma}^2))$ là một phân phối Gaussian. Khi đó:
+
+    \begin{enumerate}
+        \item Với $\boldsymbol{\sigma}^2$ bất kỳ, bài toán tối ưu hóa $\displaystyle\min_{\mu} D_{\mathrm{DK}} (q \Vert p)$ có nghiệm tối ưu $\boldsymbol{\mu}^{\ast}=\boldsymbol{\mu}_q$
+        \item Với $\mu$ bất kỳ, bài toán tối ưu hóa $\displaystyle\min_{\boldsymbol{\sigma}^2} D_{\mathrm{KL}}(q \Vert p)$ có nghiệm tối ưu $\hat{\boldsymbol{\sigma}}^{\ast 2}=\mathrm{diag}(\boldsymbol{\Sigma}_q) + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^2$, với $(.)^2$ là bình phương từng phần tử
+        \item Bài toán tối ưu $\displaystyle\min_{\boldsymbol{\mu}, \boldsymbol{\sigma}^2}$ có nghiệm tối ưu $\boldsymbol{\mu}^{\ast}=\boldsymbol{\mu}_q$ và $\boldsymbol{\sigma}^{\ast 2} = \mathrm{diag} (\boldsymbol{\Sigma}_q)$.
+    \end{enumerate}
+
+    \end{bd}
+
+    \textit{Chứng minh.} \cite{bao2021analytic} đã chứng minh rằng độ phân kỳ Kullback-Leibler giữa một hàm mật độ xác suất bất kỳ $q$ và một phân phối Gaussian $p$ có thể được viết $D_{\mathrm{KL}}(q \Vert p)=D_{\mathrm{KL}}\big(\mathcal{N}(\boldsymbol{x} \vert \boldsymbol{\mu}_q, \boldsymbol{\Sigma}_q \big) \Vert p) + c$, với $c$ là hằng số chỉ phụ thuộc vào $q$ (bổ đề 2 trong \cite{bao2021analytic}).
+    Vì vậy nghiệm tối ưu của $D_{\mathrm{DL}} (q \Vert p)$ và $D_{\mathrm{KL}} \big( \mathcal{N} (\boldsymbol{x} \vert \boldsymbol{\mu}_q, \boldsymbol{\Sigma}_q) \big)$ theo $\boldsymbol{\mu}$ và $\boldsymbol{\Sigma}_q$ là bằng nhau.
+
+    Ta khai triển $D_{\mathrm{KL}} \big( \mathcal{N} (\boldsymbol{x} \vert \boldsymbol{\mu}_q, \boldsymbol{\Sigma}_q) \Vert p$ ntheo định nghĩa của độ phân kỳ Kullback-Leibler:
+
+    \begin{equation*}
+        \begin{aligned}
+            2 D_{\mathrm{KL}} \big( \mathcal{N} (\boldsymbol{x} \vert \boldsymbol{\mu}_q, \boldsymbol{\Sigma}_q) \Vert p \big) &= \mathrm{tr} \big( \mathrm{diag} (\boldsymbol{\sigma}^{-2}) \boldsymbol{\Sigma}_q \big) - d + \log \dfrac{\lvert \mathrm{diag}(\boldsymbol{\sigma}^2) \rvert}{\lvert \boldsymbol{\Sigma}_q \rvert} + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^T \mathrm{diag}(\boldsymbol{\sigma^{-2}}) (\boldsymbol{\mu} - \boldsymbol{\mu}_q) \\
+            &=\sum_{i=1}^d \Big \lbrace \sigma_i^{-2} \big \lbrack (\boldsymbol{\Sigma}_q)_{i, i} + (\boldsymbol{\mu}_i - (\boldsymbol{\mu}_q)_i)^2 \big\rbrack + \log \sigma_i^2 \Big \rbrace - \log \lvert \boldsymbol{\Sigma}_q \rvert  - d
+        \end{aligned}
+    \end{equation*}
+
+    Từ đây ta rút ra:
+
+    \begin{equation*}
+        \min_{\boldsymbol{\mu}} D_{\mathrm{KL}} (q \Vert) \Leftrightarrow \min_{\boldsymbol{\mu}} (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^T \mathrm{diag}(\boldsymbol{\sigma}^{-2}) (\boldsymbol{\mu} - \boldsymbol{\mu}_q)
+    \end{equation*}
+
+    công thức này cho ta thấy nghiệm tối ưu $\boldsymbol{\mu}^{\ast} = \boldsymbol{\mu}_q$
 \end{document}
