@@ -989,14 +989,14 @@
     \textit{Chứng minh.} \cite{bao2021analytic} đã chứng minh rằng độ phân kỳ Kullback-Leibler giữa một hàm mật độ xác suất bất kỳ $q$ và một phân phối Gaussian $p$ có thể được viết $D_{\mathrm{KL}}(q \Vert p)=D_{\mathrm{KL}}\big(\mathcal{N}(\boldsymbol{x} \vert \boldsymbol{\mu}_q, \boldsymbol{\Sigma}_q \big) \Vert p) + c$, với $c$ là hằng số chỉ phụ thuộc vào $q$ (bổ đề 2 trong \cite{bao2021analytic}).
     Vì vậy nghiệm tối ưu của $D_{\mathrm{DL}} (q \Vert p)$ và $D_{\mathrm{KL}} \big( \mathcal{N} (\boldsymbol{x} \vert \boldsymbol{\mu}_q, \boldsymbol{\Sigma}_q) \big)$ theo $\boldsymbol{\mu}$ và $\boldsymbol{\Sigma}_q$ là bằng nhau.
 
-    Ta khai triển $D_{\mathrm{KL}} \big( \mathcal{N} (\boldsymbol{x} \vert \boldsymbol{\mu}_q, \boldsymbol{\Sigma}_q) \Vert p$ ntheo định nghĩa của độ phân kỳ Kullback-Leibler:
+    Ta khai triển $D_{\mathrm{KL}} \big( \mathcal{N} (\boldsymbol{x} \vert \boldsymbol{\mu}_q, \boldsymbol{\Sigma}_q) \Vert p$ theo định nghĩa của độ phân kỳ Kullback-Leibler:
 
-    \begin{equation*}
+    \begin{equation} \label{eq:Kullback-Leibler-Expanded}
         \begin{aligned}
             2 D_{\mathrm{KL}} \big( \mathcal{N} (\boldsymbol{x} \vert \boldsymbol{\mu}_q, \boldsymbol{\Sigma}_q) \Vert p \big) &= \mathrm{tr} \big( \mathrm{diag} (\boldsymbol{\sigma}^{-2}) \boldsymbol{\Sigma}_q \big) - d + \log \dfrac{\lvert \mathrm{diag}(\boldsymbol{\sigma}^2) \rvert}{\lvert \boldsymbol{\Sigma}_q \rvert} + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^T \mathrm{diag}(\boldsymbol{\sigma^{-2}}) (\boldsymbol{\mu} - \boldsymbol{\mu}_q) \\
             &=\sum_{i=1}^d \Big \lbrace \sigma_i^{-2} \big \lbrack (\boldsymbol{\Sigma}_q)_{i, i} + (\boldsymbol{\mu}_i - (\boldsymbol{\mu}_q)_i)^2 \big\rbrack + \log \sigma_i^2 \Big \rbrace - \log \lvert \boldsymbol{\Sigma}_q \rvert  - d
         \end{aligned}
-    \end{equation*}
+    \end{equation}
 
     Từ đây ta rút ra:
 
@@ -1004,5 +1004,49 @@
         \min_{\boldsymbol{\mu}} D_{\mathrm{KL}} (q \Vert) \Leftrightarrow \min_{\boldsymbol{\mu}} (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^T \mathrm{diag}(\boldsymbol{\sigma}^{-2}) (\boldsymbol{\mu} - \boldsymbol{\mu}_q)
     \end{equation*}
 
-    công thức này cho ta thấy nghiệm tối ưu $\boldsymbol{\mu}^{\ast} = \boldsymbol{\mu}_q$
+    công thức này cho ta thấy nghiệm tối ưu $\boldsymbol{\mu}^{\ast} = \boldsymbol{\mu}_q$.
+
+    Cũng từ công thức \ref{eq:Kullback-Leibler-Expanded}, ta biết rằng:
+
+    \begin{equation}
+        \min_{\boldsymbol{\sigma}^2} D_{\mathrm{KL}} (q \Vert p) \Leftrightarrow \sum_{i=1}^d \Big \lbrace \sigma_i^{-2} \big \lbrack (\boldsymbol{\Sigma}_q)_{i, i} + (\boldsymbol{\mu}_i - (\boldsymbol{\mu}_q)_i)^2 \big \rbrack + \log \sigma_i^2  \Big \rbrace
+    \end{equation}
+
+    Ta lấy đạo hàm $\sigma_i^{-2} \big \lbrack (\boldsymbol{\Sigma}_q)_{i, i} + (\boldsymbol{\mu}_i - (\boldsymbol{\mu}_q)_i)^2 \big \rbrack + \log \sigma_i^2$ theo $\sigma_i^2$, ta thu được nghiệm tối ưu:
+    
+    \begin{equation}
+        \tilde{\sigma}_i^{\ast 2} = (\boldsymbol{\Sigma}_q)_{i, i} + (\boldsymbol{\mu}_i - (\boldsymbol{\mu}_q)_i)^2
+    \end{equation}
+
+    Vì vậy bài toán tối ưu $\displaystyle\min_{\boldsymbol{\sigma}^2} D_{\mathrm{KL}}(q \Vert p)$ có nghiệm tối ưu là $\tilde{\boldsymbol{\sigma}}^{\ast 2}=\mathrm{diag}(\boldsymbol{\Sigma}_q) + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^2$
+
+    Kết hợp $\boldsymbol{\mu}^{\ast}$ và $\tilde{\boldsymbol{\sigma}}^{\ast 2}$, ta có nghiệm tối ưu của bài toán $\displaystyle \min_{\boldsymbol{\mu}, \boldsymbol{\sigma}^2} D_{\mathrm{KL}} (q \Vert p)$ là:
+    
+    \begin{equation}
+        \begin{cases}
+            \boldsymbol{\mu}^{\ast} = \boldsymbol{\mu}_q \\
+            \boldsymbol{\sigma}^{\ast 2} = \mathrm{diag} (\boldsymbol{\Sigma})_q + \big( \boldsymbol{\mu}^{\ast} - \boldsymbol{\mu}_q \big)^2
+        \end{cases}     
+    \end{equation}
+
+    \begin{bd}
+        Giả sử $q(\boldsymbol{x}_{0:N})$ được định nghĩa trong công thức \ref{eq:Forward-Process}. Khi đó ta có:
+
+        \begin{equation*}
+            \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack = \tilde{\boldsymbol{\mu}}_n \Big( \boldsymbol{x}_n, \dfrac{1}{\sqrt{\overline{\alpha}_n}} \big( \boldsymbol{x}_n - \sqrt{\overline{\beta}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \big) \Big)
+        \end{equation*}
+
+        \begin{equation*}
+            \mathrm{Cov}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack = \lambda_n^2 \boldsymbol{I} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \boldsymbol{\epsilon}_n^T \rbrack \big) - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^T \big)
+        \end{equation*}
+
+        \begin{equation*}
+            \mathrm{diag} \big( \mathrm{Cov}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack \big) = \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2 \big)
+        \end{equation*}
+
+        Với $\boldsymbol{\epsilon}_n = \dfrac{\boldsymbol{x}_n - \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0}{\sqrt{\overline{\beta}_n}}$ là nhiễu để tạo ra $\boldsymbol{x}_n$ từ $\boldsymbol{x}_0$ và $\gamma_n = \sqrt{\overline{\alpha}_{n-1}} - \sqrt{\overline{\beta}_{n-1} - \lambda_n^2} \sqrt{\dfrac{\overline{\alpha}_n}{\overline{\beta}_n}}$
+    \end{bd}
+
+    \textit{Chứng minh.}
+
 \end{document}
