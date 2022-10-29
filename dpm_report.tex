@@ -1048,5 +1048,26 @@
     \end{bd}
 
     \textit{Chứng minh.}
+    Vì $\tilde{\boldsymbol{\mu}}_n (\boldsymbol{x}_n, \boldsymbol{x}_0)$ là một hàm tuyến tính với $\boldsymbol{x}_0$ nên:
 
+    \begin{equation*}
+        \begin{aligned}
+            \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack &= \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0)} \lbrack \boldsymbol{x}_{n-1} \rbrack \\ 
+            &= \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)}\tilde{\boldsymbol{\mu}}_n (\boldsymbol{x}_n, \boldsymbol{x}_0) \\
+            &= \tilde{\boldsymbol{\mu}}_n (\boldsymbol{x}_n, \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \boldsymbol{x}_0) \\
+            &= \tilde{\boldsymbol{\mu}}_n \Big( \boldsymbol{x}_n, \dfrac{1}{\sqrt{\overline{\alpha}_n}} \big( \boldsymbol{x}_n - \sqrt{\overline{\beta}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \big) \Big)
+        \end{aligned}
+    \end{equation*}
+
+    Với ma trận hiệp phương sai $\mathrm{Cov}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack$, \cite{bao2021analytic} đã chứng minh được rằng có thể khai triển $\mathrm{Cov}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack = \lambda_n^2 \boldsymbol{I} + \gamma_n^2 \mathrm{Cov}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_0 \rbrack$ với $\gamma_n = \sqrt{\overline{\alpha}_{n-1}} - \sqrt{\overline{\beta}_{n-1} - \lambda_n^2} \sqrt{\dfrac{\overline{\alpha}_n}{\overline{\beta}_n}}$ (bổ đề 13 của \cite{bao2021analytic})
+
+    Bên cạnh đó, ta có $\mathrm{Cov}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack = \mathrm{Cov}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \Big \lbrack \dfrac{\boldsymbol{x}_n - \sqrt{\overline{\alpha}_n}\boldsymbol{x}_0}{\sqrt{\overline{\beta}_n}} \Big \rbrack = \dfrac{\overline{\alpha}_n}{\overline{\beta}_n} \mathrm{Cov}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_0 \rbrack$. Vì vậy:
+
+    \begin{equation}
+        \begin{aligned}
+            \mathrm{Cov}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack &= \lambda_n^2 \boldsymbol{I} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \mathrm{Cov}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \\
+            &= \lambda_n^2 \boldsymbol{I} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \boldsymbol{\epsilon}_n^T \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^T \big) \\
+            \Rightarrow \mathrm{diag} \big( \mathrm{Cov}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack \big) &= \lambda_n^2 \boldsymbol{I} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2 \big)
+        \end{aligned}
+    \end{equation}
 \end{document}
