@@ -4,6 +4,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{thmtools}
 \usepackage{mathtools}
 \usepackage{graphicx}
 %\usepackage{algpseudocode}
@@ -433,7 +434,7 @@
     Một cách tự nhiên, ta sẽ tối ưu hóa bài toán ở công thức \ref{eq:ELBO-Maximization} ứng với trung bình và ma trận hiệp phương sai để thu được lời giải tối ưu,
     được phát biểu trong định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}. Kết quả cho ma trận hiệp phương sai đầy đủ trong phụ lục .
 
-    \begin{dl} \label{dl:Optimal-Solution-To-Joint-Optimization}
+    \begin{restatable}{dl}{joint} \label{dl:Optimal-Solution-To-Joint-Optimization}
         (Nghiệm tối ưu cho bài toán tối ưu hóa chung) 
         Với ma trận hiệp phương sai có dạng $\boldsymbol{\Sigma}_n (\boldsymbol{x}_n)=\mathrm{diag}\big( \boldsymbol{\sigma}_n (\boldsymbol{x}_n)^2 \big)$.
         Khi đó trung bình tối ưu của bài toán trong công thức \ref{eq:ELBO-Maximization} là $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ được nêu trong công thức \ref{eq:Optimal-Mean},
@@ -446,7 +447,7 @@
 
         với $\boldsymbol{\epsilon}_n = \dfrac{\boldsymbol{x}_n - \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0}{\sqrt{\overline{\beta}_n}}$ là nhiễu được dùng để tạo ra $\boldsymbol{x}_n$ từ $\boldsymbol{x}_0$,
         $(.)^2$ là bình phương từng phần tử của vector, $\boldsymbol{1}$ là vector mà các phần tử đều bằng một và $\gamma_n = \sqrt{\overline{\alpha}_{n-1}} - \sqrt{\overline{\beta}_{n-1} - \lambda_n^2} \sqrt{\dfrac{\overline{\alpha}_n}{\overline{\beta}_n}}$
-    \end{dl}
+    \end{restatable}
 
     Ý tưởng chứng minh định lý \ref{dl:Optimal-Solution-To-Joint-Optimization} tương tự như trong định lý 1 trong \cite{bao2021analytic}, nhưng định lý này chỉ xem xét trong trường hợp ma trận hiệp phương sai đẳng hướng.
 
@@ -1070,4 +1071,6 @@
             \Rightarrow \mathrm{diag} \big( \mathrm{Cov}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack \big) &= \lambda_n^2 \boldsymbol{I} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2 \big)
         \end{aligned}
     \end{equation}
+
+    \joint*
 \end{document}
