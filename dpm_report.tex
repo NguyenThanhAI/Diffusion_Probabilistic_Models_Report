@@ -506,7 +506,7 @@
         \text{Cho trung bình bất kỳ } \boldsymbol{\mu}_n, \max_{\lbrace \boldsymbol{\Sigma}_n \rbrace_{n=1}^N} L_{\mathrm{elbo}}
     \end{equation}
 
-    \begin{dl} \label{dl:Solely-Optimal-Mean}
+    \begin{restatable}{dl}{mean} \label{dl:Solely-Optimal-Mean}
         (Lời giải tối ưu của bài toán tối ưu duy nhất với trung bình)
         Với ma trận hiệp phương sai bất kỳ $\boldsymbol{\Sigma}_n$,
         trung bình tối ưu của bài toán trong công thức \ref{eq:Arbitrary-Covariance-Optimize-Mean} luôn luôn là trung bình tối ưu trong công thức \ref{eq:Optimal-Mean}:
@@ -516,14 +516,14 @@
         \end{equation*}
 
         không phù hợp với $\boldsymbol{\Sigma}_n$.
-    \end{dl}
+    \end{restatable}
 
     Định lý \ref{dl:Solely-Optimal-Mean} cho thấy rằng trung bình tối ưu không phụ thuộc vào ma trận hiệp phương sai và vì vậy ta sẽ học trung bình theo công thức \ref{eq:Noise-Prediction} mà không cần biết thông tin về ma trận hiệp phương sai.
 
     Ngược lại với trung bình, ma trận hiệp phương sai tối ưu của bài toán \ref{eq:Arbitrary-Mean-Optimize-Covariance} phụ thuộc vào trung bình sẽ được trình bày trong định lý .
     Kết quả cho ma trận hiệp phương sai đầy đủ được trình bày chi tiết ở phụ lục .
 
-    \begin{dl} \label{dl:Solely-Optimal-Covariance}
+    \begin{restatable}{dl}{covariance} \label{dl:Solely-Optimal-Covariance}
         (Lời giải tối ưu của bài toán tối ưu duy nhất với ma trận hiệp phương sai)
         Ta giả định $\boldsymbol{\Sigma}_n = \mathrm{diag} \big( \boldsymbol{\sigma}_n (\boldsymbol{x}_n)^2 \big)$.
         Với trung bình bất kỳ $\boldsymbol{\mu}_n (\boldsymbol{x}_n)$ được tham số hóa bởi mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ như trong công thức \ref{eq:Estimated-Optimal-Mean},
@@ -539,7 +539,7 @@
         Với $\boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2$ là ma trận hiệp phương sai tối ưu của bài toán tối ưu hóa chung ở định lý \ref{dl:Optimal-Solution-To-Joint-Optimization},
         $\boldsymbol{\epsilon}_n = \dfrac{\boldsymbol{x}_n - \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0}{\sqrt{\overline{\beta}_n}}$ là nhiễu được dùng để tạo ra $\boldsymbol{x}_n$ từ $\boldsymbol{x}_0$,
         $(.)^2$ là bình phương từng phần tử của vector, $\boldsymbol{1}$ là vector mà các phần tử đều bằng một và $\gamma_n = \sqrt{\overline{\alpha}_{n-1}} - \sqrt{\overline{\beta}_{n-1} - \lambda_n^2} \sqrt{\dfrac{\overline{\alpha}_n}{\overline{\beta}_n}}$.
-    \end{dl}
+    \end{restatable}
 
     Chứng minh của định lý \ref{dl:Solely-Optimal-Covariance} chủ yếu dựa trên việc cực tiểu hóa độ phân kỳ Kullback-Leibler giữa mật độ xác suất mục tiêu và một hàm mật độ Gaussian có điều kiện trên trung bình cố định tương đương với đầu tiên thu được moment bậc hai của hàm mật độ xác suất mục tiêu,
     sau đó hiệu chỉnh bằng sai lệch giữa momen bậc nhất của hai hàm mật độ xác suất.
@@ -977,7 +977,7 @@
 
     \subsection{Chứng minh định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}, \ref{dl:Solely-Optimal-Mean}, \ref{dl:Solely-Optimal-Covariance}}
 
-    \begin{bd} (Kết nối moment có điều kiện) Giả sử $q(\boldsymbol{x})$ là một hàm mật độ xác suất với trung bình $\boldsymbol{\mu}_q$ và ma trận hiệp phương sai $\boldsymbol{\Sigma}_q$ và $p(\boldsymbol{x})=\mathcal{N}(\boldsymbol{x} \vert \boldsymbol{\mu}, \mathrm{diag}(\boldsymbol{\sigma}^2))$ là một phân phối Gaussian. Khi đó:
+    \begin{bd} \label{bd:Conditioned-Moment-Matching} (Kết nối moment có điều kiện) Giả sử $q(\boldsymbol{x})$ là một hàm mật độ xác suất với trung bình $\boldsymbol{\mu}_q$ và ma trận hiệp phương sai $\boldsymbol{\Sigma}_q$ và $p(\boldsymbol{x})=\mathcal{N}(\boldsymbol{x} \vert \boldsymbol{\mu}, \mathrm{diag}(\boldsymbol{\sigma}^2))$ là một phân phối Gaussian. Khi đó:
 
     \begin{enumerate}
         \item Với $\boldsymbol{\sigma}^2$ bất kỳ, bài toán tối ưu hóa $\displaystyle\min_{\mu} D_{\mathrm{DK}} (q \Vert p)$ có nghiệm tối ưu $\boldsymbol{\mu}^{\ast}=\boldsymbol{\mu}_q$
@@ -1030,7 +1030,7 @@
         \end{cases}     
     \end{equation}
 
-    \begin{bd}
+    \begin{bd} \label{bd:Mean-Covariance}
         Giả sử $q(\boldsymbol{x}_{0:N})$ được định nghĩa trong công thức \ref{eq:Forward-Process}. Khi đó ta có:
 
         \begin{equation*}
@@ -1075,5 +1075,42 @@
     \joint*
 
     \textit{Chứng minh.}
-    \cite{bao2021analytic} chứng minh rằng
+    \cite{bao2021analytic} chứng minh rằng độ phân kỳ Kullback-Leibler giữa một phân phối xác suất chung $q(\boldsymbol{x}_{0:N})$ và một chuối Markov $p(\boldsymbol{x}_{0:N})$ có thể được viết dưới dạng:
+
+    \begin{equation}
+        D_{\mathrm{KL}} (q(\boldsymbol{x}_{0:N}) \Vert p(\boldsymbol{x}_{0:N}))=\sum_{n=1}^N \mathbb{E}_{q} D_{\mathrm{KL}} (q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \Vert p(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)) + c
+    \end{equation}
+
+    với $c$ là hằng số chỉ phụ thuộc vào $q$ (xem Bổ đề 8 trong \cite{bao2021analytic}). 
+    Kết quả là bài toán tối ưu hóa của độ phân kỳ Kullback-Leibler được phân tích thành $n$ bài toan con độc lập:
+
+    \begin{equation}
+        \min_{\boldsymbol{\mu}_n (.), \boldsymbol{\sigma}_n (.)^2} \mathbb{E}_q D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \Vert p(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \big), 1 \leq n \leq N
+    \end{equation}
+
+    Khi $q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)$ là một hàm mật độ xác suất với trung bình $\mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack$ và ma trận hiệp phương sai $\mathrm{Cov}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack$ và $p(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) = \mathcal{N}\big( \boldsymbol{x}_{n-1} \vert \boldsymbol{\mu}_n (\boldsymbol{x}_n), \mathrm{diag} (\boldsymbol{\sigma}_n(\boldsymbol{x}_n)^2)\big)$ là một phân phối Gaussian, tương ứng với bổ đề \ref{bd:Conditioned-Moment-Matching} và bổ đề \ref{bd:Mean-Covariance}, ta có lời giải tối ưu là:
+
+    \begin{equation}
+        \begin{aligned}
+            \boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n) &= \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack = \tilde{\boldsymbol{x}}_n \big(\boldsymbol{x}_n, \dfrac{1}{\sqrt{\overline{\alpha}_n}} (\boldsymbol{x}_n - \sqrt{\overline{\beta}_n} \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack )\big) \\
+            \boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2 &= \mathrm{diag} (\mathrm{Cov}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack) = \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack - \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2 )
+        \end{aligned}
+    \end{equation}
+
+    \mean*
+
+    \textit{Chứng minh.}
+    Tương tự như định lý \ref{dl:Solely-Optimal-Mean}, bài toán tối ưu hóa tương đương với:
+
+    \begin{equation}
+        \max_{\lbrace \boldsymbol{\mu}_n \rbrace_{n=1}^N} \Leftrightarrow \min_{\lbrace \boldsymbol{\mu}_n \rbrace_{n=1}^N} D_{\mathrm{KL}} \big(q(\boldsymbol{x}_{0:N}) \Vert p(\boldsymbol{x}_{0:N}) \big) \Leftrightarrow \min_{\boldsymbol{\mu}_n} \mathbb{E}_q D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \Vert p(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \big), 1 \leq n \leq N
+    \end{equation}
+
+    Theo bổ đề \ref{bd:Conditioned-Moment-Matching} và bổ đề \ref{bd:Mean-Covariance}, ta thu được trung bình tối ưu $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ là:
+
+    \begin{equation}
+        \boldsymbol{\mu}_n^{\ast}=\mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack = \tilde{\boldsymbol{\mu}}_n \Big( \boldsymbol{x}_n, \dfrac{1}{\sqrt{\overline{\alpha}_n}} \big( \boldsymbol{x}_n - \sqrt{\overline{\beta}_n} \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \big) \Big)
+    \end{equation}
+
+    \covariance*
 \end{document}
