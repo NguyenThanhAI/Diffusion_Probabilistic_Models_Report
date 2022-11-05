@@ -1103,7 +1103,7 @@
     Tương tự như định lý \ref{dl:Solely-Optimal-Mean}, bài toán tối ưu hóa tương đương với:
 
     \begin{equation}
-        \max_{\lbrace \boldsymbol{\mu}_n \rbrace_{n=1}^N} \Leftrightarrow \min_{\lbrace \boldsymbol{\mu}_n \rbrace_{n=1}^N} D_{\mathrm{KL}} \big(q(\boldsymbol{x}_{0:N}) \Vert p(\boldsymbol{x}_{0:N}) \big) \Leftrightarrow \min_{\boldsymbol{\mu}_n} \mathbb{E}_q D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \Vert p(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \big), 1 \leq n \leq N
+        \max_{\lbrace \boldsymbol{\mu}_n \rbrace_{n=1}^N} L_{\mathrm{elbo}} \Leftrightarrow \min_{\lbrace \boldsymbol{\mu}_n \rbrace_{n=1}^N} D_{\mathrm{KL}} \big(q(\boldsymbol{x}_{0:N}) \Vert p(\boldsymbol{x}_{0:N}) \big) \Leftrightarrow \min_{\boldsymbol{\mu}_n} \mathbb{E}_q D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \Vert p(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \big), 1 \leq n \leq N
     \end{equation}
 
     Theo bổ đề \ref{bd:Conditioned-Moment-Matching} và bổ đề \ref{bd:Mean-Covariance}, ta thu được trung bình tối ưu $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ là:
@@ -1113,4 +1113,35 @@
     \end{equation}
 
     \covariance*
+
+    \textit{Chứng minh.}
+    Tương tự như định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}, bài toán tối ưu hóa tương đương với:
+
+    \begin{equation*}
+        \max_{\lbrace \boldsymbol{\Sigma}_n \rbrace_{n=1}^N} L_{\mathrm{elbo}} \Leftrightarrow \min_{\lbrace \boldsymbol{\Sigma}_n \rbrace_{n=1}^N} D_{\mathrm{KL}} \big(q(\boldsymbol{x}_{0:N}) \Vert p(\boldsymbol{x}_{0:N}) \big) \Leftrightarrow \min_{\boldsymbol{\Sigma}_n} \mathbb{E}_q D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \Vert p(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \big), 1 \leq n \leq N
+    \end{equation*}
+
+    Theo bổ đề \ref{bd:Conditioned-Moment-Matching}, ta biết hiệp phương sai tối ưu hiệu chỉnh $\tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2$ là:
+
+    \begin{equation}
+        \tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2 = \mathrm{diag} \big(\mathrm{Cov}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack \big) + \big( \boldsymbol{\mu}_n (\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack\big)^2
+    \end{equation}
+
+    Theo bổ đề \ref{bd:Conditioned-Moment-Matching}, $\mathrm{diag} \big( \mathrm{Cov}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack \big) = \boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2$.
+    Theo bổ đề \ref{bd:Mean-Covariance} và tham số hóa $\boldsymbol{\mu}_n (\boldsymbol{x}_n)$ trong công thức \ref{eq:Estimated-Optimal-Mean}, ta có:
+    \begin{equation}
+        \boldsymbol{\mu}_n (\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack = \gamma_n \sqrt{\dfrac{\overline{\beta}_n}{\overline{\alpha}_n}} \big( \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)
+    \end{equation}
+
+    Cuối cùng ta thu được,
+
+    \begin{equation}
+        \begin{aligned}
+            \tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2 &= \mathrm{diag} \big( \mathrm{Cov}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack \big) + \big( \boldsymbol{\mu}_n (\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack \big)^2 \\
+            &= \boldsymbol{\sigma}_n^{\ast}(\boldsymbol{x}_n)^2 + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \big)^2 \\
+            &= \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big \lbrace \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2 + \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2 - 2 \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) + \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2 \big \rbrace \\
+            &= \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big \lbrace \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack - 2 \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) + \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2 \big \rbrace \\
+            &= \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \lbrack (\boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n))^2 \rbrack
+        \end{aligned}
+    \end{equation}
 \end{document}
