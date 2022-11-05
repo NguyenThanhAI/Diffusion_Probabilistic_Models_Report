@@ -671,7 +671,7 @@
     Ta sẽ mở rộng định lý \ref{dl:Optimal-Solution-To-Joint-Optimization} cho DPMs với bước thời gian liên tục.
     Ta thu được lời giải toán tối ưu cho bài toán \ref{eq:ELBO-Maximization} khi $\boldsymbol{\Sigma}_{s \vert t} (\boldsymbol{x}_t)=\mathrm{diag}\big(\boldsymbol{\sigma}_{s \vert t} (\boldsymbol{x}_t)^2 \big)$ được trình bày trong mệnh đề \ref{md:Continuous-Optimal-Covariance}.
 
-    \begin{md} \label{md:Continuous-Optimal-Covariance}
+    \begin{restatable}{md}{continuousoptimalcovariance} \label{md:Continuous-Optimal-Covariance}
         Với ma trận hiệp phương sai có dạng $\boldsymbol{\Sigma}_{s \vert t} (\boldsymbol{x}_t)=\mathrm{diag}\big(\boldsymbol{\sigma}_{s \vert t} (\boldsymbol{x}_t)^2 \big)$.
         Khi đó trung bình tối ưu của bài toán trong công thức \ref{eq:ELBO-Maximization} là $\boldsymbol{\mu}_{s \vert t}^{\ast} (\boldsymbol{x}_t)$ được nêu trong công thức \ref{eq:Continuous-Optimal-Mean} và ma trận hiệp phương sai tối ưu của bài toán trong công thức \ref{eq:ELBO-Maximization} là:
 
@@ -680,7 +680,7 @@
         \end{equation*}
 
         Với $\boldsymbol{\epsilon}_t = \dfrac{\boldsymbol{x}_t - \sqrt{\alpha_{t \vert 0}} \boldsymbol{x}_0}{\sqrt{\beta_{t \vert 0}}}$ là nhiễu được sử dụng để tạo ra $\boldsymbol{x}_t$ từ $\boldsymbol{x}_0$ và $\tilde{\beta}_{s \vert t} = \dfrac{\beta_{s \vert 0}}{\beta_{t \vert 0}} \beta_{t \vert s}$.
-    \end{md}
+    \end{restatable}
 
     Tiếp theo, ta sẽ  mở rộng định lý \ref{dl:Solely-Optimal-Covariance} cho DPMs với bước thời gian liên tục.
     Tương tự như các bài toán ở công thức \ref{eq:Arbitrary-Covariance-Optimize-Mean} và công thức \ref{eq:Arbitrary-Mean-Optimize-Covariance},
@@ -697,7 +697,7 @@
     Trung bình tối ưu của bài toán trong công thức \ref{eq:Continuous-Arbitrary-Covariance-Optimize-Mean} cũng là công thức \ref{eq:Continuous-Optimal-Mean}, trung bình tối ưu này không phù hợp với $\boldsymbol{\Sigma}_{s \vert t}$.
     Ma trận hiệp phương sai tối ưu của bài toán trong công thức \ref{eq:Continuous-Arbitrary-Mean-Optimize-Covariance} được trình bày trong mệnh đề \ref{md:Continuous-Corrected-Optimal-Covariance}.
 
-    \begin{md} \label{md:Continuous-Corrected-Optimal-Covariance}
+    \begin{restatable}{md}{continuouscorrectedoptimalcovariance} \label{md:Continuous-Corrected-Optimal-Covariance}
         Ta giả định ma trận hiệp phương sai có dạng $\boldsymbol{\Sigma}_{s \vert t} (\boldsymbol{x}_t) = \mathrm{diag} \big( \boldsymbol{\sigma}_{s \vert t} (\boldsymbol{x}_t)^2 \big)$.
         Với trung bình bất kỳ $\boldsymbol{\mu}_{s \vert t}(\boldsymbol{x}_t)$ được tham số hóa bởi mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_t (\boldsymbol{x}_t)$ trong công thức \ref{eq:Estimated-Continuous-Optimal-Mean},
         ma trận hiệp phương sai tối ưu $\tilde{\boldsymbol{\sigma}}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$ của bài toán trong công thức \ref{eq:Continuous-Arbitrary-Mean-Optimize-Covariance} là:
@@ -710,7 +710,7 @@
         \end{equation}
 
         Với $\boldsymbol{\epsilon}_t = \dfrac{\boldsymbol{x}_t - \sqrt{\alpha_{t \vert 0}} \boldsymbol{x}_0}{\sqrt{\beta_{t \vert 0}}}$ là nhiễu được dùng để tạo ra $\boldsymbol{x}_t$ từ $\boldsymbol{x}_0$ và $\tilde{\beta}_{s \vert t} = \dfrac{\beta_{s \vert 0}}{\beta_{t \vert 0}} \beta_{t \vert s}$.
-    \end{md}
+    \end{restatable}
 
     Tương tự như trong công thức \ref{eq:Sigma-SN-SPM} và công thức \ref{eq:Sigma-NPR-DPM},
     để ước lượng $\boldsymbol{\sigma}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$ và $\tilde{\boldsymbol{\sigma}}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$,
@@ -1138,10 +1138,77 @@
     \begin{equation}
         \begin{aligned}
             \tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2 &= \mathrm{diag} \big( \mathrm{Cov}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack \big) + \big( \boldsymbol{\mu}_n (\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack \big)^2 \\
-            &= \boldsymbol{\sigma}_n^{\ast}(\boldsymbol{x}_n)^2 + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \big)^2 \\
+            &= \boldsymbol{\sigma}_n^{\ast}(\boldsymbol{x}_n)^2 + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \underbrace{\big( \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \big)^2}_{\mathrm{error}} \\
             &= \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big \lbrace \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2 + \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2 - 2 \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) + \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2 \big \rbrace \\
             &= \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big \lbrace \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack - 2 \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) + \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2 \big \rbrace \\
             &= \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \lbrack (\boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n))^2 \rbrack
         \end{aligned}
     \end{equation}
+
+    \subsection{Chứng minh mệnh đề \ref{md:Continuous-Optimal-Covariance} và mệnh đề \ref{md:Continuous-Corrected-Optimal-Covariance}}
+
+    \begin{bd} \label{bd:Continous-Conditional-Distribution}
+        Với $0 \leq s < t \leq T$ và $q(\boldsymbol{x}_s \vert \boldsymbol{x}_t)$ là phân phối có điều kiện của $\boldsymbol{x}_s$ khi cho trước $\boldsymbol{x}_t$ được xác định bởi SDE $d \boldsymbol{x} = f(t) \boldsymbol{x} dt + g(t) d \boldsymbol{w}$. Khi đó ta có:
+
+        \begin{equation}
+            \begin{aligned}
+                \mathbb{E}_{q(\boldsymbol{x}_s \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{x}_s \rbrack &= \dfrac{1}{\sqrt{\alpha_{t \vert s}}} \big( \boldsymbol{x}_t - \dfrac{\beta_{t \vert s}}{\sqrt{\beta_{t \vert 0}}} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack \big) \\
+                \mathrm{Cov}_{q(\boldsymbol{x}_s \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{x}_s \rbrack &= \overline{\beta}_{s \vert t} \boldsymbol{I} + \dfrac{\beta_{s \vert t}^2}{\beta_{t \vert 0} \alpha_{t \vert s}} \big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \boldsymbol{\epsilon}_t^T \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack^T \big) \\
+                \mathrm{diag} \big( \mathrm{Cov}_{q(\boldsymbol{x}_s \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{x}_s \rbrack \big) &= \overline{\beta}_{s \vert t} \boldsymbol{1} + \dfrac{\beta_{s \vert t}^2}{\beta_{t \vert 0} \alpha_{t \vert s}} \big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t^2 \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack^2 \big)
+            \end{aligned}
+        \end{equation}
+
+        Với $\boldsymbol{\epsilon}_t = \dfrac{\boldsymbol{x}_t - \sqrt{\alpha_{t \vert 0}} \boldsymbol{x}_0}{\sqrt{\beta_{t \vert 0}}}$ là nhiễu được sử dụng để tạo ra $\boldsymbol{x}_t$ từ $\boldsymbol{x}_0$ và $\overline{\beta}_{s \vert t} = \dfrac{\beta_{s \vert 0}}{\beta_{t \vert 0}} \beta_{t \vert s}$ được xác định bởi SDE là:
+    \end{bd}
+
+    \textit{Chứng minh.}
+    Phân phối có điều kiện của $\boldsymbol{x}_s$ khi cho trước $\boldsymbol{x}_t$ và $\boldsymbol{x}_0$ được xác định bởi SDE là:
+
+    \begin{equation}
+        q(\boldsymbol{x}_s \vert \boldsymbol{x}_t, \boldsymbol{x}_0) = \mathcal{N} \big( \boldsymbol{x}_s \vert \dfrac{\sqrt{\alpha_{t \vert s}} \beta_{s \vert 0}}{\beta_{t \vert 0}} \boldsymbol{x}_t + \dfrac{\sqrt{\alpha_{s \vert 0} \beta_{t \vert s}}}{\beta_{t \vert 0}} \boldsymbol{x}_0, \overline{\beta}_{s \vert t} \boldsymbol{I} \big)
+    \end{equation}
+
+    Với $\mathbb{E}_{q(\boldsymbol{x}_s \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{x}_s \rbrack$, ta có:
+
+    \begin{equation}
+        \begin{aligned}
+            \mathbb{E}_{q(\boldsymbol{x}_s \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{x}_s \rbrack &= \dfrac{1}{\sqrt{\alpha_{t \vert s}}} \big( \boldsymbol{x}_t + \beta_{t \vert s} \nabla \log q_t(\boldsymbol{x}_t) \big) \\
+            &= \dfrac{1}{\sqrt{\alpha_{t \vert s}}} \big( \boldsymbol{x}_t - \dfrac{\beta_{t \vert s}}{\sqrt{\beta_{t \vert 0}}} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack \big)
+        \end{aligned}    
+    \end{equation}
+
+    Với $\mathrm{Cov}_{q(\boldsymbol{x}_s \vert \boldsymbol{x}_t)}$, ta có thể khai triển sử dụng quy tắc cộng tổng phương sai:
+
+    \begin{equation}
+        \begin{aligned}
+            \mathrm{Cov}_{q(\boldsymbol{x}_s \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{x}_s \rbrack &= \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \mathrm{Cov}_{q(\boldsymbol{x}_s \vert \boldsymbol{x}_t, \boldsymbol{x}_0)} \lbrack \boldsymbol{x}_s \rbrack + \mathrm{Cov}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \mathbb{E}_{q(\boldsymbol{x}_s \vert \boldsymbol{x}_t, \boldsymbol{x}_0)} \lbrack \boldsymbol{x}_s \rbrack \\
+            &= \overline{\beta}_{s \vert t} \boldsymbol{I} + \dfrac{\alpha_{s \vert 0} \beta_{t \vert s}^2}{\beta_{t \vert 0}^2} \mathrm{Cov}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{x}_0 \rbrack \\
+            &= \overline{\beta}_{s \vert t} \boldsymbol{I} + \dfrac{\alpha_{s \vert 0} \beta_{t \vert s}^2}{\beta_{t \vert 0}^2} \dfrac{\beta_{t \vert 0}}{\alpha_{t \vert 0}} \mathrm{Cov}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack \\
+            &= \overline{\beta}_{s \vert t} \boldsymbol{I} + \dfrac{\beta_{t \vert s}^2}{\beta_{t \vert 0} \alpha_{t \vert s}} \big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \boldsymbol{\epsilon}_t^T \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \epsilon_t \rbrack^T \big)
+        \end{aligned}
+    \end{equation}
+
+    Ma trận thu được đường chéo của ma trận hiệp phương sai là:
+
+    \begin{equation}
+        \mathrm{diag}\big( \mathrm{Cov}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{x}_s \rbrack \big) = \overline{\beta}_{s \vert t} \boldsymbol{1} + \big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t^2 \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack^2 \big)
+    \end{equation}
+
+    \continuousoptimalcovariance*
+
+    \textit{Chứng minh.}
+    Tương ứng với bổ đề \ref{bd:Mean-Covariance} và bổ đề \ref{bd:Continous-Conditional-Distribution}, lời giải tối ưu là:
+
+    \begin{equation}
+        \begin{aligned}
+            \boldsymbol{\mu}_{s \vert t}^{\ast} &= \mathbb{E}_{q(\boldsymbol{x}_s \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{x}_s \rbrack = \dfrac{1}{\sqrt{\alpha_{t \vert s}}} \big( \boldsymbol{x}_t - \dfrac{\beta_{t \vert s}}{\sqrt{\beta_{t \vert 0}}} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack \big) \\
+            \boldsymbol{\sigma}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2 &= \mathrm{diag} \big( \mathrm{Cov}_{q(\boldsymbol{x}_s) \vert \boldsymbol{x}_t} \lbrack \boldsymbol{x}_s \rbrack \big) = \overline{\beta}_{s \vert t} \boldsymbol{1} + \dfrac{\beta_{t \vert s}^2}{\beta_{t \vert 0} \alpha_{t \vert s}} \big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t) \lbrack \boldsymbol{\epsilon}_t^2 \rbrack} - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t) \lbrack \boldsymbol{\epsilon}_t \rbrack^2} \big)
+        \end{aligned}
+    \end{equation}
+
+    \continuouscorrectedoptimalcovariance*
+
+    \textit{Chứng minh.}
+
+    
 \end{document}
