@@ -1210,5 +1210,28 @@
 
     \textit{Chứng minh.}
 
-    
+    Tương ứng với bổ đề \ref{bd:Conditioned-Moment-Matching} và mệnh đề \ref{md:Continuous-Optimal-Covariance}, ma trận hiệp phương sai tối ưu $\tilde{\boldsymbol{\sigma}}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$ là:
+
+    \begin{equation}
+        \begin{aligned}
+            \tilde{\boldsymbol{\sigma}}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2 &= \mathrm{diag} (\mathrm{Cov}_{q(\boldsymbol{x}_s \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{x}_s \rbrack) + \big(\boldsymbol{\mu}_{s \vert t} (\boldsymbol{x}_t) - \mathbb{E}_{q(\boldsymbol{x}_s \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{x}_s \rbrack \big)^2 \\
+            &= \boldsymbol{\sigma}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2 + \dfrac{\beta_{t \vert s}^2}{\beta_{t \vert 0} \alpha_{t \vert s}} \underbrace{\big( \hat{\boldsymbol{\epsilon}}_t (\boldsymbol{x}_t) - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack \big)^2}_{\mathrm{error}} \\
+            &= \tilde{\beta}_{s \vert t} \boldsymbol{1} + \dfrac{\beta_{t \vert s}^2}{\beta_{t \vert 0} \alpha_{t \vert s}} \big \lbrace  \big \lbrace \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t^2 \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack^2 + \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack^2 - 2 \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack \rbrack \hat{\boldsymbol{\epsilon}}_t (\boldsymbol{x}_t) + \hat{\boldsymbol{\epsilon}}_t (\boldsymbol{x}_t)^2 \big \rbrace \\
+            &= \tilde{\beta}_{s \vert t} \boldsymbol{1} + \dfrac{\beta_{t \vert s}^2}{\beta_{t \vert 0} \alpha_{t \vert s}} \big \lbrace \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t^2 \rbrack - 2 \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack \rbrack \hat{\boldsymbol{\epsilon}}_t (\boldsymbol{x}_t) + \hat{\boldsymbol{\epsilon}}_t(\boldsymbol{x}_t)^2 \big \rbrace \\
+            &= \tilde{\beta}_{s \vert t} \boldsymbol{1} + \dfrac{\beta_{t \vert s}^2}{\beta_{t \vert 0} \alpha_{t \vert s}} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \big \lbrack \big( \boldsymbol{\epsilon}_t - \hat{\boldsymbol{\epsilon}}_t (\boldsymbol{x}_t) \big)^2 \big \rbrack
+        \end{aligned}
+    \end{equation}
+
+    \subsection{Sức mạnh sinh dữ liệu của DPMs được cải thiện trong trường hợp phân phối dữ liệu là trộn của các phân phối Gaussian}
+
+    \begin{bd} \label{bd:Mixture-Gaussian-Data-Distribution}
+        Ta giả sử $q(\boldsymbol{x}, \boldsymbol{y})$ là một hàm mật độ xác suất ví dụ $q(\boldsymbol{x})=\sum_{j=1}^J \gamma_j \mathcal{N} (\boldsymbol{\mu}_j, c \boldsymbol{I})$ với $J \leq 2$ và trung bình $\lbrace \boldsymbol{\mu}_j \rbrace_{j=1}^J$ đôi một khác nhau và $q(\boldsymbol{y} \vert \boldsymbol{x})=\mathcal{N}(\boldsymbol{y} \vert \sqrt{\alpha} \boldsymbol{x}, \beta \boldsymbol{I})$ với $\alpha, \beta > 0$. Ta giả sử $p(\boldsymbol{x} \vert \boldsymbol{y}) = \mathcal{N} (\boldsymbol{x} \vert \boldsymbol{\mu}(\boldsymbol{y}), \boldsymbol{\Sigma}(\boldsymbol{y}))$ là một phân phối Gaussian có điều kiện trên $\boldsymbol{y}$.
+        Khi đó ta có:
+
+        \begin{equation}
+            \min_{\boldsymbol{\mu}, \boldsymbol{\Sigma}:\boldsymbol{\Sigma}(\boldsymbol{y})=\mathrm{diag}(\boldsymbol{\sigma} (\boldsymbol{y})^2)} \mathbb{E}_{q(\boldsymbol{y})} D_{\mathrm{KL}} \big( q(\boldsymbol{x} \vert \boldsymbol{y}) \Vert p(\boldsymbol{x} \vert \boldsymbol{y}) \big) < \min_{\boldsymbol{\mu}, \boldsymbol{\Sigma}:\boldsymbol{\Sigma}(\boldsymbol{y})=\sigma^2 \boldsymbol{I}} \mathbb{E}_{q(\boldsymbol{y})} D_{\mathrm{KL}} \big( q(\boldsymbol{x} \vert \boldsymbol{y}) \Vert p(\boldsymbol{x} \vert \boldsymbol{y}) \big)
+        \end{equation}
+    \end{bd}
+
+    \textit{Chứng minh.}
 \end{document}
