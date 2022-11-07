@@ -1264,4 +1264,63 @@
     \begin{equation}
         \min_{\boldsymbol{\sigma}(.)^2} \mathbb{E}_{q(\boldsymbol{y})} \Bigg \lbrack \sum_{i=1}^d \big( \boldsymbol{\sigma} (\boldsymbol{y})_i^{-2} \boldsymbol{M} (\boldsymbol{y})_{ii} + \log \boldsymbol{\sigma} (\boldsymbol{y})_i^2 \big) \Bigg \rbrack < \min_{\sigma^2} \mathbb{E}_{q(\boldsymbol{y})} \Bigg \lbrack \sum_{i=1}^d \big( \sigma^{-2} \boldsymbol{M} (\boldsymbol{y})_{ii} + \log \sigma^2 \big) \Bigg \rbrack
     \end{equation}
+
+    Bài toán ở vế bên trái cho ta biết lời giải tối ưu $\boldsymbol{\sigma}^{\ast}(\boldsymbol{y})_i^2=\boldsymbol{M} (\boldsymbol{y})_{ii}$ và bài toán ở vế bên phải có lời giải tối ưu $\sigma^{\ast 2}=\mathbb{E}_{q(\boldsymbol{y})} \dfrac{\mathrm{tr}\big( \boldsymbol{M} (\boldsymbol{y}) \big)}{d}$.
+    Ta chỉ cần chứng mình:
+
+    \begin{equation}
+        \mathbb{E}_{q(\boldsymbol{y})} \Bigg \lbrack \sum_{i=1}^d \big( \boldsymbol{\sigma}^{\ast} (\boldsymbol{y})_i^{-2} \boldsymbol{M} (\boldsymbol{y})_{ii} + \log \boldsymbol{\sigma}^{\ast} (\boldsymbol{y})_i^2 \big) \Bigg \rbrack < \mathbb{E}_{q(\boldsymbol{y})} \Bigg \lbrack \sum_{i=1}^d \big( \sigma^{\ast -2} \boldsymbol{M} (\boldsymbol{y})_{ii} + \log \sigma^{\ast 2} \big) \Bigg \rbrack
+    \end{equation}
+    Ta chứng minh bằng phản chứng. Ta giả sử:
+
+    \begin{equation}
+        \mathbb{E}_{q(\boldsymbol{y})} \Bigg \lbrack \sum_{i=1}^d \big( \boldsymbol{\sigma}^{\ast} (\boldsymbol{y})_i^{-2} \boldsymbol{M} (\boldsymbol{y})_{ii} + \log \boldsymbol{\sigma}^{\ast} (\boldsymbol{y})_i^2 \big) \Bigg \rbrack = \mathbb{E}_{q(\boldsymbol{y})} \Bigg \lbrack \sum_{i=1}^d \big( \sigma^{\ast -2} \boldsymbol{M} (\boldsymbol{y})_{ii} + \log \sigma^{\ast 2} \big) \Bigg \rbrack
+    \end{equation}
+
+    Vì vậy:
+
+    \begin{equation}
+        \forall \boldsymbol{y}, \sum_{i=1}^d \big( \boldsymbol{\sigma}^{\ast} (\boldsymbol{y})_i^{-2} \boldsymbol{M} (\boldsymbol{y})_{ii} + \log \boldsymbol{\sigma}^{\ast} (\boldsymbol{y})_i^2 \big) = \sum_{i=1}^d \big( \sigma^{\ast -2} \boldsymbol{M} (\boldsymbol{y})_{ii} + \log \sigma^{\ast 2} \big)
+    \end{equation}
+
+    phải đúng khi và chỉ khi $\forall y, \forall i, \boldsymbol{\sigma}^{\ast} (\boldsymbol{y})_i^2=\sigma^{\ast 2}$. Điều này nghĩa là $\forall y, \forall y, \boldsymbol{M} (\boldsymbol{y})_{ii}=\mathbb{E}_{q(\boldsymbol{y})} \dfrac{\mathrm{tr}\big( \boldsymbol{M} (\boldsymbol{y}) \big)}{d}$, ẩn ý rằng tồn tại $m \in \mathbb{R}$ phù hợp với $\boldsymbol{y}$ ví dụ $\mathrm{diag} \big( \mathrm{Cov}_{q(\boldsymbol{x} \vert \boldsymbol{y})} \lbrack \boldsymbol{x} \rbrack \big) = m \boldsymbol{I}$.
+
+    Từ đây ta thu được $q(\boldsymbol{x} \vert \boldsymbol{y})$:
+
+    \begin{equation}
+        \begin{aligned}
+            q(\boldsymbol{x} \vert \boldsymbol{y}) &\propto q(\boldsymbol{x}) q(\boldsymbol{y} \vert \boldsymbol{x}) \propto \sum_{j=1}^J \gamma_j \exp \Bigg ( - \dfrac{\lVert \boldsymbol{x} - \boldsymbol{\mu}_j \rVert_2^2}{2c} \Bigg ) \exp \Bigg ( - \dfrac{\lVert \boldsymbol{y} - \sqrt{\alpha} \boldsymbol{x} \rVert_2^2}{2\beta} \Bigg ) \\
+            &\propto \sum_{j=1}^J \exp \Bigg ( - \dfrac{\lVert \boldsymbol{\mu}_j \rVert_2^2}{2c} \Bigg ) \exp \Bigg( - \dfrac{(c \alpha + \beta) \lVert \boldsymbol{x} \rVert_2^2 - 2 \langle \boldsymbol{x}, \beta \boldsymbol{\mu}_j + c \sqrt{\alpha} \boldsymbol{y} \rangle}{2 c \beta} \Bigg ) \\
+            &= \sum_{j=1}^J \exp \Bigg ( \dfrac{\lVert \beta \boldsymbol{\mu}_j + c \sqrt{\alpha} \boldsymbol{y} \rVert_2^2}{2 c \beta (c \alpha + \beta)} - \dfrac{\lVert \boldsymbol{\mu}_j \rVert_2^2}{2c} \Bigg ) \exp \Bigg ( - \dfrac{\lVert \boldsymbol{x} - (\beta \boldsymbol{\mu}_j + c \sqrt{\alpha} \boldsymbol{y}) / (c \alpha + \beta) \rVert}{2c \beta / (c \alpha + \beta)} \Bigg ) \\
+            &\propto \sum_{j=1}^J \exp \Bigg ( \log \gamma_j - \dfrac{\alpha}{c \alpha + \beta} \dfrac{\lVert \boldsymbol{\mu}_j \rVert_2^2}{2} + \dfrac{\sqrt{\alpha}}{c \alpha + \beta} \boldsymbol{\mu}_j^T \boldsymbol{y} \Bigg) \mathcal{N} \Big ( (\beta \boldsymbol{\mu}_j + c \sqrt{\alpha} \boldsymbol{y})/(c \alpha + \beta), c \beta /(c \alpha + \beta) \boldsymbol{I} \Big )
+        \end{aligned}
+    \end{equation}
+
+    Ta đặt $\xi_j = \log \gamma_j - \dfrac{\alpha}{c \alpha + \beta}\dfrac{\lVert \boldsymbol{\mu}_j \rVert_2^2}{2}$, $\boldsymbol{\phi} (\boldsymbol{y})=\big ( \phi_1 (\boldsymbol{y}), \dots, \phi_J (\boldsymbol{y}) \big )$ với $\boldsymbol{\phi}_j = \xi_j + \dfrac{\sqrt{\alpha}}{c \alpha + \beta} \boldsymbol{\mu}_j^T \boldsymbol{y}$ và $\boldsymbol{\eta} (\boldsymbol{y})=\mathrm{softmax} \big ( \boldsymbol{\phi} (\boldsymbol{y}) \big )$.
+    Đặt $\boldsymbol{\nu}_j (\boldsymbol{y})=(\beta \boldsymbol{\mu}_j + c \sqrt{\alpha} \boldsymbol{y})/(c \alpha + \beta), \overline{\boldsymbol{\mu}}(\boldsymbol{y})=\sum_{j=1}^J \eta_j (\boldsymbol{y}) \boldsymbol{\mu}_j$ và $\overline{\boldsymbol{\nu}} (\boldsymbol{y})=\sum_{j=1}^J \eta_j (\boldsymbol{y}) \boldsymbol{\nu}_j (\boldsymbol{y})=(\beta \overline{\boldsymbol{\mu}} (\boldsymbol{y}) + c \sqrt{\alpha} \boldsymbol{y})/(c \alpha + \beta)$.
+    Khi đó ta có:
+
+    \begin{equation}
+        q(\boldsymbol{x} \vert \boldsymbol{y}) = \sum_{j=1}^J \eta_j (\boldsymbol{y}) \mathcal{N} \big ( \boldsymbol{\nu}_j (\boldsymbol{y}), c \beta / (c \alpha + \beta) \boldsymbol{I} \big )
+    \end{equation}
+
+    cũng là một phân phối trộn của các phân phối Gaussian.
+    Theo tính chất của phân phối trộn của các phân phối Gaussian, đường chéo của ma trận hiệp phương sai là:
+
+    \begin{equation}
+        \mathrm{diag} \big( \mathrm{Cov}_{q(\boldsymbol{x} \vert \boldsymbol{y})} \lbrack \boldsymbol{x} \rbrack \big) = c \beta / (c \alpha + \beta) \boldsymbol{1} + \sum_{j=1}^J \eta_j (\boldsymbol{y}) \boldsymbol{\nu}_j (\boldsymbol{y})^2 - \overline{\boldsymbol{\nu}} (\boldsymbol{y})^2
+    \end{equation}
+
+    Mặt khác $\mathrm{diag} \big( \mathrm{Cov}_{q(\boldsymbol{x} \vert \boldsymbol{y})} \lbrack \boldsymbol{x} \rbrack \big)=m \boldsymbol{I}$.
+    Vì vậy:
+
+    \begin{equation}
+        c \beta / (c \alpha + \beta)d + \sum_{j=1}^J \eta_j(\boldsymbol{y}) \lVert \boldsymbol{\nu}_j (\boldsymbol{y}) \rVert_2^2 - \lVert \rVert_2^2 = d m
+    \end{equation}
+
+    phù hợp với $\boldsymbol{y}$:
+
+    \begin{equation}
+        \sum_{j=1}^J \eta_j (\boldsymbol{y}) \lVert \boldsymbol{\nu}_j (\boldsymbol{y}) \rVert_2^2 - \lVert \overline{\nu} (\boldsymbol{y}) \rVert_2^2 = \beta^2 / (c \alpha + \beta)^2 \Bigg \lbrack \sum_{j=1}^J \eta_j (\boldsymbol{y}) \lVert \boldsymbol{\mu}_j \rVert_2^2 - \lVert \overline{\boldsymbol{\mu}} \rVert_2^2 \Bigg \rbrack
+    \end{equation}
 \end{document}
