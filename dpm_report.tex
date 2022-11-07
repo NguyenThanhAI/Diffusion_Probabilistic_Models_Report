@@ -1234,4 +1234,34 @@
     \end{bd}
 
     \textit{Chứng minh.}
+    Như đã được đề cập trong chứng minh của bổ đề \ref{bd:Conditioned-Moment-Matching}, độ phân kỳ Kullback-Leibler giữa hàm mật độ xác suất $q$ và một phân phối Gaussian $p$ có thể được viết dưới dạng $D_{\mathrm{KL}} (q \Vert p) = D_{\mathrm{KL}} \big( \mathcal{N}(\boldsymbol{x} \vert \mathbb{E}_{q(\boldsymbol{x}, \boldsymbol{y})} \lbrack \boldsymbol{x} \rbrack) \Vert p \big) + \mathrm{const}$, với $\boldsymbol{\mu}_q$ là trung bình của phân phối $q$, $\boldsymbol{\Sigma}_q$ là ma trận hiệp phương sai của phân phối $q$ và $\mathrm{const}$ chỉ phụ thuộc vào phân phối $q$.
+    Vì vậy, ta chỉ cần chứng minh:
+
+    \begin{equation}
+        \begin{aligned}
+            &\min_{\boldsymbol{\mu}, \boldsymbol{\Sigma}:\boldsymbol{\Sigma}(\boldsymbol{y})=\mathrm{diag}(\boldsymbol{\sigma} (\boldsymbol{y})^2)} \mathbb{E}_{q(\boldsymbol{y})} D_{\mathrm{KL}} \big( \mathcal{N} (x \vert \mathbb{E}_{q(\boldsymbol{x} \vert \boldsymbol{y})}, \mathrm{Cov}_{q(\boldsymbol{x} \vert \boldsymbol{y})} \lbrack x \rbrack) \Vert p(\boldsymbol{x} \vert \boldsymbol{y}) \big) \\
+            &< \\
+            &\min_{\boldsymbol{\mu}, \boldsymbol{\Sigma}:\boldsymbol{\Sigma}(\boldsymbol{y})=\sigma^2 \boldsymbol{I}} \mathbb{E}_{q(\boldsymbol{y})} D_{\mathrm{KL}} \big( \mathcal{N} (x \vert \mathbb{E}_{q(\boldsymbol{x} \vert \boldsymbol{y})}, \mathrm{Cov}_{q(\boldsymbol{x} \vert \boldsymbol{y})} \lbrack x \rbrack) \Vert p(\boldsymbol{x} \vert \boldsymbol{y}) \big)
+        \end{aligned}
+    \end{equation}
+
+    Trung bình tối ưu $\boldsymbol{\mu}^{\ast} (\boldsymbol{y})=\mathbb{E}_{q(\boldsymbol{x} \vert \boldsymbol{y})} \lbrack \boldsymbol{x} \rbrack$ cho cả hai bài toán.
+    Ta đặt $\boldsymbol{M} (\boldsymbol{y})=\mathrm{Cov}_{q(\boldsymbol{x} \vert \boldsymbol{y})} \lbrack \boldsymbol{x} \rbrack$.
+    Ta khai triển độ phân kỳ Kullback-Leibler và thế $\boldsymbol{\mu}^{\ast}$ vào $\boldsymbol{\mu}$:
+
+    \begin{equation}
+        2 D_{\mathrm{KL}} \big( \mathcal{N} (\boldsymbol{x} \vert \mathbb{E}_{q(\boldsymbol{x} \vert \boldsymbol{y})} \lbrack x \rbrack), \mathrm{Cov}_{q(\boldsymbol{x} \vert \boldsymbol{y})} \Vert p(\boldsymbol{x} \vert \boldsymbol{y}) \big) = \mathrm{tr} \big( \boldsymbol{\Sigma} (\boldsymbol{y})^{-1} \boldsymbol{M} (\boldsymbol{y}) \big) - d + \log \dfrac{\lvert \boldsymbol{\Sigma} (\boldsymbol{y}) \rvert}{\lvert \mathrm{Cov}_{q(\boldsymbol{x} \vert \boldsymbol{y})} \lbrack x \rbrack \rvert}
+    \end{equation}
+
+    Vì vậy ta chỉ cần chứng minh:
+
+    \begin{equation}
+        \min_{\boldsymbol{\Sigma}:\boldsymbol{\Sigma}(\boldsymbol{y})=\mathrm{diag}(\boldsymbol{\sigma}(\boldsymbol{y})^2)} \mathbb{E}_{q(\boldsymbol{y})} \Big \lbrack \mathrm{tr} \big( \boldsymbol{\Sigma} (\boldsymbol{y})^{-1} \boldsymbol{M} (\boldsymbol{y}) \big) + \log \lvert \boldsymbol{\Sigma} (\boldsymbol{y}) \rvert \Big \rbrack < \min_{\boldsymbol{\Sigma}:\boldsymbol{\Sigma}(\boldsymbol{y})=\sigma^2 \boldsymbol{I}} \mathbb{E}_{q(\boldsymbol{y})} \Big \lbrack \mathrm{tr} \big( \boldsymbol{\Sigma} (\boldsymbol{y})^{-1} \boldsymbol{M} (\boldsymbol{y}) \big) + \log \lvert \boldsymbol{\Sigma} (\boldsymbol{y}) \rvert \Big \rbrack
+    \end{equation}
+
+    tương đương với:
+
+    \begin{equation}
+        \min_{\boldsymbol{\sigma}(.)^2} \mathbb{E}_{q(\boldsymbol{y})} \Bigg \lbrack \sum_{i=1}^d \big( \boldsymbol{\sigma} (\boldsymbol{y})_i^{-2} \boldsymbol{M} (\boldsymbol{y})_{ii} + \log \boldsymbol{\sigma} (\boldsymbol{y})_i^2 \big) \Bigg \rbrack < \min_{\sigma^2} \mathbb{E}_{q(\boldsymbol{y})} \Bigg \lbrack \sum_{i=1}^d \big( \sigma^{-2} \boldsymbol{M} (\boldsymbol{y})_{ii} + \log \sigma^2 \big) \Bigg \rbrack
+    \end{equation}
 \end{document}
