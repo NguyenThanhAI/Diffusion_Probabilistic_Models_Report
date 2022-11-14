@@ -1340,4 +1340,73 @@
     Vì vậy $\boldsymbol{\mu}_1 = \boldsymbol{\mu}_2 = \dots = \boldsymbol{\mu}_J = \overline{\boldsymbol{\mu}} (\boldsymbol{y})$.
     Điều này mâu thuẫn với giả thuyết $\lbrace \boldsymbol{\mu}_j \rbrace_{j=1}^J$ đôi một khác nhau.
     Vì vậy bất đẳng thức \ref{eq:Inequality-Mixture-Of-Gaussian} đúng.
+
+    \begin{md}
+        Nếu hàm phân phối dữ liệu $a(\boldsymbol{x}_0)=\sum_{j=1}^J \mathcal{N} (\boldsymbol{\mu}_j, c \boldsymbol{I})$ là một phân phối trộn với $J \geq 2$ của phân phối Gaussian và $\lbrace \boldsymbol{\mu}_j \rbrace_{j=1}^J$ đôi một khác nhau, khi đó ta có:
+
+        \begin{equation}
+            \max_{\boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n:\boldsymbol{\Sigma}_n(\boldsymbol{x}_n)=\mathrm{diag}\big( \boldsymbol{\sigma}_n (\boldsymbol{x}_n)^2 \big)} L_{\mathrm{elbo}} > \max_{\boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n:\boldsymbol{\Sigma}_n(\boldsymbol{x}_n)=\sigma_n^2 \boldsymbol{I}} L_{\mathrm{elbo}}
+        \end{equation}
+    \end{md}
+
+    \textit{Chứng minh.}
+    Ta chỉ cần chứng minh:
+
+    \begin{equation}
+        \min_{\boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n:\boldsymbol{\Sigma}_n=\mathrm{diag}\big( \boldsymbol{\sigma}_n (\boldsymbol{x}_n)^2 \big)} D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{0:N}) \Vert p(\boldsymbol{x}_{0:N}) \big) < \max_{\boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n:\boldsymbol{\Sigma}_n=\sigma_n^2 \boldsymbol{I}} D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{0:N}) \Vert p(\boldsymbol{x}_{0:N})
+    \end{equation}
+
+    Như đã được đề cập trong chứng minh của định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}, $D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{0:N} \Vert p(\boldsymbol{x}_{0:N}) \big)$ có thể được phân tích thành:
+
+    \begin{equation}
+        D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{0:N}) \Vert p(\boldsymbol{x}_{0:N}) \big) = \sum_{n=1}^N \mathbb{E}_q D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \Vert p(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \big) + c
+    \end{equation}
+
+    với $c$ là một hằng số chỉ phụ thuộc vào phân phối $q$. Vì vậy ta chỉ cần chứng minh:\
+
+    \begin{equation}
+        \begin{aligned}
+            &\sum_{n=1}^N \min_{\boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n:\boldsymbol{\Sigma}_n(\boldsymbol{x}_n)=\mathrm{diag}\big( \boldsymbol{\sigma}_n (\boldsymbol{x}_n)^2 \big)} \mathbb{E}_q D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \Vert p(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \big) \\
+            < &\sum_{n=1}^N \min_{\boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n:\boldsymbol{\Sigma}_n(\boldsymbol{x}_n)=\sigma_n^2 \boldsymbol{I}} \mathbb{E}_q D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \Vert p(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \big)
+        \end{aligned}
+    \end{equation}
+
+    Ta chỉ cần chứng minh bất đẳng thức trên đúng khi $n=1$:
+
+    \begin{equation}
+        \begin{aligned}
+            & \min_{\boldsymbol{\mu}_1, \boldsymbol{\Sigma}_1:\boldsymbol{\Sigma}_1(\boldsymbol{x}_1)=\mathrm{diag}\big( \boldsymbol{\sigma}_1 (\boldsymbol{x}_1)^2 \big)} \mathbb{E}_q D_{\mathrm{KL}} \big( q(\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \Vert p(\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \big) \\
+            < & \min_{\boldsymbol{\mu}_1, \boldsymbol{\Sigma}_1:\boldsymbol{\Sigma}_1(\boldsymbol{x}_1)=\sigma_1^2 \boldsymbol{I}} \mathbb{E}_q D_{\mathrm{KL}} \big( q(\boldsymbol{x}_0\vert \boldsymbol{x}_1) \Vert p(\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \big)
+        \end{aligned}
+    \end{equation}
+
+    Bất đẳng thức trên đúng theo \ref{bd:Mixture-Gaussian-Data-Distribution}.
+
+    \section{Các kết quả cho ma trận hiệp phương sai đầy đủ}
+
+    Trong mục này, ta sẽ diễn giải các kết quả cho ma trận hiệp phương sai đầy đủ. 
+    Trong mệnh đề , ta sẽ thu được lời giải tối ưu của bài toán tối ưu trong công thức \ref{eq:ELBO-Maximization}.
+    Trong mệnh đề , ta sẽ thu được ma trận hiệp phương sai tối ưu cho bài toán tối ưu trong công thức \ref{eq:Arbitrary-Mean-Optimize-Covariance} khi tối ưu duy nhất ma trận hiệp phương sai.
+    Các chứng minh trong bổ đề , tương tự như bổ đề \ref{bd:Conditioned-Moment-Matching}
+
+    \begin{bd} \label{bd:Optimal-Solution-Full-Covariance}
+        Giả sử $q(\boldsymbol{x})$ là một hàm mật độ xác suất với trung bình $\boldsymbol{\mu}_q$ và ma trận hiệp phương sai $\boldsymbol{\Sigma}_q$ và $ơ(\boldsymbol{x})=\mathcal{N}(\boldsymbol{x} \vert \boldsymbol{\mu}, \boldsymbol{\Sigma})$ là một phân phối Gaussian. Khi đó:
+
+        \begin{enumerate}
+            \item Với ma trận hiệp phương sai bất kỳ $\boldsymbol{\Sigma}$, bài toán tối ưu hóa $\displaystyle\min_{\boldsymbol{\mu}} D_{\mathrm{KL}} (q \Vert p)$ có nghiệm trung bình tối ưu $\boldsymbol{\mu}^{\ast}=\boldsymbol{\mu}_q$
+            \item Với trung bình bất kỳ $\boldsymbol{\mu}$, bài toán tối ưu hóa $\displaystyle\min_{\boldsymbol{\Sigma}} D_{\mathrm{KL}} (q \Vert p)$ có nghiệm tối ưu $\tilde{\boldsymbol{\Sigma}}^{\ast}=\boldsymbol{\Sigma}_q + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)(\boldsymbol{\mu} - \boldsymbol{\mu}_q)^T$
+            \item Bài toán tối ưu hóa $\displaystyle\min_{\boldsymbol{\mu}, \boldsymbol{\Sigma}} D_{\mathrm{KL}} (q \Vert p)$ có nghiệm tối ưu $\boldsymbol{\mu}^{\ast}=\boldsymbol{\mu}_q$ và $\boldsymbol{\Sigma}^{\ast} = \boldsymbol{\Sigma}_q$
+        \end{enumerate}
+    \end{bd}
+
+    \textit{Chứng minh.}
+    Tương tự như chứng minh của bổ đề \ref{bd:Conditioned-Moment-Matching}, nghiệm tối ưu của $D_{\mathrm{KL}}(q \Vert p)$ và $D_{\mathrm{KL}}\big( \mathcal{N} (\boldsymbol{x} \vert \boldsymbol{\mu}_q, \boldsymbol{\Sigma}_q) \Vert p \big)$ tương ứng với $\boldsymbol{\mu}$ và $\boldsymbol{\Sigma}$ là như nhau.
+    Ta khai triển $D_{\mathrm{KL}} \big( \mathrm{N}(\boldsymbol{x} \vert \boldsymbol{\mu}_q, \boldsymbol{\Sigma}_q ) \Vert p \big)$ theo định nghĩa của độ phan kỳ Kullback-Leibler:
+
+    \begin{equation}
+        \begin{aligned}
+            2 D_{\mathrm{KL}} \big( \mathcal{N}(\boldsymbol{x} \vert \boldsymbol{\mu}_q, \boldsymbol{\Sigma}_q) \Vert p \big) &= \mathrm{tr} \big( \boldsymbol{\Sigma}^{-1} \boldsymbol{\Sigma}_q \big) - d + \log \dfrac{\lvert \boldsymbol{\Sigma} \rvert}{\lvert \boldsymbol{\Sigma}_q \rvert} + \big( \boldsymbol{\mu} - \boldsymbol{\mu}_q \big)^T \boldsymbol{\Sigma}^{-1} \big( \boldsymbol{\mu} - \boldsymbol{\mu}_q \big) \\
+            &= \mathrm{tr} \Big( \boldsymbol{\Sigma}^{-1} \big( \boldsymbol{\Sigma}_q + (\boldsymbol{\mu} - \boldsymbol{\mu}_q) (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^ \big) \Big) + \log \dfrac{\boldsymbol{\Sigma}}{\lvert \boldsymbol{\Sigma}_q \rvert} - d
+        \end{aligned}
+    \end{equation}
 \end{document}
