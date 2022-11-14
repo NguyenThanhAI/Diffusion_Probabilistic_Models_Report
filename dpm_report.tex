@@ -1268,7 +1268,7 @@
     Bài toán ở vế bên trái cho ta biết lời giải tối ưu $\boldsymbol{\sigma}^{\ast}(\boldsymbol{y})_i^2=\boldsymbol{M} (\boldsymbol{y})_{ii}$ và bài toán ở vế bên phải có lời giải tối ưu $\sigma^{\ast 2}=\mathbb{E}_{q(\boldsymbol{y})} \dfrac{\mathrm{tr}\big( \boldsymbol{M} (\boldsymbol{y}) \big)}{d}$.
     Ta chỉ cần chứng mình:
 
-    \begin{equation}
+    \begin{equation} \label{eq:Inequality-Mixture-Of-Gaussian}
         \mathbb{E}_{q(\boldsymbol{y})} \Bigg \lbrack \sum_{i=1}^d \big( \boldsymbol{\sigma}^{\ast} (\boldsymbol{y})_i^{-2} \boldsymbol{M} (\boldsymbol{y})_{ii} + \log \boldsymbol{\sigma}^{\ast} (\boldsymbol{y})_i^2 \big) \Bigg \rbrack < \mathbb{E}_{q(\boldsymbol{y})} \Bigg \lbrack \sum_{i=1}^d \big( \sigma^{\ast -2} \boldsymbol{M} (\boldsymbol{y})_{ii} + \log \sigma^{\ast 2} \big) \Bigg \rbrack
     \end{equation}
     Ta chứng minh bằng phản chứng. Ta giả sử:
@@ -1323,4 +1323,21 @@
     \begin{equation}
         \sum_{j=1}^J \eta_j (\boldsymbol{y}) \lVert \boldsymbol{\nu}_j (\boldsymbol{y}) \rVert_2^2 - \lVert \overline{\nu} (\boldsymbol{y}) \rVert_2^2 = \beta^2 / (c \alpha + \beta)^2 \Bigg \lbrack \sum_{j=1}^J \eta_j (\boldsymbol{y}) \lVert \boldsymbol{\mu}_j \rVert_2^2 - \lVert \overline{\boldsymbol{\mu}} \rVert_2^2 \Bigg \rbrack
     \end{equation}
+
+    $\sum_{j=1}^J \eta_j (\boldsymbol{y}) \lVert \boldsymbol{\mu}_j \rVert_2^2 - \lVert \overline{\boldsymbol{\mu}} \rVert_2^2$ cũng phù hợp với $\boldsymbol{y}$.
+    Đặt $\boldsymbol{y} = t\boldsymbol{y}_0, j_0 = \underset{j}{\mathrm{argmax}} \thickspace \boldsymbol{\mu}_j^T \boldsymbol{y}_0$. Khi đó $\lim_{t \rightarrow \infty} \eta_{j_0} (t \boldsymbol{y}_0)=1$ và:
+
+    \begin{equation}
+        \lim_{t \rightarrow \infty} \sum_{j=1}^J \eta_j (t \boldsymbol{y}_0) \lVert \boldsymbol{\mu}_j \rVert_2^2 - \lVert \overline{\boldsymbol{\mu}} (t \boldsymbol{y}_0) \rVert_2^2 =0
+    \end{equation}
+
+    Vì vậy, $\sum_{j=1}^J \eta_j (\boldsymbol{y}) \lVert \boldsymbol{\mu}_j \rVert_2^2 - \lVert \overline{\boldsymbol{\mu}} (\boldsymbol{y})  \rVert_2^2 = 0$. Điều này nghĩa là:
+
+    \begin{equation}
+        \sum_{j=1}^J \eta_j (\boldsymbol{y}) \lVert \boldsymbol{\mu}_j \rVert_2^2 - \lVert \overline{\boldsymbol{\mu}} (\boldsymbol{y}) \rVert_2^2 = \sum_{j=1}^J \eta_j (\boldsymbol{y}) \lVert \boldsymbol{\mu}_j - \overline{\boldsymbol{\mu}} (\boldsymbol{y}) \rVert_2^2 = 0
+    \end{equation}
+
+    Vì vậy $\boldsymbol{\mu}_1 = \boldsymbol{\mu}_2 = \dots = \boldsymbol{\mu}_J = \overline{\boldsymbol{\mu}} (\boldsymbol{y})$.
+    Điều này mâu thuẫn với giả thuyết $\lbrace \boldsymbol{\mu}_j \rbrace_{j=1}^J$ đôi một khác nhau.
+    Vì vậy bất đẳng thức \ref{eq:Inequality-Mixture-Of-Gaussian} đúng.
 \end{document}
