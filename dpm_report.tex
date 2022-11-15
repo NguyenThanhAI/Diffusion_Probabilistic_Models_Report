@@ -1457,4 +1457,69 @@
             \end{aligned}
         \end{equation}
     \end{md}
+
+    \textit{Chứng minh.}
+
+    Theo bổ đề \ref{bd:Joint-Optimal-Solution-Full-Covariance}, ta biết hiệp phương sai tối ưu $\tilde{\boldsymbol{\Sigma}}_n^{\ast}$ là:
+
+    \begin{equation}
+        \tilde{\boldsymbol{\Sigma}}_n^{\ast} (\boldsymbol{x}_n) = \mathrm{Cov}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack + \big( \boldsymbol{\mu}_n (\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack \big)\big( \boldsymbol{\mu}_n (\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack \big)^T
+    \end{equation}
+
+    Theo mệnh đề \ref{md:Optimal-Covariance-Solely-Full-Covariance}, $\mathrm{Cov}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack = \boldsymbol{\Sigma}_n^{\ast} (\boldsymbol{x}_n)$.
+
+    Theo bỏ đề \ref{bd:Mean-Covariance} và tham số hóa $\boldsymbol{\mu}_n (\boldsymbol{x})$ trong công thức \ref{eq:Estimated-Optimal-Mean}, ta có:
+
+    \begin{equation}
+        \boldsymbol{\mu}_n (\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack = \gamma_n \sqrt{\dfrac{\overline{\beta}_n}{\overline{\alpha}_n}} \big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)
+    \end{equation}
+
+    Ta thu được:
+
+    \begin{equation*}
+        \begin{aligned}
+            \tilde{\boldsymbol{\Sigma}}_n^{\ast} (\boldsymbol{x}_n) &= \mathrm{Cov}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack + \big( \boldsymbol{\mu}_n(\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack \big)\big( \boldsymbol{\mu}_n(\boldsymbol{x}_n) - \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack \big)^T \\
+            &= \boldsymbol{\Sigma}_n^{\ast} (\boldsymbol{x}_n) + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \underbrace{\big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)\big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^T}_{\mathrm{error}} \\
+            &= \lambda_n^2 \boldsymbol{I} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big \lbrace \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \boldsymbol{\epsilon}_n^T \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^T - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^T + \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^T  \big \rbrace \\
+            &= \lambda_n^2 \boldsymbol{I} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \big \lbrack \boldsymbol{\epsilon}_n \boldsymbol{\epsilon}_n^T - \boldsymbol{\epsilon}_n \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^T - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \boldsymbol{\epsilon}_n^T + \hat{\boldsymbol{\epsilon}}_n(\boldsymbol{x}_n) \hat{\boldsymbol{\epsilon}}_n(\boldsymbol{x}_n)^T \big \rbrack \\
+            &= \lambda_n^2 \boldsymbol{I} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \big \lbrack \big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big) \big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^T \big \rbrack
+        \end{aligned}
+    \end{equation*}
+
+    Ta cần chú ý rằng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \boldsymbol{\epsilon}_n^T \rbrack$ trong mệnh đề \ref{md:Optimal-Covariance-Solely-Full-Covariance} và $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \big \lbrack \big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big) \big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^T \big \rbrack$ trong mệnh đề \ref{md:Corrected-Optimal-Covariance-Solely-Full-Covariance} là các ma trận có kích thước $d\times d$.
+    Ta cũng có thể học các ước lượng có điều kiện bằng cách huấn luyện một mạng và đầu ra là ma trận có kích thước $d \times d$ bằng hàm mục tiêu MSE, sau đó ta ước lượng $\boldsymbol{\Sigma}_n^{\ast} (\boldsymbol{x}_n)$ và $\tilde{\boldsymbol{\Sigma}}_n^{\ast} (\boldsymbol{x}_n)$ sử dụng mạng.
+
+    Tuy nhiên, thu được mẫu từ các bước chuyển tiếp là phân phối Gaussian với ma trận hiệp phương sai đầy đủ cần sử dụng một phép phân tích của ma trận hiệp phương sai, ví dụ phân tích Cholesky có độ phức tạp thời gian $\mathcal{O}(d^3)$.
+    Trong thực tế, $d$ có thể rất lớn (ảnh có độ phân giải cao), một phép phân tích tốn rất nhiều thời gian.
+    Vì vậy, trong thực tế việc sử dụng ma trận đường chéo là phù hợp để không phải sử dụng các phép phân tích với chi phí lớn về mặt thời gian.
+
+    \section{Mở rộng DPMs sang bước thời gian liên tục}
+
+    Để thu được ước lượng của $\boldsymbol{\sigma}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$ xuất hiện trong mệnh đề \ref{md:Continuous-Optimal-Covariance}, ta sử dụng mạng $\boldsymbol{h}_t (\boldsymbol{x}_t) \in \mathbb{R}^d$ để học $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t^2 \rbrack$ bằng cực tiểu hóa hàm MSE:
+
+    \begin{equation}
+        \min_{\boldsymbol{h}_t} \mathbb{E}_t \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lVert \boldsymbol{\epsilon}_t^2 - \boldsymbol{h}_t (\boldsymbol{x}_t) \rVert_2^2
+    \end{equation}
+
+    với $t$ được lấy mẫu theo phân phối đều từ $\lbrack 0, T, \rbrack$. Sau đó ta thu được $\boldsymbol{\sigma}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$:
+
+    \begin{equation}
+        \hat{\boldsymbol{\sigma}}_{s \vert t} (\boldsymbol{x}_t)^2 = \tilde{\beta}_{s \vert t} \boldsymbol{1} + \dfrac{\beta_{t \vert s}^2}{\beta_{t \vert 0} \alpha_{t \vert s}} \big( \boldsymbol{h}_t (\boldsymbol{x}_t) - \hat{\boldsymbol{\epsilon}}_t (\boldsymbol{x}_t)^2 \big)
+    \end{equation}
+
+    Để thu được ước lượng của $\boldsymbol{\sigma}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$ được đề cập trong mệnh đề \ref{md:Continuous-Corrected-Optimal-Covariance}, ta sử dụng mạng $\boldsymbol{g}_t(\boldsymbol{x}_t) \in \mathbb{R}^d$ để học $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \big \lbrack \big( \boldsymbol{\epsilon}_t - \hat{\boldsymbol{\epsilon}}_t (\boldsymbol{x}_t) \big)^2 \big \rbrack$ bằng cách cực tiểu hóa hàm MSE:
+
+    \begin{equation}
+        \min_{\boldsymbol{g}_t} \mathbb{E}_t \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lVert \big( \boldsymbol{\epsilon}_t - \hat{\boldsymbol{\epsilon}}_t (\boldsymbol{x}_t) \big)^2 - \boldsymbol{g}_t (\boldsymbol{x}_t) \rVert_2^2
+    \end{equation}
+
+    Với $t$ được lấy mẫu theo phân phối đều từ $\lbrack 0, T \rbrack$. Khi đó ta thu được ước lượng của $\tilde{\boldsymbol{\sigma}}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$:
+
+    \begin{equation}
+        \hat{\tilde{\boldsymbol{\sigma}}}_{s \vert t} (\boldsymbol{x}_t)^2 = \tilde{\beta}_{s \vert t} \boldsymbol{1} + \dfrac{\beta_{t \vert s}^2}{\beta_{t \vert 0} \alpha_{t \vert s}} \boldsymbol{g}_t (\boldsymbol{x}_t)
+    \end{equation}
+
+    \section{Sinh dữ liệu trên quỹ đạo con}
+
+    Để tăng tốc quá trình sinh dữ liệu, ta có thể đảo ngược một quá trình khuếch tán thuận ngắn hơn 
 \end{document}
