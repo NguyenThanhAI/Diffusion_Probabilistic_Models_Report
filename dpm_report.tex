@@ -1389,7 +1389,7 @@
     Trong mệnh đề , ta sẽ thu được ma trận hiệp phương sai tối ưu cho bài toán tối ưu trong công thức \ref{eq:Arbitrary-Mean-Optimize-Covariance} khi tối ưu duy nhất ma trận hiệp phương sai.
     Các chứng minh trong bổ đề , tương tự như bổ đề \ref{bd:Conditioned-Moment-Matching}
 
-    \begin{bd} \label{bd:Optimal-Solution-Full-Covariance}
+    \begin{bd} \label{bd:Joint-Optimal-Solution-Full-Covariance}
         Giả sử $q(\boldsymbol{x})$ là một hàm mật độ xác suất với trung bình $\boldsymbol{\mu}_q$ và ma trận hiệp phương sai $\boldsymbol{\Sigma}_q$ và $ơ(\boldsymbol{x})=\mathcal{N}(\boldsymbol{x} \vert \boldsymbol{\mu}, \boldsymbol{\Sigma})$ là một phân phối Gaussian. Khi đó:
 
         \begin{enumerate}
@@ -1401,12 +1401,60 @@
 
     \textit{Chứng minh.}
     Tương tự như chứng minh của bổ đề \ref{bd:Conditioned-Moment-Matching}, nghiệm tối ưu của $D_{\mathrm{KL}}(q \Vert p)$ và $D_{\mathrm{KL}}\big( \mathcal{N} (\boldsymbol{x} \vert \boldsymbol{\mu}_q, \boldsymbol{\Sigma}_q) \Vert p \big)$ tương ứng với $\boldsymbol{\mu}$ và $\boldsymbol{\Sigma}$ là như nhau.
-    Ta khai triển $D_{\mathrm{KL}} \big( \mathrm{N}(\boldsymbol{x} \vert \boldsymbol{\mu}_q, \boldsymbol{\Sigma}_q ) \Vert p \big)$ theo định nghĩa của độ phan kỳ Kullback-Leibler:
+    Ta khai triển $D_{\mathrm{KL}} \big( \mathrm{N}(\boldsymbol{x} \vert \boldsymbol{\mu}_q, \boldsymbol{\Sigma}_q ) \Vert p \big)$ theo định nghĩa của độ phân kỳ Kullback-Leibler:
 
     \begin{equation}
         \begin{aligned}
             2 D_{\mathrm{KL}} \big( \mathcal{N}(\boldsymbol{x} \vert \boldsymbol{\mu}_q, \boldsymbol{\Sigma}_q) \Vert p \big) &= \mathrm{tr} \big( \boldsymbol{\Sigma}^{-1} \boldsymbol{\Sigma}_q \big) - d + \log \dfrac{\lvert \boldsymbol{\Sigma} \rvert}{\lvert \boldsymbol{\Sigma}_q \rvert} + \big( \boldsymbol{\mu} - \boldsymbol{\mu}_q \big)^T \boldsymbol{\Sigma}^{-1} \big( \boldsymbol{\mu} - \boldsymbol{\mu}_q \big) \\
-            &= \mathrm{tr} \Big( \boldsymbol{\Sigma}^{-1} \big( \boldsymbol{\Sigma}_q + (\boldsymbol{\mu} - \boldsymbol{\mu}_q) (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^ \big) \Big) + \log \dfrac{\boldsymbol{\Sigma}}{\lvert \boldsymbol{\Sigma}_q \rvert} - d
+            &= \mathrm{tr} \Big( \boldsymbol{\Sigma}^{-1} \big( \boldsymbol{\Sigma}_q + (\boldsymbol{\mu} - \boldsymbol{\mu}_q) (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^T \big) \Big) + \log \dfrac{\boldsymbol{\Sigma}}{\lvert \boldsymbol{\Sigma}_q \rvert} - d
         \end{aligned}
     \end{equation}
+
+    Vì vậy, $\displaystyle\min_{\boldsymbol{\mu}} D_{\mathrm{KL}} (q \Vert p) \Leftrightarrow \displaystyle\min_{\boldsymbol{\mu}} \big (\boldsymbol{\mu} - \boldsymbol{\mu}_q \big )^T \boldsymbol{\Sigma}^{-1} \big (\boldsymbol{\mu} - \boldsymbol{\mu}_q \big )$ có nghiệm tối ưu $\boldsymbol{\mu}^{\ast} = \boldsymbol{\mu}_q$, và $\displaystyle \min_{\boldsymbol{\Sigma}} D_{\mathrm{KL}} (q \Vert p) \Leftrightarrow \displaystyle \min_{\boldsymbol{\Sigma}} \mathrm{tr} \Big( \boldsymbol{\Sigma}^{-1} \big( \boldsymbol{\Sigma}_q + (\boldsymbol{\mu} - \boldsymbol{\mu}_q) (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^T \big) \Big) + \log \lvert \boldsymbol{\Sigma} \rvert$ có nghiệm tối ưu $\tilde{\boldsymbol{\Sigma}}^{\ast}=\boldsymbol{\Sigma}_q + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)(\boldsymbol{\mu} - \boldsymbol{\mu}_q)^T$.
+    Kết hợp $\boldsymbol{\mu}^{\ast}$ và $\tilde{\boldsymbol{\Sigma}}^{\ast}$, ta biết rằng $\displaystyle\min_{\boldsymbol{\mu}, \boldsymbol{\Sigma}} D_{\mathrm{KL}} (q \Vert p)$ có nghiệm tối ưu $\boldsymbol{\mu}^{ast}=\boldsymbol{\mu}_q$ và $\boldsymbol{\Sigma}^{\ast}=\boldsymbol{\Sigma}_q$
+
+    \begin{md} \label{md:Optimal-Covariance-Solely-Full-Covariance}
+        Giả sử $\boldsymbol{\Sigma}_n (\boldsymbol{x}_n)$ là một ma trận hiệp phương sai đầy đủ. 
+        Khi đó trung bình tối ưu của bài toán tối ưu trong công thức \ref{eq:ELBO-Maximization} là $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ trong công thức \ref{eq:Optimal-Mean} và ma trận hiệp phương sai tối ưu của bài toán tối ưu trong công thức \ref{eq:ELBO-Maximization} là:
+
+        \begin{equation}
+            \boldsymbol{\Sigma}_n^{\ast} (\boldsymbol{x}_n) = \lambda_n^2 \boldsymbol{I} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \boldsymbol{\epsilon}_n^T \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^T \big)
+        \end{equation}
+    \end{md}
+
+    \textit{Chứng minh.}
+    \cite{bao2021analytic} chứng minh rằng độ phân kỳ Kullback - Leibler giữa một hàm mật độ xác suất chung và một chuỗi Markov $p(\boldsymbol{x}_{0:N})$ được viết dưới dạng:
+
+    \begin{equation}
+        D_{\mathrm{KL}} \big ( q(\boldsymbol{x}_{0:N}) \Vert p(\boldsymbol{x}_{0:N}) \big ) = \sum_{n=1}^N \mathbb{E}_{q} D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \Vert p(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \big) + c
+    \end{equation}
+
+    với $c$ là hằng số chỉ phụ thuộc vào phân phối $q$ (xem bổ đề 8 trong \cite{bao2021analytic}).
+    Kết quả là quá trình tối ưu của độ phân kỳ Kullback-Leibler được phân tích thành $n$ bài toán tối ưu hóa con độc lập:
+
+    \begin{equation}
+        \min_{\boldsymbol{\mu}_n (.), \boldsymbol{\Sigma}_n (.)} \mathbb{E}_q D_{\mathbb{KL}} \big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \Vert p(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \big), 1 \leq n \leq N
+    \end{equation}
+
+    $q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)$ là hàm mật độ xác suất với trung bình $\mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack$ và ma trận hiệp phương sai $\mathrm{Cov}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack$ và $p(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) = \mathcal{N} \big( \boldsymbol{x}_{n-1} \vert \boldsymbol{\mu}_n (\boldsymbol{x}_n), \boldsymbol{\Sigma}_n (\boldsymbol{x}_n) \big)$ là phân phối Gaussian,
+    theo bổ đề \ref{bd:Joint-Optimal-Solution-Full-Covariance} và bổ đề \ref{bd:Mean-Covariance}, ta biết nghiệm tối ưu là:
+
+    \begin{equation}
+        \begin{aligned}
+            \boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n) &= \mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack = \tilde{\boldsymbol{\mu}}_n \big( \boldsymbol{x}_n, \dfrac{1}{\sqrt{\overline{\alpha}_m}} (\boldsymbol{x}_n - \sqrt{\overline{\beta}_n}\mathbb{E}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack) \big) \\
+            \boldsymbol{\Sigma}_n^{\ast} (\boldsymbol{x}_n) &= \mathrm{Cov}_{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{x}_{n-1} \rbrack = \lambda_n^2 \boldsymbol{I} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \boldsymbol{\epsilon}_n^T \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^T \big)
+        \end{aligned}
+    \end{equation}
+
+    \begin{md} \label{md:Corrected-Optimal-Covariance-Solely-Full-Covariance}
+        Giả sử $\boldsymbol{\Sigma}_n(\boldsymbol{x}_n)$ là ma trận hiệp phương sai đầy đủ.
+        Với trung bình bất kỳ $\boldsymbol{\mu}_n (\boldsymbol{x}_n)$ được tham số hóa bởi một mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ như trong công thức \ref{eq:Estimated-Optimal-Mean}, ma trận hiệp phương sai tối ưu $\tilde{\boldsymbol{\Sigma}}_n^{\ast} (\boldsymbol{x}_n)$ của bài toán tối ưu trong công thức \ref{eq:Arbitrary-Mean-Optimize-Covariance} là:
+
+        \begin{equation}
+            \begin{aligned}
+                \tilde{\boldsymbol{\Sigma}}_n^{\ast} (\boldsymbol{x}_n) &= \boldsymbol{\Sigma}_n^{\ast} (\boldsymbol{x}_n) + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \underbrace{\big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)\big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^T}_{\mathrm{error}} \\
+                &= \lambda_n^2 \boldsymbol{I} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \big \lbrack \big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big) \big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^T \big \rbrack
+            \end{aligned}
+        \end{equation}
+    \end{md}
 \end{document}
