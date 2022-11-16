@@ -1521,5 +1521,50 @@
 
     \section{Sinh dữ liệu trên quỹ đạo con}
 
-    Để tăng tốc quá trình sinh dữ liệu, ta có thể đảo ngược một quá trình khuếch tán thuận ngắn hơn 
+    Để tăng tốc quá trình sinh dữ liệu, ta có thể đảo ngược một quá trình khuếch tán thuận ngắn hơn $q(\boldsymbol{x}_{\tau_0}, \dots, \boldsymbol{x}_{\tau_k} \vert \boldsymbol{x}_0)$ ràng buộc trên một quỹ đạo $1 \leq \tau_1 < \dots < \tau_K = N$ gồm $K$ bước thời gian \cite{song2020denoising}, \cite{bao2021analytic}.
+    Theo như ký hiệu trong \cite{bao2021analytic}, quá trình khuếch tán thuận rút gọn được định nghĩa là:
+
+    \begin{equation*}
+        \begin{aligned}
+            & q(\boldsymbol{x}_{\tau_1}, \boldsymbol{x}_{\tau_2}, \dots, \boldsymbol{x}_{\tau_K} \vert \boldsymbol{x}_0) = q(\boldsymbol{x}_{\tau_K} \vert \boldsymbol{x}_0) \prod_{k=2}^K q(\boldsymbol{x}_{\tau_{k-1}} \vert \boldsymbol{x}_{\tau_k}, \boldsymbol{x}_0) \\
+            & q(\boldsymbol{x}_{\tau_{k-1}} \vert \boldsymbol{x}_{\tau_k}, \boldsymbol{x}_0) = \mathcal{N} \big( \boldsymbol{x}_{\tau_{k-1}} \vert \tilde{\boldsymbol{\mu}}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k}, \boldsymbol{x}_0), \lambda_{\tau_{k-1} \vert \tau_k}^2 \boldsymbol{I} \big) \\
+            & \tilde{\boldsymbol{\mu}}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k}, \boldsymbol{x}_0) = \sqrt{\overline{\alpha}_{\tau_{k-1}}} \boldsymbol{x}_0 + \sqrt{\overline{\beta}_{\tau_{k-1}} - \lambda_{\tau_{k-1} \vert \tau_k}^2} \dfrac{\boldsymbol{x}_{\tau_k} - \sqrt{\overline{\alpha}_{\tau_k}}\boldsymbol{x}_0}{\sqrt{\overline{\beta}_{\tau_k}}}
+        \end{aligned}
+    \end{equation*}
+
+    Tương tự như công thức \ref{eq:Reverse-Process}, mô hình Markov rút gọn để đảo ngược quá trình khuếch tán thuận được định nghĩa là:
+
+    \begin{equation*}
+        \begin{aligned}
+            & p(\boldsymbol{x}_0, \boldsymbol{x}_{\tau_1}, \dots, \boldsymbol{x}_{\tau_K}) = p(\boldsymbol{x}_{\tau_K}) \prod_{k=1}^K p(\boldsymbol{x}_{\tau_{k-1} \vert \tau_k}) \\
+            & p(\boldsymbol{x}_{\tau_{k-1} \vert \tau_k}) = \mathcal{N} \big( \boldsymbol{x}_{\tau_{k-1}} \vert \boldsymbol{\mu}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k}), \boldsymbol{\Sigma}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k}) \boldsymbol{I} \big)
+        \end{aligned}
+    \end{equation*}
+
+    Theo định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}, khi $\boldsymbol{\Sigma}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k})=\mathrm{diag} \big( \boldsymbol{\sigma}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k})^2 \big)$, hiệp phương sai tối ưu $\boldsymbol{\sigma}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k})^2$ là:
+
+    \begin{equation}
+        \boldsymbol{\sigma}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k})^2 = \lambda_{\tau_{k-1} \vert \tau_k}^2 \boldsymbol{1} + \gamma_{\tau_{k-1} \vert \tau_k}^2 \dfrac{\overline{\beta}_{\tau_k}}{\overline{\alpha}_{\tau_k}} \Big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_{\tau_k})} \lbrack \boldsymbol{\epsilon}_{\tau_k}^2 \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_{\tau_k})} \lbrack \boldsymbol{\epsilon}_{\tau_k} \rbrack^2 \Big)
+    \end{equation}
+
+    với $\boldsymbol{\epsilon}_{\tau_k}=\dfrac{\boldsymbol{x}_{\tau_k} - \sqrt{\overline{\alpha}_{\tau_k}} \boldsymbol{x}_0}{\sqrt{\overline{\beta}_{\tau_k}}}$ là nhiễu để tạo ra $\boldsymbol{x}_{\tau_k}$ từ $\boldsymbol{x}_0$ và $\gamma_{\tau_{k-1} \vert \tau_k}=\sqrt{\overline{\alpha}_{\tau_{k-1}}} - \sqrt{\overline{\beta}_{\tau_{k-1}} - \lambda_{\tau_{k-1} \vert \tau_k}^2} \sqrt{\dfrac{\overline{\alpha}_{\tau_k}}{\overline{\beta}_{\tau_k}}}$.
+    Vì vậy ta có thể sử dụng mạng dự đoán nhiễu bình phương $\boldsymbol{h}_n(\boldsymbol{x}_n)$ được luấn luyện trên hàm mục tiêu ở công thức \ref{eq:Square-Noise-Prediction-Network-MSE-Loss} và ước lượng của $\boldsymbol{\sigma}_{\tau_{k-1} \vert \tau_k}^{\ast} (\boldsymbol{x}_{\tau_k})^2$ bằng công thức:
+
+    \begin{equation}        
+        \hat{\boldsymbol{\sigma}}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k})^2 = \lambda_{\tau_{k-1} \vert \tau_k}^2 \boldsymbol{1} + \gamma_{\tau_{k-1} \vert \tau_k}^2 \dfrac{\overline{\beta}_{\tau_k}}{\overline{\alpha}_{\tau_k}} \big( \boldsymbol{h}_{\tau_k} (\boldsymbol{x}_{\tau_k}) - \hat{\boldsymbol{\epsilon}}_{\tau_k} (\boldsymbol{x}_{\tau_k})^2 \big)
+    \end{equation}
+
+    Khi xét tới trung bình không hoàn hảo (khi xét sai lệch của $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$), tương ứng với định lý \ref{dl:Solely-Optimal-Covariance}, hiệp phương sai tối ưu hiệu chỉnh là $\tilde{\boldsymbol{\sigma}}_{\tau_{k-1} \vert \tau_k}^{\ast} (\boldsymbol{x}_{\tau_k})^2$ là:
+
+    \begin{equation}
+        \tilde{\boldsymbol{\sigma}}_{\tau_{k-1} \vert \tau_k}^{\ast} (\boldsymbol{x}_{\tau_k})^2 = \lambda_{\tau_{k-1} \vert \tau_k}^2 \boldsymbol{1} + \gamma_{\tau_{k-1} \vert \tau_k}^2 \dfrac{\overline{\beta}_{\tau_k}}{\overline{\alpha}_{\tau_k}} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_{\tau_k})} \big \lbrack \big(\boldsymbol{\epsilon}_{\tau_k} - \hat{\boldsymbol{\epsilon}}_{\tau_k} (\boldsymbol{x}_{\tau_k}) \big)^2 \rbrack
+    \end{equation}
+
+    Vì vậy ta sử dụng mạng dự đoán phần dư nhiễu bình phương $\boldsymbol{g}_n (\boldsymbol{x}_n)$ được huấn luyện trên hàm mục tiêu ở công thức \ref{eq:Square-Noise-Prediction-Network-MSE-Loss} và ước lượng của $\tilde{\boldsymbol{\sigma}}_{\tau_{k-1} \vert \tau_k}^{\ast} (\boldsymbol{x}_{\tau_k})^2$ là:
+
+    \begin{equation}
+        \hat{\tilde{\boldsymbol{\sigma}}}_{\tau_{k-1} \vert \tau_k} (\boldsymbol{x}_{\tau_k})^2 = \lambda_{\tau_{k-1} \vert \tau_k}^2 \boldsymbol{1} + \gamma_{\tau_{k-1} \vert \tau_k}^2 \boldsymbol{g}_{\tau_k} (\boldsymbol{x}_{\tau_k})
+    \end{equation}
+
+    Ta cần nhấn mạnh rằng quá trình sinh dữ liệu trên quỹ đạo rút gọn không cần huấn luyện một mạng dự đoán phần dư nhiễu bình phương hoặc một mạng dự đoán nhiễu bình phương, quá trình rút gọn và quá trình đầy đủ sử dụng chung phân phối cận biên vì vậy ta có thể sử dụng các mạng dự đoạn được huấn luyện với số bước thời gian đầy đủ.
 \end{document}
