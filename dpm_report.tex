@@ -1567,4 +1567,32 @@
     \end{equation}
 
     Ta cần nhấn mạnh rằng quá trình sinh dữ liệu trên quỹ đạo rút gọn không cần huấn luyện một mạng dự đoán phần dư nhiễu bình phương hoặc một mạng dự đoán nhiễu bình phương, quá trình rút gọn và quá trình đầy đủ sử dụng chung phân phối cận biên vì vậy ta có thể sử dụng các mạng dự đoạn được huấn luyện với số bước thời gian đầy đủ.
+
+    \section{Một số bàn luận}
+
+    \subsection{Khuếch đại sai lệch}
+
+    Ta cần chú ý rằng trong SN-DPM, sai lệch của $\hat{\boldsymbol{\epsilon}}_n(\boldsymbol{x}_n)^2$ hay bị khuếch đại so với $\hat{\boldsymbol{\epsilon}}_n(\boldsymbol{x}_n)$.
+    $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2$ sử dụng $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2$ là bình phương của đầu ra của mô hình.
+    Tuy nhiên hàm mục tiêu cho $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ trong công thức \ref{eq:Noise-Prediction} là hàm mục tiêu MSE giữa $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ và $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack$ thay vì bình phương của nhiễu.
+    Vì vậy, sai lệch giữa $\hat{\boldsymbol{\epsilon}}_n(\boldsymbol{x}_n)^2$ và $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2$ có xu hướng bị khuếch đại.
+    Đặc biệt sai lệch của $\hat{\boldsymbol{\epsilon}}_n(\boldsymbol{x}_n)^2$ và $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2$ tại thành phần thứ $i$ là $\big \lbrack \hat{\boldsymbol{\epsilon}}_n(\boldsymbol{x}_n)_i^2 - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack_i^2 \big \rbrack=A_i \big \lbrack \hat{\boldsymbol{\epsilon}}_n(\boldsymbol{x}_n)_i - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack_i \big \rbrack$ với $A_i = \big \lbrack \hat{\boldsymbol{\epsilon}}_n(\boldsymbol{x}_n)_i + \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack_i \big \rbrack$.
+    Vì vậy, sai lệch của $\hat{\boldsymbol{\epsilon}}_n(\boldsymbol{x}_n)^2$ tại thành phần thứ $i$ bị nhân với một hệ số $A_i$.
+    Trong thực tế, giá trị của $A_i$ không đảm bảo bị chặn và sai lệch có thể khuếch đại bởi một hệ số lớn.
+
+    Ngược lại, NPR-DPM không gặp phải vấn đề về khuếch đại sai số, khi mà mô hình này sử dụng mô hình mạng $\boldsymbol{g}_n (\boldsymbol{x}_n)$ để ước lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)}$ và trực tiếp cực tiểu hóa hàm mục tiêu MSE giữa giá trị đầu ra của mạng và giá trị thực tế thu được.
+
+    \subsection{NPR-DPM không phải lúc nào cũng tốt hơn SN-DPM}
+
+    Ta chú ý rằng SN-DPM tốt hơn về độ đô FID và NPR-DPM tốt hơn về ước lượng hợp lý.
+    Khả năng sinh dữ liệu của NPR-DPM trên độ đo ước lượng hợp lý được đảm bảo vì mô hình này tối ưu hóa hàm $\log$ của ước lượng hợp lý với trung bình không hoàn hảo.
+    Nhưng chất lượng ảnh được sinh ra và ước lượng hợp lý không nhất thiết phải nhất quán với nhau (mục 3.2 trong \cite{theis2016note}) và NPR-DPM không trực tiếp tối ưu hóa chất lượng ảnh được sinh ra.
+    Vì vậy NPR-DPM trên độ đo FID không được đảm bảo.
+
+    Trong thực tế, NPR-DPM rất hữu ích trong các ứng dụng như nén không tổn hao (mục 7.3 trong \cite{kingma2021variational}),
+    nơi mà ước lượng hợp lý và độ hiệu quả tính toán đóng một vai trò quan trọng.
+
+    \section{Chi tiết thực nghiệm}
+
+    \subsection{Chi tiết của các mô hình dự đoán nhiễu được tiền huấn luyện}
 \end{document}
