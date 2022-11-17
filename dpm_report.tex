@@ -1595,4 +1595,55 @@
     \section{Chi tiết thực nghiệm}
 
     \subsection{Chi tiết của các mô hình dự đoán nhiễu được tiền huấn luyện}
+
+    Trong bảng \ref{table:Details-of-Pretrained-Noise-Prediction-Network}, ta sẽ liệt kê chi tiết về các mạng dự đoán nhiễu được tiền huấn luyện.
+    Mô hình được tiền huấn luyện trên ImageNet 64x64 bao gồm mạng dự đoán nhiễu và một mạng hiệp phương sai.
+    Ta chỉ sử dụng mạng dự đoán nhiễu.
+
+    \begin{table}[h!] \label{table:Details-of-Pretrained-Noise-Prediction-Network}
+        \caption{Chi tiết của các mạng dự đoán nhiễu được sử dụng trong thử nghiệm.
+        LS nghĩa là lịch trình tuyến tính của $\beta_n$ trong quá trình khuếch tán thuận của bước thời gian rời rạc (công thức \ref{eq:Forward-Process}).
+        CS nghĩa là lịch trình cosine của $\beta_n$ \cite{nichol2021improved} trong quá trình khuếch toán thuận của bước thời gian rời rạc (công thức \ref{eq:Forward-Process}).
+        VP SDE được định nghĩa bằng $d \boldsymbol{x}=- \dfrac{1}{2} \beta(t) \boldsymbol{x} dt + \sqrt{\beta(t)} d \boldsymbol{w}$, với $\beta (t)$ là một hàm tuyến tính theo $t$ với $\beta(0)=1$ và $\beta(1)=20$ \cite{song2020score}}
+        \begin{tabular}{l c c c c}
+            \hline
+            & Loại bước thời gian & Số bước thời gian $N$ & Quá trình thuận & Công trình \\
+            \hline
+            CIFAR10 (LS) & Rời rạc & 1000 & LS & \cite{bao2021analytic} \\
+            CIFAR10 (CS) & Rời rạc & 1000 & CS & \cite{bao2021analytic} \\
+            CIFAR10 (VP SDE) & Liên tục & \_ & VP SDE & \cite{song2020score} \\
+            CelebA 64x64 & Rời rạc & 1000 & LS & \cite{song2020denoising} \\
+            ImageNet 64x64 & Rời rạc & 4000 & CS & \cite{nichol2021improved} \\
+            LSUN Bedroom & Rời rạc & 1000 & LS & \cite{ho2020denoising} \\
+            \hline
+        \end{tabular}
+    \end{table}
+
+    \subsection{Cấu trúc chi tiết của mạng dự đoán nhiễu}
+
+    Trong bảng \ref{table:Structures-Details-of-Prediction-Network}, ta liệt kê cấu trúc chi tiết của $N_1$ và $NN_2$ của mạng dự đoán nhiễu được sử dụng trong thực nghiệm.
+
+    \begin{table}[h!] \label{table:Structures-Details-of-Prediction-Network}
+        \caption{$NN_1$ là mạng dự đoán nhiễu được tiền huấn luyện và $NN_2$ là SN hoặc NPR sử dụng trong thực nghiệm.
+        CONV là viết tắ của mạng tích chập. RES là các khối phần dư}
+        \begin{center}
+            \begin{tabular}{l c c c }
+                \hline
+                & $NN_1$ & $NN_2$ (SN) & $NN_2$ (NPR) \\
+                \hline
+                CIFAR10 (LS) & CONV & CONV & CONV \\
+                CIFAR10 (CS) & CONV & CONV & CONV \\
+                CIFAR10 (VP SDE) & CONV & CONV & CONV \\
+                CelebA 64X64 & CONV & CONV & CONV \\
+                ImageNet 64x64 & CONV & RES + CONV & CONV \\
+                LSUN Bedroom & CONV & RES + CONV & CONV \\
+                \hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+
+    \subsection{Chi tiết về chi phí bộ nhớ và chi phí thời gian}
+
+    Trong bảng, ta liệt kê chi phí bộ nhớ và chi phí thời gian của các mô hình (tương ứng với các phương pháp) được sử dụng trong thực nghiệm.
+    Chi phí bộ nhớ của SN hoặc NPR là không đáng kể. Thời gian tăng thêm của SN hoặc NPR là không đáng kể trên CIFAR10, CelebA 64x64, và khoảng 4.5\% trên tập ImageNet 64x64, và khoảng 10 \% trên tập LSUN Bedroom.
 \end{document}
