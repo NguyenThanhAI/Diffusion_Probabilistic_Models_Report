@@ -1646,4 +1646,55 @@
 
     Trong bảng, ta liệt kê chi phí bộ nhớ và chi phí thời gian của các mô hình (tương ứng với các phương pháp) được sử dụng trong thực nghiệm.
     Chi phí bộ nhớ của SN hoặc NPR là không đáng kể. Thời gian tăng thêm của SN hoặc NPR là không đáng kể trên CIFAR10, CelebA 64x64, và khoảng 4.5\% trên tập ImageNet 64x64, và khoảng 10 \% trên tập LSUN Bedroom.
+
+    \begin{table}
+        \caption{Kích thước của mô hình (MB) và thời gian chạy trung bình (ms) để chạy một bước qua mạng (thời gian để tính toán nhiễu và thời gian để tính toán qua SN và NPR).
+        Ta cũng sẽ liệt kê thời gian tăng thêm của SN và NPR tương đối so với mạng dự đoán nhiễu.
+        Tất cả được thực hiện với batch size là 10 và trên một GeForce RTX 2080 Ti.}
+        \begin{center}
+            \begin{tabular}{l c c c}
+                \hline
+                & Mạng dự đoán nhiễu & SN-DPM & NPR-DPM \\
+                \hline
+                CIFAR10 (LS) & 200.44 MB / 25.65 MS & 200.45 MB / 25.77 MS (+0.5\%) & 200.45 MB / 25.71 MS (+0.2\%) \\
+                CIFAR10 (CS) & 200.44 MB / 25.26 MS & 200.45 MB / 25.62 MS (+1.4\%) & 200.45 MB / 25.64 MS (+1.5\%) \\
+                CIFAR10 (VP SDE) & 235.77 MB / 26.98 MS 235.78 MB / 27.17 MS (+0.7\%) & 235.78 MB / 27.17 MS (+0.7\%) \\
+                CelebA 64X64 & 300.22 MB / 48.64 MS & 300.23 MB / 49.20 MS (+1.2\%) & 300.23 MB / 49.18 MS (+1.1\%) \\
+                ImageNet 64X64 & 461.82 MB / 72.32 MS & 463.47 MB / 75.56 MS (+4.5\%) & 461.84 MB / 72.80 MS (+0.7\%) \\
+                LSUN Bedroom & 433.63 MB / 441.41 MS & 435.02 MB / 485.54 MS (+10.0\%) & 433.64 MB / 448.74 MS (+1.7\%) \\
+                \hline
+            \end{tabular}
+        \end{center}
+    \end{table}
+
+    \subsection{Chi tiết huấn luyện}
+    
+    Ta sử dụng cấu hình huấn luyện tương tự như mạng dự đoán nhiễu trong \cite{bao2021analytic}.
+    Trên tất cả các tập dự liệu, ta sử dụng thuật toán AdamW \cite{loshchilov2018decoupled} với tốc độ học 0.0001.
+    Ta huấn luyện trên 500000 bước và trung bình dịch chuyển hàm mũ (EMA) với hệ số 0.9999.
+    Ta sử dụng batch size là 64 trên tập LSUN Bedroom và 128 trên các tập khác.
+    Ta sẽ lưu lại một checkpoint sau mỗi 10000 bước và lựa chọn mô hình với tham số tốt nhất trên độ đo FID trên 1000 ảnh được sinh ra.
+    Mặc định, các ảnh được sinh với số bước đầy đủ, ngoại trừ tập LSUN Bedroom.
+    Trên tập LSUN Bedroom, các ảnh được sinh ra được với 100 bước với chi phí thời gian chấp nhận được (chi phí thời gian trên tập LSUN Bedroom lớn hơn rất nhiều so với các tập khác).
+
+    Huấn luyện một mạng SN hoặc NPR trên tập CIFAR10 mất khoảng 32 giờ trên một GeForce RTX 2080Ti.
+    Huấn luyện trên tập CelebA 64x64 mất khoảng 72 giờ trên hai GeForce RTX 2080Ti.
+    Huấn luyện trên tập ImageNet 64x64 mất khoảng 83 giờ trên hai GeForece RTX 2080ti. 
+    Huấn luyện trên tập LSUN Bedroom mất khoảng 171 giờ trên bốn GeFore RTX 2080 Ti.
+
+    \subsection{Log của ước lượng hợp lý và lấy mẫu}
+
+    Dữ liệu ảnh là một vector của các số thực trong $\lbrace 0, 1, \dots, 255 \rbrace$ và ta sẽ đưa các giá trị này về khoảng $\lbrack -1, 1 \rbrack$ theo \cite{ho2020denoising}, \cite{bao2021analytic}.
+
+    \textbf{Log của ước lượng hợp lý.} Theo \cite{ho2020denoising}, \cite{bao2021analytic}, ta rời rạc hóa bước chuyển tiếp Markov cuối cùng $p(\boldsymbol{x}_0 \vert \boldsymbol{x}_1)$ để thu được NLL rời rạc và cận trên.
+    Ước lượng hợp lý được đánh giá trên toàn tập test.
+
+    \textbf{Lấy mẫu.} Theo \cite{ho2020denoising}, \cite{bao2021analytic}, ta chỉ hiển thị trung bình của $p(\boldsymbol{x}_0 \vert \boldsymbol{x}_1)$ mà không phải là lấy mẫu ở bước cuối cùng của quá trình lấy mẫu.
+    Theo \cite{bao2021analytic}, ta sẽ chặn hiệp phương sai $\boldsymbol{\sigma}_2 (\boldsymbol{x}_2)^2$ của $p(\boldsymbol{x}_1 \vert \boldsymbol{x}_2)$ bởi chuẩn vô cùng là $\lVert \boldsymbol{\sigma}_2 (\boldsymbol{x}_2) \rVert_{\infty} \mathbb{E} \lvert \epsilon \rvert \leq \dfrac{2}{255}y$ với $\lVert \boldsymbol{\sigma}_2 (\boldsymbol{x}_2) \rVert_{\infty}$ ký hiệu là chuẩn vô cùng,
+    $\epsilon$ là phân phối Gaussian chuẩn tắc và $y$ là độ thay đổi lớn nhất có thể chịu được trên từng kênh màu.
+    Theo \cite{bao2021analytic} ta sử dụng $y = 2$ trên CIFAR10 (LS) và trên CelebA 64x64 với quá trình khuếch tán thuận DDPM.
+    Các cấu hình khác sử dụng $y=1$.
+    Theo \cite{bao2021analytic}, ta tính độ đo FID trên 50000 ảnh được sinh ra, sử dụng code chính thức của FID được viết trên PyTorch (\url{(https://github.com/mseitzer/pytorch-fid}).
+    Theo \cite{nichol2021improved}, \cite{bao2021}
+
 \end{document}
