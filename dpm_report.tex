@@ -1592,7 +1592,7 @@
     Trong thực tế, NPR-DPM rất hữu ích trong các ứng dụng như nén không tổn hao (mục 7.3 trong \cite{kingma2021variational}),
     nơi mà ước lượng hợp lý và độ hiệu quả tính toán đóng một vai trò quan trọng.
 
-    \section{Chi tiết thực nghiệm}
+    \section{Chi tiết thực nghiệm} \label{Experimental-Details}
 
     \subsection{Chi tiết của các mô hình dự đoán nhiễu được tiền huấn luyện}
 
@@ -1600,7 +1600,7 @@
     Mô hình được tiền huấn luyện trên ImageNet 64x64 bao gồm mạng dự đoán nhiễu và một mạng hiệp phương sai.
     Ta chỉ sử dụng mạng dự đoán nhiễu.
 
-    \begin{table}[h!] \label{table:Details-of-Pretrained-Noise-Prediction-Network}
+    \begin{table}[h!] 
         \caption{Chi tiết của các mạng dự đoán nhiễu được sử dụng trong thử nghiệm.
         LS nghĩa là lịch trình tuyến tính của $\beta_n$ trong quá trình khuếch tán thuận của bước thời gian rời rạc (công thức \ref{eq:Forward-Process}).
         CS nghĩa là lịch trình cosine của $\beta_n$ \cite{nichol2021improved} trong quá trình khuếch toán thuận của bước thời gian rời rạc (công thức \ref{eq:Forward-Process}).
@@ -1617,13 +1617,14 @@
             LSUN Bedroom & Rời rạc & 1000 & LS & \cite{ho2020denoising} \\
             \hline
         \end{tabular}
+        \label{table:Details-of-Pretrained-Noise-Prediction-Network}
     \end{table}
 
     \subsection{Cấu trúc chi tiết của mạng dự đoán nhiễu}
 
     Trong bảng \ref{table:Structures-Details-of-Prediction-Network}, ta liệt kê cấu trúc chi tiết của $N_1$ và $NN_2$ của mạng dự đoán nhiễu được sử dụng trong thực nghiệm.
 
-    \begin{table}[h!] \label{table:Structures-Details-of-Prediction-Network}
+    \begin{table}[h!] 
         \caption{$NN_1$ là mạng dự đoán nhiễu được tiền huấn luyện và $NN_2$ là SN hoặc NPR sử dụng trong thực nghiệm.
         CONV là viết tắ của mạng tích chập. RES là các khối phần dư}
         \begin{center}
@@ -1640,31 +1641,35 @@
                 \hline
             \end{tabular}
         \end{center}
+        \label{table:Structures-Details-of-Prediction-Network}
     \end{table}
 
     \subsection{Chi tiết về chi phí bộ nhớ và chi phí thời gian}
 
-    Trong bảng, ta liệt kê chi phí bộ nhớ và chi phí thời gian của các mô hình (tương ứng với các phương pháp) được sử dụng trong thực nghiệm.
+    Trong bảng \ref{table:Model-size}, ta liệt kê chi phí bộ nhớ và chi phí thời gian của các mô hình (tương ứng với các phương pháp) được sử dụng trong thực nghiệm.
     Chi phí bộ nhớ của SN hoặc NPR là không đáng kể. Thời gian tăng thêm của SN hoặc NPR là không đáng kể trên CIFAR10, CelebA 64x64, và khoảng 4.5\% trên tập ImageNet 64x64, và khoảng 10 \% trên tập LSUN Bedroom.
 
-    \begin{table}
+    \begin{table}[h!]
         \caption{Kích thước của mô hình (MB) và thời gian chạy trung bình (ms) để chạy một bước qua mạng (thời gian để tính toán nhiễu và thời gian để tính toán qua SN và NPR).
         Ta cũng sẽ liệt kê thời gian tăng thêm của SN và NPR tương đối so với mạng dự đoán nhiễu.
         Tất cả được thực hiện với batch size là 10 và trên một GeForce RTX 2080 Ti.}
         \begin{center}
-            \begin{tabular}{l c c c}
-                \hline
-                & Mạng dự đoán nhiễu & SN-DPM & NPR-DPM \\
-                \hline
-                CIFAR10 (LS) & 200.44 MB / 25.65 MS & 200.45 MB / 25.77 MS (+0.5\%) & 200.45 MB / 25.71 MS (+0.2\%) \\
-                CIFAR10 (CS) & 200.44 MB / 25.26 MS & 200.45 MB / 25.62 MS (+1.4\%) & 200.45 MB / 25.64 MS (+1.5\%) \\
-                CIFAR10 (VP SDE) & 235.77 MB / 26.98 MS 235.78 MB / 27.17 MS (+0.7\%) & 235.78 MB / 27.17 MS (+0.7\%) \\
-                CelebA 64X64 & 300.22 MB / 48.64 MS & 300.23 MB / 49.20 MS (+1.2\%) & 300.23 MB / 49.18 MS (+1.1\%) \\
-                ImageNet 64X64 & 461.82 MB / 72.32 MS & 463.47 MB / 75.56 MS (+4.5\%) & 461.84 MB / 72.80 MS (+0.7\%) \\
-                LSUN Bedroom & 433.63 MB / 441.41 MS & 435.02 MB / 485.54 MS (+10.0\%) & 433.64 MB / 448.74 MS (+1.7\%) \\
-                \hline
-            \end{tabular}
+            \resizebox{\columnwidth}{!}{
+                \begin{tabular}{l c c c}
+                    \hline
+                    & Mạng dự đoán nhiễu & SN-DPM & NPR-DPM \\
+                    \hline
+                    CIFAR10 (LS) & 200.44 MB / 25.65 MS & 200.45 MB / 25.77 MS (+0.5\%) & 200.45 MB / 25.71 MS (+0.2\%) \\
+                    CIFAR10 (CS) & 200.44 MB / 25.26 MS & 200.45 MB / 25.62 MS (+1.4\%) & 200.45 MB / 25.64 MS (+1.5\%) \\
+                    CIFAR10 (VP SDE) & 235.77 MB / 26.98 MS 235.78 MB / 27.17 MS (+0.7\%) & 235.78 MB / 27.17 MS (+0.7\%) \\
+                    CelebA 64X64 & 300.22 MB / 48.64 MS & 300.23 MB / 49.20 MS (+1.2\%) & 300.23 MB / 49.18 MS (+1.1\%) \\
+                    ImageNet 64X64 & 461.82 MB / 72.32 MS & 463.47 MB / 75.56 MS (+4.5\%) & 461.84 MB / 72.80 MS (+0.7\%) \\
+                    LSUN Bedroom & 433.63 MB / 441.41 MS & 435.02 MB / 485.54 MS (+10.0\%) & 433.64 MB / 448.74 MS (+1.7\%) \\
+                    \hline
+                \end{tabular}
+            }
         \end{center}
+        \label{table:Model-size}
     \end{table}
 
     \subsection{Chi tiết huấn luyện}
@@ -1695,6 +1700,80 @@
     Theo \cite{bao2021analytic} ta sử dụng $y = 2$ trên CIFAR10 (LS) và trên CelebA 64x64 với quá trình khuếch tán thuận DDPM.
     Các cấu hình khác sử dụng $y=1$.
     Theo \cite{bao2021analytic}, ta tính độ đo FID trên 50000 ảnh được sinh ra, sử dụng code chính thức của FID được viết trên PyTorch (\url{(https://github.com/mseitzer/pytorch-fid}).
-    Theo \cite{nichol2021improved}, \cite{bao2021}
+    Theo \cite{nichol2021improved}, \cite{bao2021analytic}, thống kê tham chiếu của FID được tính dựa trên toàn bộ tập huấn luyện của CIFAR10 và tập ImageNet 64x64, tập 50 nghìn ảnh huấn luyện trên CelebA 64x64 và tập LSUN Bedroom.
 
+    \subsection{Số mẫu Monte Carlo để tính toán quỹ đạo tối ưu}
+
+    Để tính toán quỹ đạo tối ưu cần ước lượng các thành phần được phân tích xuất hiện trong $L_{\mathrm{elbo}}$, liên quan đến ước lượng Monte Carlo được tính trên tập huấn luyện \cite{watson2021learning}, \cite{bao2021analytic}.
+    Theo \cite{bao2021analytic}, ta sử dụng 50000 mẫu trên tập CIFAR10, 10000 mẫu trên tập CelebA 64x64 và ImageNet 64x64.
+
+    \subsection{Thử nghiệm chi tiết trên các bảng \ref{table:FID-CIFAR10}, \ref{table:Smallest-steps-to-achieved-FID-6}, \ref{table:Upper-Bound}}
+
+    Trong bảng \ref{table:FID-CIFAR10} và bảng \ref{table:Upper-Bound}, kết quả của các mô hình cơ bản và phương pháp của ta dựa trên cùng một mạng dự đoán nhiễu (các mô hình được liệt kê ở bảng \ref{table:Details-of-Pretrained-Noise-Prediction-Network}).
+    Các kết quả về các mô hình này trong DPMs với bước thời gian rời rạc được cung cấp bởi \cite{bao2021analytic}.
+    Cho DPMs với bước thời gian liên tục, ta thu được kết quả của Euler-Maruyama solver và dòng xác suất bằng cách chạy code \url{https://github.com/yang-song/score_sde_pytorch} của \cite{song2020score} và thu được kết quả của Ancestral Sampling và Analytic-DPM \cite{bao2021analytic}.
+
+    Trong bảng \ref{table:Smallest-steps-to-achieved-FID-6}, kết quả của DDPM, DDIM, Analytic-DPM và phương pháp của ta dựa trên cùng một mạng dự đoán nhiễu (các mô hình được liệt kê ở bảng \ref{table:Details-of-Pretrained-Noise-Prediction-Network}).
+    Chi phí thời gian trên một bước thời gian riêng biệt là như nhau trên tất cả các mô hình (DDPM, DDIM, Improved DDPM và Analytic DPM) dựa trên thống kê báo cáo trong bảng 4 trong \cite{bao2021analytic}).
+    Tỷ số giữa chi phí thời gian trong một bước thời gian riêng biệt trong NPR-DPM và SN-DPM dựa trên quá trình khuếch tán thuận của DDPM dựa trên các tập dữ liệu.
+    Hai lựa chọn SN-DPM và NPR-DPM yêu cầu số bước thời gian nhỏ hơn các lựa chọn khác.
+
+    \section{Thực nghiệm bổ sung}
+
+    \subsection{So sánh ước lượng hợp lý}
+
+    Ta so sánh NPR-DPM và Improved DDPM \cite{nichol2021improved} dựa trên tập ImageNet 64x64.
+    Improved-DDPM tham số hóa ma trận hiệp phương sai đường chéo sử dụng nội suy giữa $\beta_n$ và $\tilde{\beta}_n$ và học ma trận hiệp sai trực tiếp bằng cách tối ưu hóa $L_{\mathrm{elbo}}$.
+    Trong bảng \ref{table:Likelihood-comparison}, NPR-DDPM có thể thu được một kết quả ước lượng hợp lý phù hợp chỉ với một số bước thời gian nhỏ, trái ngược với Improved DDPM.
+    Với số bước thời gian đầy đủ, hai phương pháp cho cùng một kết quả trên ước lượng hợp lý.
+    Điều này cho thấy rằng sử dụng một hàm mục tiêu thay thế ví dụ như hàm mục tiêu MSE có thể thu được cùng kết quả ước lượng hợp ly so với trực tiếp tối ưu hóa $L_{\mathrm{elbo}}$.
+
+    \begin{table}[h!]
+        \caption{Cận trên ($-L_{\mathrm{elbo}}$) là số âm của log của ước lượng hợp lý với quá trình khuếch tán thuận của DDPM trên tập ImageNet và số bước đầy đủ}
+        \begin{center}
+            \begin{tabular}{lrrrrrrr}
+                \hline
+                Mô hình \textbackslash \# Số bước K & 25 & 50 & 100 & 200 & 400 & 1000 & 4000 \\
+                \hline
+                Improved DDPM &  18.91 & 8.46 & 5.27 & 4.24 & 3.86 & 3.68 & \textbf{3.57} \\
+                NPR-DDPM & \textbf{4.66} & \textbf{4.22} & \textbf{3.96} & \textbf{3.80} & \textbf{3.71} & \textbf{3.64} & \textbf{3.60} \\
+                \hline
+            \end{tabular}
+        \end{center}
+        \label{table:Likelihood-comparison}
+    \end{table}
+
+    \subsection{Phương sai của ước lượng hợp lý}
+
+    Ta chú ý rằng với số bước thời gian đầy đủ, kết quả ước lượng hợp lý của Analytic-DPM và NPR-DDPM trong bảng \ref{table:Smallest-steps-to-achieved-FID-6} là rất gần nhau.
+    Để làm giảm hiệu ứng của ngẫu nhiên, ta báo cáo độ lệch tiêu chuẩn của kết quả ước lượng hợp lý dưới cấu hình số bước thời gian đầy đủ trong bảng \ref{table:Likelihood-Variance}.
+
+    \begin{table}
+        \caption{Cận trên ($-L_{\mathrm{elbo}}$) là số âm của log của ước lượng hợp lý.
+        Ta lặp lại 5 lần với seeds khác nhau và báo cáo trung bình và độ lệch chuẩn.
+        Từng lần chạy ta chọn ngẫu nhiên 10000 ảnh}
+        \begin{center}
+            \begin{tabular}{lcccc}
+                \hline
+                & CIFAR10 (LS) & CIFAR10 (CS) & CelebA 64x64 & ImageNet 64x64 \\
+                \hline
+                Analytic-DPM \cite{bao2021analytic} & 3.58593 $\pm$ 0.00028 & 3.42229$\pm$0.00019 & 2.65657$\pm$0.00126 & 3.61749$\pm$0.00745 \\
+                NPR-DDPM & 3.57204$\pm$0.00039 & 3.41013$\pm$0.00031 & 2.65257$\pm$0.00113 & 3.59660$\pm$0.00793 \\
+                \hline
+            \end{tabular}
+        \end{center}
+        \label{table:Likelihood-Variance}
+    \end{table}
+
+    \subsection{So sánh sau khi chuẩn hóa chi phí tăng thêm}
+    
+    Ta biểu diễn các kết quả sau khi chuẩn hóa các chi phí tăng thêm. Trong bảng , phương pháp của ta vẫn tỏ ra vượt trội so với các mô hình còn lại.
+    Ta cũng so sánh với "Gotta Go Fast" SDE solver \cite{jolicoeur2021gotta} và phương pháp của ta cũng tỏ ra tốt hơn khi NFE nhỏ ($\leq 49$).
+    Khi NFE lớn ($\geq 147$), các phương pháp khác có kết quả tương tự nhau.
+
+    Ta cũng liệt kê các kết quả sau khi chuẩn hóa chi phi huấn luyện tăng thêm.
+    Trên CIFAR10 (LS), ta huấn luyện một mạng dự đoán nhiễu với số bước là 300000 bước và huấn luyện mạng SN hoặc NPR với 200000 bước.
+    Điều này đảm bảo tổng chi phí huấn luyện luôn nhỏ hơn mô hình CIFAR10 (LS) được cung cấp trong \cite{bao2021analytic} được huấn luyện với 500000 bước.
+    Với số bước thời gian lần lượt là 24 và 49 bước, NPR-DPM thu được FID lần lượt là 10.56 và 6.24, SN-DDPM thu được FID lần lượt là là 7.51 và 4.64.
+    Các kết quả này không bị ảnh hưởng nhiều bởi chuẩn hóa chi phí huấn luyện tăng thêm và phương pháp của ta vẫn tốt hơn nhiều các mô hình trong Analytic-DPM \cite{bao2021analytic}.
 \end{document}
