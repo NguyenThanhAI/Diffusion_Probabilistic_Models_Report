@@ -1767,7 +1767,7 @@
 
     \subsection{So sánh sau khi chuẩn hóa chi phí tăng thêm}
     
-    Ta biểu diễn các kết quả sau khi chuẩn hóa các chi phí tăng thêm. Trong bảng , phương pháp của ta vẫn tỏ ra vượt trội so với các mô hình còn lại.
+    Ta biểu diễn các kết quả sau khi chuẩn hóa các chi phí tăng thêm. Trong bảng \ref{table:FID-Comparision-Normalization}, phương pháp của ta vẫn tỏ ra vượt trội so với các mô hình còn lại.
     Ta cũng so sánh với "Gotta Go Fast" SDE solver \cite{jolicoeur2021gotta} và phương pháp của ta cũng tỏ ra tốt hơn khi NFE nhỏ ($\leq 49$).
     Khi NFE lớn ($\geq 147$), các phương pháp khác có kết quả tương tự nhau.
 
@@ -1776,4 +1776,36 @@
     Điều này đảm bảo tổng chi phí huấn luyện luôn nhỏ hơn mô hình CIFAR10 (LS) được cung cấp trong \cite{bao2021analytic} được huấn luyện với 500000 bước.
     Với số bước thời gian lần lượt là 24 và 49 bước, NPR-DPM thu được FID lần lượt là 10.56 và 6.24, SN-DDPM thu được FID lần lượt là là 7.51 và 4.64.
     Các kết quả này không bị ảnh hưởng nhiều bởi chuẩn hóa chi phí huấn luyện tăng thêm và phương pháp của ta vẫn tốt hơn nhiều các mô hình trong Analytic-DPM \cite{bao2021analytic}.
+
+    \begin{table}[h!]
+        \caption{So sánh khoảng cách FID sau khi chuẩn hóa chi phí tăng thêm của quá trình sinh dữ liệu.
+        Số bước thời gian chuẩn hóa và hàm đánh giá mô hình (NFE) được hiển thị trong dấu ngoặc tròn.
+        Chuẩn hóa đảm bảo chi phí thời gian của các mô hình của ta nhỏ hơn so với các mô hình khác}
+        \begin{center}
+            \resizebox{\columnwidth}{!}{
+                \begin{tabular}{lrrrrrrrrrrrrrr}
+                    \hline
+                    \multirow{2}{*}{\# Số bước } & \multicolumn{2}{c}{CIFAR10 (LS)} & & \multicolumn{2}{c}{CIFAR10 (CS)} & & \multicolumn{2}{c}{CelebA 64x64} & & \multicolumn{2}{c}{ImageNet 64x64} & & \multicolumn{2}{c}{VP SDE} \\ \cline{2-3} \cline{5-6} \cline{8-9} \cline{11-12} \cline{14-15}
+                    & 25 (24) & 50 (49) & & 25 (24) & 50 (49) & & 25 (24) & 50 (49) & & 25 (23) & 50 (47) & & 25 (24) & 50 (49) \\
+                    \hline
+                    Analytic-DPM \cite{bao2021analytic} &  11.60 & 7.25 & & 8.50 & 5.50 & & 16.01 & 11.23 & & 32.56 & 22.45 & & 11.57 & 6.54 \\
+                    NPR-DDPM & 10.82 & 6.28 & & 7.98 & 5.33 & & 16.00 & 11.06 & & 29.72 & 21.52 & & 10.88 & 5.80 \\
+                    SN-DDPM & \textbf{7.42} & \textbf{4.60} & & \textbf{6.15} & \textbf{4.20} & & \textbf{12.11} & \textbf{8.08} & & \textbf{29.05} & \textbf{20.80} & & \textbf{7.94} & \textbf{4.47} \\
+                    \hline
+                \end{tabular}
+            }
+            \resizebox{\columnwidth}{!}{
+                \begin{tabular}{lrrrrrrr}
+                    \hline
+                    NFE trên CIFAR10 (VP SDE) & 29 (28) & 39 (38) & 49 (48) & 147 (145) & 179 (177) & 274 (272) & 329 (326) \\
+                    \hline
+                    Gotta Go Fast & 247.79 & 116.91 & 72.29 & \textbf{2.95} & \textbf{2.59} & 2.74 & 2.70 \\
+                    NPR-DDPM & 9.22 & 6.97 & 5.88 & 3.44 & 3.19 & 2.91 & 2.94 \\
+                    SN-DDPM & \textbf{6.62} & \textbf{5.21} & \textbf{4.55} & 2.96 & 2.85 & \textbf{2.67} & \textbf{2.64} \\
+                    \hline
+                \end{tabular}
+            }
+        \end{center}
+        \label{table:FID-Comparision-Normalization}
+    \end{table}
 \end{document}
