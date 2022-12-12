@@ -415,7 +415,7 @@
 
     Ta có thể cải thiện ước lượng của ma trận hiệp phương sai của DPMs dựa trên công trình gần đây \cite{bao2021analytic}.
     Đầu tiên ta sẽ xem xét ma trận hiệp phương sai đường chéo và ma trận hiệp phương sai đầy đủ thay vì ma trận hiệp phương sai đẳng hướng để cải thiện khả năng sinh dữ liệu của DPMs và thu được biểu thức của nghiệm tối ưu,
-    sẽ được trình bày ở mục \ref{Optimal-Solution-Covariance-Beyond-Isotropic-Covariance}. Tiếp theo ta sẽ hiệu chỉnh ma trận hiệp phương sai tối ưu khi cho một trung bình không hoàn hảo (có xét đến sai số xấp xỉ và tối ưu hóa), sẽ được trình bày ở mục .
+    sẽ được trình bày ở mục \ref{Optimal-Solution-Covariance-Beyond-Isotropic-Covariance}. Tiếp theo ta sẽ hiệu chỉnh ma trận hiệp phương sai tối ưu khi cho một trung bình không hoàn hảo (có xét đến sai số xấp xỉ và tối ưu hóa), sẽ được trình bày ở mục \ref{Subsection:The-Optimal-Covariance-with-an-Imperfect-Mean}.
     Các chứng minh sẽ được trình bày ở phụ lục \ref{Appen:Section:Proof}.
 
     Mặc dù các kết quả lý thuyết có thể được áp dụng cho trường ma trận hiệp phương sai đầy đủ (phụ lục \ref{Appen:Section:Results-for-Full-Covariances}), 
@@ -456,7 +456,7 @@
     Như đã được đề cập ở mục \ref{Background}, mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ có mục đích ước lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack$ bằng cách cực tiểu hóa hàm mục tiêu MSE trong công thức \ref{eq:Noise-Prediction}.
     Vì vậy ta sử dụng $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2$ để ước lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2$.
     Nhưng cần chú ý rằng sai lệch của $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2$ sẽ bị khuếch đại nhiều hơn so với $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ (chi tiết xem phụ lục \ref{Appen:Subsection:Error-Amplification}).
-    Tuy nhiên ta vẫn thấy chất lượng ảnh được tạo ra vẫn khá tốt (mục ).
+    Tuy nhiên ta vẫn thấy chất lượng ảnh được tạo ra vẫn khá tốt (mục \ref{Subsection:Sample-Quality}).
 
     Đại lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack$ là kỳ vọng có điều kiện của bình phương của nhiễu (SN) $\boldsymbol{\epsilon}_n^2$ điều kiện trên $\boldsymbol{x}_n$.
     Đại lượng kỳ vọng này có thể được ước lượng sử dụng mạng $\boldsymbol{h}_n (\boldsymbol{x}_n) \in \mathbb{R}^d$ được huấn luyện trên hàm mục tiêu MSE:
@@ -478,7 +478,7 @@
 
     Trong tiểu luận này ta gọi công thức trên ước lượng trên là SN-DPM.
 
-    \subsection{Ma trận hiệp phương sai tối ưu với trung bình không hoàn hảo}
+    \subsection{Ma trận hiệp phương sai tối ưu với trung bình không hoàn hảo} \label{Subsection:The-Optimal-Covariance-with-an-Imperfect-Mean}
 
     Ta thấy việc ước lượng $\hat{\boldsymbol{\mu}}_n (\boldsymbol{x}_n)$ và $\hat{\boldsymbol{\sigma}}_n (\boldsymbol{x}_n)^2$ là việc hoàn toàn cần thiết theo định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}.
     Tuy nhiên, định lý \ref{dl:Optimal-Solution-To-Joint-Optimization} chỉ cho ta lời giải tối ưu $\boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)$ và $\boldsymbol{\sigma}_n^{\ast} (\boldsymbol{x}_n)^2$.
@@ -574,7 +574,7 @@
 
     Trong mục này ta sẽ trình bày chi tiết thực thi SN-DPM và NPR-DPM.
     Đặc biệt ta thiết kế chiến lược sử dụng chia sẻ tham số để tăng độ hiệu quả khi chạy suy luận trong mục \ref{Parameter-Sharing-And-Inference-Efficiency}.
-    Sử dụng định lý \ref{dl:Solely-Optimal-Mean} và định lý \ref{dl:Solely-Optimal-Covariance}, ta sử dụng quá trình huấn luyện hai giai đoạn cho cả SN-DPM và NPR-DPM trong mục .
+    Sử dụng định lý \ref{dl:Solely-Optimal-Mean} và định lý \ref{dl:Solely-Optimal-Covariance}, ta sử dụng quá trình huấn luyện hai giai đoạn cho cả SN-DPM và NPR-DPM trong mục \ref{Subsection:Two-Stage-Learning-and-Pretraining}.
 
     \subsection{Chia sẻ tham số và suy luận hiệu quả} \label{Parameter-Sharing-And-Inference-Efficiency}
 
@@ -593,7 +593,7 @@
 
     So với DPMs thông thường với cùng cấu trúc $\mathrm{UNet}$, cả SN-DPM và NPR-DPM đều yêu cầu thêm chi phí bộ nhớ không lớn và thêm khoảng 10\% chi phí tính toán (chi tiết ở phụ lục \ref{Appen:Subsection:Details-of-Memory-and-Time-Cost}).
 
-    \subsubsection{Quá trình học hai giai đoạn và tiền huấn luyện}
+    \subsubsection{Quá trình học hai giai đoạn và tiền huấn luyện} \label{Subsection:Two-Stage-Learning-and-Pretraining}
 
     Ta nhắc lại trung bình tối ưu của bài toán trong công thức \ref{eq:Arbitrary-Covariance-Optimize-Mean} không phù hợp với ma trận hiệp phương sai.
     Vì vậy, một cách tự nhiên học trung bình và phương sai có thể chia làm hai giai đoạn.
@@ -755,7 +755,7 @@
     Ta huấn luyện mạng dự đoán phần dư nhiễu NPR hoặc mạng dự đoán bình phương nhiễu SN với tất cả các mạng trên, theo cách thực thi đã được trình bày ở mục \ref{Implementation}.
     Chi tiết của thực nghiệm được trình bày ở phụ lục \ref{Experimental-Details}.
 
-    \subsection{Chất lượng mẫu}
+    \subsection{Chất lượng mẫu} \label{Subsection:Sample-Quality}
 
     Trong mục này, ta so sánh chất lượng mẫu dữ liệu được sinh ra theo phương pháp định lượng, được đo lường bởi khoảng cách FID \cite{heusel2017gans}.
     Ta đánh giá các DPMs với cả bước thời gian rời rạc và bước thời gian liên tục. Với DPMs bước thời gian rời rạc, ta sẽ đánh giá DPMs ở cả hai kiểu quá trình thuận tương ứng là DDPM và DDIM.
