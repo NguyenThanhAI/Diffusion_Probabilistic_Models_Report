@@ -416,9 +416,9 @@
     Ta có thể cải thiện ước lượng của ma trận hiệp phương sai của DPMs dựa trên công trình gần đây \cite{bao2021analytic}.
     Đầu tiên ta sẽ xem xét ma trận hiệp phương sai đường chéo và ma trận hiệp phương sai đầy đủ thay vì ma trận hiệp phương sai đẳng hướng để cải thiện khả năng sinh dữ liệu của DPMs và thu được biểu thức của nghiệm tối ưu,
     sẽ được trình bày ở mục \ref{Optimal-Solution-Covariance-Beyond-Isotropic-Covariance}. Tiếp theo ta sẽ hiệu chỉnh ma trận hiệp phương sai tối ưu khi cho một trung bình không hoàn hảo (có xét đến sai số xấp xỉ và tối ưu hóa), sẽ được trình bày ở mục .
-    Các chứng minh sẽ được trình bày ở phụ lục .
+    Các chứng minh sẽ được trình bày ở phụ lục \ref{Appen:Section:Proof}.
 
-    Mặc dù các kết quả lý thuyết có thể được áp dụng cho trường ma trận hiệp phương sai đầy đủ (phụ lục ), 
+    Mặc dù các kết quả lý thuyết có thể được áp dụng cho trường ma trận hiệp phương sai đầy đủ (phụ lục \ref{Appen:Section:Results-for-Full-Covariances}), 
     nhưng thường tốn nhiều thời gian để thu được các mẫu dữ liệu từ các bước chuyển tiếp Gaussian với ma trận hiệp phương sai đầy đủ (ví dụ phân tích Cholesky).
     Để cân bằng sự linh hoạt giữa thời gian và chi phí tính toán, ta tập trung vào ma trận hiệp phương sai đường chéo trong xuyên suốt các thực nghiệm.
 
@@ -427,12 +427,12 @@
     Thay vì sử dụng ma trận hiệp phương sai đẳng hướng chỉ dựa vào bước thời gian mà không xét đến trạng thái, ta sẽ xét ma trận hiệp phương sai đường chéo để cải thiện khả năng sinh dữ liệu của DPMs.
     Ta sẽ xây dựng một ví dụ mà phân phối dữ liệu là phân phối trộn của các phân phối Gaussian.
     Ngay cả trong trường hợp đơn giản, ta có thể chứng minh ELBO tối ưu trong \ref{eq:ELBO-Maximization} với một ma trận hiệp phương sai đường chéo luôn lớn hơn trong trường hợp sử dụng ma trận hiệp phương sai đẳng hướng.
-    Chứng minh chi tiết được trình bày trong phụ lục .
+    Chứng minh chi tiết được trình bày trong mệnh đề \ref{md:Mixture-Data-Distribution} .
 
     Về mặt hình thức, ta xét ma trận hiệp phương sai trong dạng $\boldsymbol{\Sigma}_n (\boldsymbol{x}_n)=\mathrm{diag}\big( \boldsymbol{\sigma}_n (\boldsymbol{x}_n)^2 \big)$,
     với $\boldsymbol{\sigma}_n (\boldsymbol{x}_n)^2: \mathbb{R}^d \rightarrow \mathbb{R}^d$ là đường chéo của ma trận hiệp phương sai mà $\mathrm{diag} (.)$ ký hiệu là toán tử biến đổi vector thành ma trận đường chéo.
     Một cách tự nhiên, ta sẽ tối ưu hóa bài toán ở công thức \ref{eq:ELBO-Maximization} ứng với trung bình và ma trận hiệp phương sai để thu được lời giải tối ưu,
-    được phát biểu trong định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}. Kết quả cho ma trận hiệp phương sai đầy đủ trong phụ lục .
+    được phát biểu trong định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}. Kết quả cho ma trận hiệp phương sai đầy đủ trong phụ lục \ref{Appen:Section:Results-for-Full-Covariances}.
 
     \begin{restatable}{dl}{joint} \label{dl:Optimal-Solution-To-Joint-Optimization}
         (Nghiệm tối ưu cho bài toán tối ưu hóa chung) 
@@ -455,7 +455,7 @@
 
     Như đã được đề cập ở mục \ref{Background}, mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ có mục đích ước lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack$ bằng cách cực tiểu hóa hàm mục tiêu MSE trong công thức \ref{eq:Noise-Prediction}.
     Vì vậy ta sử dụng $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2$ để ước lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2$.
-    Nhưng cần chú ý rằng sai lệch của $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2$ sẽ bị khuếch đại nhiều hơn so với $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ (chi tiết xem phụ lục ).
+    Nhưng cần chú ý rằng sai lệch của $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2$ sẽ bị khuếch đại nhiều hơn so với $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ (chi tiết xem phụ lục \ref{Appen:Subsection:Error-Amplification}).
     Tuy nhiên ta vẫn thấy chất lượng ảnh được tạo ra vẫn khá tốt (mục ).
 
     Đại lượng $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n^2 \rbrack$ là kỳ vọng có điều kiện của bình phương của nhiễu (SN) $\boldsymbol{\epsilon}_n^2$ điều kiện trên $\boldsymbol{x}_n$.
@@ -521,7 +521,7 @@
     Định lý \ref{dl:Solely-Optimal-Mean} cho thấy rằng trung bình tối ưu không phụ thuộc vào ma trận hiệp phương sai và vì vậy ta sẽ học trung bình theo công thức \ref{eq:Noise-Prediction} mà không cần biết thông tin về ma trận hiệp phương sai.
 
     Ngược lại với trung bình, ma trận hiệp phương sai tối ưu của bài toán \ref{eq:Arbitrary-Mean-Optimize-Covariance} phụ thuộc vào trung bình sẽ được trình bày trong định lý .
-    Kết quả cho ma trận hiệp phương sai đầy đủ được trình bày chi tiết ở phụ lục .
+    Kết quả cho ma trận hiệp phương sai đầy đủ được trình bày chi tiết ở phụ lục \ref{Appen:Section:Results-for-Full-Covariances}.
 
     \begin{restatable}{dl}{covariance} \label{dl:Solely-Optimal-Covariance}
         (Lời giải tối ưu của bài toán tối ưu duy nhất với ma trận hiệp phương sai)
@@ -560,7 +560,7 @@
     ta gọi mạng $\boldsymbol{g}_n (\boldsymbol{x}_n)$ là mạng dự đoán phần dư nhiễu.
     Công thức \ref{eq:Square-Noise-Residual-Prediction-Network-MSE-Loss} cho thấy lời giải tối ưu xảy ra khi $\boldsymbol{g}_n (\boldsymbol{x}_n) = \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \Big\lbrack \big( \boldsymbol{\epsilon}_n - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \big)^2 \Big\rbrack$ với mọi $n \in \lbrace 1, 2, \dots, N \rbrace$.
     Một điều cần chú ý rằng, trái với $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2$ được sử dụng trong SN-DPM,
-    mạng $\boldsymbol{g}_n (\boldsymbol{x}_n)$ không có vấn đề khuếch đại sai số (chi tiết được trình bày trong phụ lục ).
+    mạng $\boldsymbol{g}_n (\boldsymbol{x}_n)$ không có vấn đề khuếch đại sai số (chi tiết được trình bày trong phụ lục \ref{Appen:Subsection:Error-Amplification}).
     Với mạng dự đoán phần dư nhiễu $\boldsymbol{g}_n (\boldsymbol{x}_n)$ trong công thức \ref{eq:Square-Noise-Residual-Prediction-Network-MSE-Loss},
     ta ước lượng $\tilde{\boldsymbol{\sigma}}_n^{\ast} (\boldsymbol{x}_n)^2$ bằng công thức:
 
@@ -591,7 +591,7 @@
     Với $\mathrm{UNet}$ là một trong những cấu trong rất phổ biến trong DPMs \cite{ho2020denoising}, \cite{song2020score} và được tham số hóa bởi tham số được chia sẻ $\boldsymbol{\theta}$,
     $\mathrm{NN}_1$ và $\mathrm{NN}_2$ là hai mạng nhỏ ví dụ mạng bao gồm một bài lớp tích chập và được tham số hóa bởi $\boldsymbol{\phi}_1$ và $\boldsymbol{\phi}_2$ tương ứng.
 
-    So với DPMs thông thường với cùng cấu trúc $\mathrm{UNet}$, cả SN-DPM và NPR-DPM đều yêu cầu thêm chi phí bộ nhớ không lớn và thêm khoảng 10\% chi phí tính toán (chi tiết ở phụ lục ).
+    So với DPMs thông thường với cùng cấu trúc $\mathrm{UNet}$, cả SN-DPM và NPR-DPM đều yêu cầu thêm chi phí bộ nhớ không lớn và thêm khoảng 10\% chi phí tính toán (chi tiết ở phụ lục \ref{Appen:Subsection:Details-of-Memory-and-Time-Cost}).
 
     \subsubsection{Quá trình học hai giai đoạn và tiền huấn luyện}
 
@@ -715,7 +715,7 @@
     Tương tự như trong công thức \ref{eq:Sigma-SN-SPM} và công thức \ref{eq:Sigma-NPR-DPM},
     để ước lượng $\boldsymbol{\sigma}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$ và $\tilde{\boldsymbol{\sigma}}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$,
     ta có thể học các kỳ vọng có điều kiện xuất hiện trong mệnh đề \ref{md:Continuous-Optimal-Covariance} và mệnh đề \ref{md:Continuous-Corrected-Optimal-Covariance} bằng cách cực tiểu hóa hàm mục tiêu MSE.
-    Chi tiết được trình bày trong phụ lục .
+    Chi tiết được trình bày trong phụ lục \ref{Appen:Section:Extention-to-DPMs-with-Continuous-Timesteps}.
 
     \section{Thực nghiệm}
 
@@ -743,7 +743,7 @@
     \end{itemize}
 
     Vì khả năng và chất lượng sinh dữ liệu của DPMs trên một tập con các bước là rất quan trọng nên ta so sánh các phương pháp đề xuất với các phương pháp nêu trên với ràng buộc trên một quỹ đạo
-    $1 \leq \tau_1 < \dots < \tau_K = N$ với số lượng bước thời gian $K$ khác nhau \cite{song2020denoising}, \cite{bao2021analytic} (chi tiết áp dụng các phương pháp vào quỹ đạo được trình bày trong phụ lục ).
+    $1 \leq \tau_1 < \dots < \tau_K = N$ với số lượng bước thời gian $K$ khác nhau \cite{song2020denoising}, \cite{bao2021analytic} (chi tiết áp dụng các phương pháp vào quỹ đạo được trình bày trong phụ lục \ref{Appen:Section:Inference-on-Trajectories}).
     Theo \cite{bao2021analytic}, ta xem xét hai kiểu quỹ đạo. Kiểu đầu tiên là quỹ đạo chẵn (ET) \cite{nichol2021improved}, các bước thời gian được cách đều nhau. Kiểu thứ hai là quỹ đạo tối ưu (OT) \cite{watson2021learning}, 
     các bước thời gian được xác định bằng quy hoạch động làm cực đại hóa ELBO.
 
@@ -753,7 +753,7 @@
     Hai cấu hình đầu tiên là CIFAR10 (LS) và CIFAR10 (CS) tương ứng có bước thời gina rời rạc, cấu hình cuối cùng là CIFAR10 (VP SDE) có bước thời gian liên tục.
     Các mạng tiền huấn luyện còn lại được huấn luyện với bước thời gian rời rạc trên tập CelebA 64x64 \cite{liu2015deep}, ImageNet 64x64 \cite{deng2009imagenet} và LSUN Bedroom \cite{yu2015lsun} tương ứng.
     Ta huấn luyện mạng dự đoán phần dư nhiễu NPR hoặc mạng dự đoán bình phương nhiễu SN với tất cả các mạng trên, theo cách thực thi đã được trình bày ở mục \ref{Implementation}.
-    Chi tiết của thực nghiệm được trình bày ở phụ lục .
+    Chi tiết của thực nghiệm được trình bày ở phụ lục \ref{Experimental-Details}.
 
     \subsection{Chất lượng mẫu}
 
@@ -767,7 +767,7 @@
         %\centering
         \caption{Bảng kết quả khoảng cách FID. Tất cả các kết quả đều với cấu hình quỹ đạo chẵn (ET). A-DPM ký hiệu của Analytic-DPM. 
         Ta cần chú ý rằng chi phí thời gian tăng thêm của mạng dự đoán phần dư nhiễu NPR hoặc mạng dự đoán bình phương nhiễu SN là không đáng kể trên tập CIFAR10, CelebA 64x64 và khoảng 4.5 \% trên tập ImageNet 64x64
-        (chi tiết ở phụ lục ). Ta có thể sử dụng số bước để so sánh tính hiệu quả của các phương pháp}
+        (chi tiết ở phụ lục \ref{Appen:Subsection:Details-of-Memory-and-Time-Cost}). Ta có thể sử dụng số bước để so sánh tính hiệu quả của các phương pháp}
         \resizebox{\columnwidth}{!}{
             \begin{tabular}{ lrrrrrrrrrrrrr  }
                 \hline
@@ -882,7 +882,7 @@
     \begin{table}[h!]
         \caption{Cận trên ($-L_{\mathrm{elbo}}$) của log-likelihood âm.
         A-DPM là ký hiệu của Analytic-DPM. Cần chú ý rằng chi phí tính toán được thêm vào là không đáng kể trên các tập CIFAR10, CelebA 64x64 và khoảng 4.5 \% trên tập ImageNet 64x64.
-        Vì vậy ta có thể sử dụng số bước thời gian để so sánh độ hiệu quả của các phương pháp. Để giảm ảnh hưởng của tính ngẫu nhiên, ta cũng lặp lại với cấu hình số bước thời gian nhiều nhất và phương sai sẽ được đề cập ở phần phụ lục .}
+        Vì vậy ta có thể sử dụng số bước thời gian để so sánh độ hiệu quả của các phương pháp. Để giảm ảnh hưởng của tính ngẫu nhiên, ta cũng lặp lại với cấu hình số bước thời gian nhiều nhất và phương sai sẽ được đề cập ở phần phụ lục \ref{Appen:Subsection:Details-of-Memory-and-Time-Cost}.}
         \begin{center}
             \resizebox{\columnwidth}{!}{
                 \begin{tabular}{llrrrrrrrrrrrrr}
@@ -973,7 +973,7 @@
 
     \appendix
 
-    \section{Chứng minh}
+    \section{Chứng minh} \label{Appen:Section:Proof}
 
     \subsection{Chứng minh định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}, \ref{dl:Solely-Optimal-Mean}, \ref{dl:Solely-Optimal-Covariance}}
 
@@ -1341,8 +1341,8 @@
     Điều này mâu thuẫn với giả thuyết $\lbrace \boldsymbol{\mu}_j \rbrace_{j=1}^J$ đôi một khác nhau.
     Vì vậy bất đẳng thức \ref{eq:Inequality-Mixture-Of-Gaussian} đúng.
 
-    \begin{md}
-        Nếu hàm phân phối dữ liệu $a(\boldsymbol{x}_0)=\sum_{j=1}^J \mathcal{N} (\boldsymbol{\mu}_j, c \boldsymbol{I})$ là một phân phối trộn với $J \geq 2$ của phân phối Gaussian và $\lbrace \boldsymbol{\mu}_j \rbrace_{j=1}^J$ đôi một khác nhau, khi đó ta có:
+    \begin{md} \label{md:Mixture-Data-Distribution}
+        Nếu hàm phân phối dữ liệu $q(\boldsymbol{x}_0)=\sum_{j=1}^J \mathcal{N} (\boldsymbol{\mu}_j, c \boldsymbol{I})$ là một phân phối trộn với $J \geq 2$ của phân phối Gaussian và $\lbrace \boldsymbol{\mu}_j \rbrace_{j=1}^J$ đôi một khác nhau, khi đó ta có:
 
         \begin{equation}
             \max_{\boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n:\boldsymbol{\Sigma}_n(\boldsymbol{x}_n)=\mathrm{diag}\big( \boldsymbol{\sigma}_n (\boldsymbol{x}_n)^2 \big)} L_{\mathrm{elbo}} > \max_{\boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n:\boldsymbol{\Sigma}_n(\boldsymbol{x}_n)=\sigma_n^2 \boldsymbol{I}} L_{\mathrm{elbo}}
@@ -1382,7 +1382,7 @@
 
     Bất đẳng thức trên đúng theo \ref{bd:Mixture-Gaussian-Data-Distribution}.
 
-    \section{Các kết quả cho ma trận hiệp phương sai đầy đủ}
+    \section{Các kết quả cho ma trận hiệp phương sai đầy đủ} \label{Appen:Section:Results-for-Full-Covariances}
 
     Trong mục này, ta sẽ diễn giải các kết quả cho ma trận hiệp phương sai đầy đủ. 
     Trong mệnh đề , ta sẽ thu được lời giải tối ưu của bài toán tối ưu trong công thức \ref{eq:ELBO-Maximization}.
@@ -1493,7 +1493,7 @@
     Trong thực tế, $d$ có thể rất lớn (ảnh có độ phân giải cao), một phép phân tích tốn rất nhiều thời gian.
     Vì vậy, trong thực tế việc sử dụng ma trận đường chéo là phù hợp để không phải sử dụng các phép phân tích với chi phí lớn về mặt thời gian.
 
-    \section{Mở rộng DPMs sang bước thời gian liên tục}
+    \section{Mở rộng DPMs sang bước thời gian liên tục} \label{Appen:Section:Extention-to-DPMs-with-Continuous-Timesteps}
 
     Để thu được ước lượng của $\boldsymbol{\sigma}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2$ xuất hiện trong mệnh đề \ref{md:Continuous-Optimal-Covariance}, ta sử dụng mạng $\boldsymbol{h}_t (\boldsymbol{x}_t) \in \mathbb{R}^d$ để học $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t^2 \rbrack$ bằng cực tiểu hóa hàm MSE:
 
@@ -1519,7 +1519,7 @@
         \hat{\tilde{\boldsymbol{\sigma}}}_{s \vert t} (\boldsymbol{x}_t)^2 = \tilde{\beta}_{s \vert t} \boldsymbol{1} + \dfrac{\beta_{t \vert s}^2}{\beta_{t \vert 0} \alpha_{t \vert s}} \boldsymbol{g}_t (\boldsymbol{x}_t)
     \end{equation}
 
-    \section{Sinh dữ liệu trên quỹ đạo con}
+    \section{Sinh dữ liệu trên quỹ đạo con} \label{Appen:Section:Inference-on-Trajectories}
 
     Để tăng tốc quá trình sinh dữ liệu, ta có thể đảo ngược một quá trình khuếch tán thuận ngắn hơn $q(\boldsymbol{x}_{\tau_0}, \dots, \boldsymbol{x}_{\tau_k} \vert \boldsymbol{x}_0)$ ràng buộc trên một quỹ đạo $1 \leq \tau_1 < \dots < \tau_K = N$ gồm $K$ bước thời gian \cite{song2020denoising}, \cite{bao2021analytic}.
     Theo như ký hiệu trong \cite{bao2021analytic}, quá trình khuếch tán thuận rút gọn được định nghĩa là:
@@ -1570,7 +1570,7 @@
 
     \section{Một số bàn luận}
 
-    \subsection{Khuếch đại sai lệch}
+    \subsection{Khuếch đại sai lệch} \label{Appen:Subsection:Error-Amplification}
 
     Ta cần chú ý rằng trong SN-DPM, sai lệch của $\hat{\boldsymbol{\epsilon}}_n(\boldsymbol{x}_n)^2$ hay bị khuếch đại so với $\hat{\boldsymbol{\epsilon}}_n(\boldsymbol{x}_n)$.
     $\mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack^2$ sử dụng $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2$ là bình phương của đầu ra của mô hình.
@@ -1644,7 +1644,7 @@
         \label{table:Structures-Details-of-Prediction-Network}
     \end{table}
 
-    \subsection{Chi tiết về chi phí bộ nhớ và chi phí thời gian}
+    \subsection{Chi tiết về chi phí bộ nhớ và chi phí thời gian} \label{Appen:Subsection:Details-of-Memory-and-Time-Cost}
 
     Trong bảng \ref{table:Model-size}, ta liệt kê chi phí bộ nhớ và chi phí thời gian của các mô hình (tương ứng với các phương pháp) được sử dụng trong thực nghiệm.
     Chi phí bộ nhớ của SN hoặc NPR là không đáng kể. Thời gian tăng thêm của SN hoặc NPR là không đáng kể trên CIFAR10, CelebA 64x64, và khoảng 4.5\% trên tập ImageNet 64x64, và khoảng 10 \% trên tập LSUN Bedroom.
