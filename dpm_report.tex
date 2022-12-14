@@ -1808,4 +1808,114 @@
         \end{center}
         \label{table:FID-Comparision-Normalization}
     \end{table}
+
+    \section{Một số nền tảng cơ bản về các mô hình sinh}
+
+    \subsection{Giới thiệu mô hình sinh}
+
+    Ta quan sát được một mẫu dữ liệu $\boldsymbol{x}$ từ một phân phối, mục tiêu của mô hình sinh là học để mô hình được phân phối dữ liệu thực sự $p(\boldsymbol{x})$.
+    Khi đã học được phân phối dữ liệu, ta có thể sinh ra những mẫu dữ liệu mới từ mô hình theo ý muốn.
+    Ngoài ra theo một số mô hình, ta có thể sử dụng mô hình học được để đánh giá khả năng của dữ liệu quan sát hoặc được lấy mẫu.
+
+    Có một số hướng nghiên cứu phổ biến trong lý thuyết các mô hình sinh, ta sẽ chỉ giới thiệu sơ lược.
+    Mô hình sinh đối kháng (GANs) mô hình hóa thủ tục lấy mẫu của một phân phối phức tạp, được học dựa trên phương pháp đối kháng.
+    Một lớp khác của các mô hình sinh được gọi là "dựa trên khả năng", tìm cách mô hình hóa một mô hình sao cho cực đại hóa khả năng của dữ liệu quan sát được.
+    Nhóm các mô hình này gồm các mô hình tự hồi quy, bộ tự mã hóa biến phân (VAEs).
+    Một cách tiếp cận tương tự khác là các mô hình dựa trên năng lượng, trong đó một phân phối được học là một hàm năng lượng linh hoạt ngẫu nhiên được chuẩn hóa.
+
+    \subsection{ELBO, VAE và VAE phân cấp}
+
+    \subsubsection{Evidence Lower Bound (ELBO)}
+
+    Về mặt toán học, ta có thể tưởng tượng biến ẩn và dữ liệu ta quan sát được được mô hình hóa bởi một phân phối xác suất chung $p(\boldsymbol{x}, \boldsymbol{z})$.
+    Ta xét một cách tiếp cận của mô hình sinh gọi là "dựa trên khả năng", cách tiếp cận này học một mô hình cực đại hóa khả năng $p(\boldsymbol{x})$ của tất cả các $\boldsymbol{x}$ quan sát được.
+    Có hai cách ta có thể can thiệp phân phối chung để phục hồi hàm khả năng của dữ liệu quan sát được $p(\boldsymbol{x})$, ta có thể cận biên hóa biến ẩn $\boldsymbol{z}$:
+
+    \begin{equation} \label{eq:likelihood-of-x}
+        p(\boldsymbol{x}) = \int p(\boldsymbol{x}, \boldsymbol{z}) d \boldsymbol{z}
+    \end{equation}
+
+    hoặc ta có thể sử dụng quy tắc chuỗi của xác suất:
+
+    \begin{equation} \label{eq:chain-rule-of-probability}
+        p(\boldsymbol{x}) = \dfrac{p(\boldsymbol{x}, \boldsymbol{z})}{p(\boldsymbol{z} \vert \boldsymbol{x})}
+    \end{equation}
+
+    Việc tính trực tiếp và cực đại hóa hàm khả năng $p(\boldsymbol{x})$ là rất khó vì liên quan đến việc tính tích phân trên tất cả biến ẩn $\boldsymbol{z}$ trong công thức \ref{eq:likelihood-of-x}, việc này là bất khả thi cho các mô hình phức tạp hoặc liên quan đến việc phải sử dụng đến bộ tự mã hóa ẩn thực sự $p(\boldsymbol{z} \vert \boldsymbol{x})$ trong công thức \ref{eq:chain-rule-of-probability}.
+    Tuy nhiên, sử dụng hai công thức trên, ta có thể thu được một thuật ngữ được gọi là Evidence Lower Bound (ELBO).
+    Như tên gọi, đại lượng này là một cận dưới của hàm khả năng.
+    Thực tế là $\log$ của hàm khả năng của dữ liệu quan sát được.
+    Khi cực đại hóa ELBO trở thành một hàm mục tiêu thay thế để tối ưu hóa mô hình biến ẩn.
+    Trong trường hợp tốt nhất, khi ELBO được tham số hóa và được tối ưu một cách hoàn hảo, đại lượng này chính xác bằng $\log$ của hàm khả năng của dữ liệu quan sát được.
+    Một cách hình thức, công thức của ELBO là:
+
+    \begin{equation}
+        \mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{x}, \boldsymbol{z})}  \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}, \boldsymbol{z})}{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack
+    \end{equation}
+
+    Ở đây $q_{\boldsymbol{\phi}}$ là một phân phối biến phân xấp xỉ với tham số $\boldsymbol{\phi}$ ta cần tối ưu.
+    Về mặt trực quan, nó có thể được xem như là một mô hình được tham số hóa và được học để ước lượng phân phối thực trên các biến ẩn cho các quan sát $\boldsymbol{x}$ đã cho.
+    Nói cách khác, mô hình tìm cách xấp xỉ phân phối hậu nghiệm thực tế $p(\boldsymbol{z} \vert \boldsymbol{x})$.
+    Ta sẽ thấy khi nghiên cứu về bộ tự mã hóa biến phân (VAE), khi ta tăng cận dưới bằng cách chỉnh định các tham số $\boldsymbol{\phi}$ để cực đại hóa ELBO, ta sẽ thành công trong việc truy cập vào các thành phần có thể được sử dụng để mô hình phân phối dữ liệu thực tế và lấy mẫu từ phân phối này do đó ta học được một mô hình sinh.
+    Ta sẽ phân tích sâu vì sao ELBO là một hàm mục tiêu mà ta muốn cực đại hóa.
+
+    Ta sẽ thu được ELBO sử dụng công thức \ref{eq:likelihood-of-x}:
+
+    \begin{equation} \label{eq:Jensen-Derivation}
+        \begin{aligned}
+            \log p(\boldsymbol{x}) &= \log \int p(\boldsymbol{x}, \boldsymbol{z}) d \boldsymbol{z} \\
+            &= \log \int \dfrac{p(\boldsymbol{x}, \boldsymbol{z}) q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})}{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} d \boldsymbol{z} \\
+            &= \log \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \dfrac{p(\boldsymbol{x}, \boldsymbol{z})}{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack \\
+            &\geq \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}, \boldsymbol{z})}{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack
+        \end{aligned}
+    \end{equation}
+
+    Trong biến đổi này, ta thu được cận dưới bằng cách áp dụng bất đẳng thức Jensen.
+    Tuy nhiên điều này chưa cung cấp cho ta nhiều thông tin hữu ích về điều gì đang xảy ra bên trong bản chất.
+    Điều quan trọng là chứng minh này không đưa ra một cách chính xác về mặt trực giác vì sao ELBO lại là cận dưới của $\log$ của hàm khả năng.
+    Hơn nữa, chỉ cần biết ELBO thực sự là cận dưới của hàm khả năng không cho ta biết vì sao ta cần cực đại hóa hàm mục tiêu này.
+    Để hiểu rõ hơn về mối liên hệ giữa $\log$ của hàm khả năng và ELBO, ta thực hiện một cách biến đổi khác, lần này ta sử dụng công thức \ref{eq:chain-rule-of-probability}:
+
+    \begin{equation} \label{eq:ELBO-Derivation-KL-divergence}
+        \begin{aligned}
+            \log p(\boldsymbol{x}) &= \log p(\boldsymbol{x}) \int q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x}) d \boldsymbol{z} \\
+            &= \int q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x}) \log p (\boldsymbol{x}) d \boldsymbol{z} \\
+            &= \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \lbrack \log p (\boldsymbol{x}) \rbrack \\
+            &= \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}, \boldsymbol{z})}{p(\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack \\
+            &= \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}, \boldsymbol{z}) q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})}{p(\boldsymbol{z} \vert \boldsymbol{x}) q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack \\
+            &= \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}, \boldsymbol{z})}{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack + \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \log \dfrac{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})}{p(\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack \\
+            &= \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}, \boldsymbol{z})}{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack + D_{\mathrm{KL}} \big( q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x}) \Vert p(\boldsymbol{z} \vert \boldsymbol{x}) \big) \\
+            &\geq \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}, \boldsymbol{z})}{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack
+        \end{aligned}
+    \end{equation}
+
+    Từ cách diễn giải này, ta thấy rõ ràng rằng từ công thức \ref{eq:ELBO-Derivation-KL-divergence} $\log$ của hàm khả năng của dữ liệu bằng ELBO cộng với độ phân kỳ Kullback-Leibler của phân phối hậu nghiệm xấp xỉ $q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})$ phân phối hậu nghiệm thực tế $p(\boldsymbol{z} \vert \boldsymbol{x})$.
+    Trên thực tế, thành phần độ phân kỳ Kullback-Leibler đã bị bất đẳng thức Jensen loại bỏ trong công thức \ref{eq:Jensen-Derivation} bằng cách diễn giải đầu tiên.
+    Hiểu được cách diễn giải này là chìa khóa để hiểu không chỉ mối quan hệ giữa ELBO và $\log$ của hàm khả năng mà còn là lý do vì sao tối ưu hóa hàm ELBO lại là một hàm mục tiêu phù hợp.
+
+    Đầu tiên, ta đã biết vì sao ELBO thực sự là một cận dưới: chênh lệch giữa $\log$ của hàm khả năng và ELBO là độ phân kỳ Kullback-Leibler là một số không âm, vì vậy giá trị của ELBO không bao giờ vượt quá $\log$ của hàm khả năng của phân phối dữ liệu.
+
+    Thứ hai, ta khám phá lý do vì sao ta nên cực đại hóa ELBO.
+    Như đã giới thiệu biến ẩn $\boldsymbol{z}$ ta muốn mô hình hóa, mục tiêu của ta là học cấu trúc ẩn này miêu tả dữ liệu quan sát được.
+    Hay nói cách khác, ta muốn tối ưu hóa các tham số của phân phối hậu nghiệm biến phân $q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})$ để khớp chính xác với phân phối hậu nghiệm thực sự $p(\boldsymbol{z} \vert \boldsymbol{x})$, đạt được bằng cách cực tiểu hóa độ phân kỳ Kullback-Leibler (lý tưởng bằng 0).
+    Thật không may, rất khó để cực tiểu hóa độ phân kỳ Kullback-Leibler một cách trực tiếp khi ta không có phân phối hậu nghiệm thực sự $p(\boldsymbol{z} \vert \boldsymbol{x})$.
+    Tuy nhiên ta cần chú ý rằng trong công thức \ref{eq:ELBO-Derivation-KL-divergence}, hàm khả năng của dữ liệu $\log p(\boldsymbol{x})$ luôn là một hằng số ứng với $\boldsymbol{\phi}$ vì đại lượng này được tính bằng cách cận biên hóa tất cả các biến ẩn $\boldsymbol{z}$ từ phân phối chung $p(\boldsymbol{x}, \boldsymbol{z})$ và không phụ thuộc vào $\boldsymbol{\phi}$.
+    Vì các số hạng ELBO và độ phân kỳ Kullback-Leibler cộng lại là một hằng số, bất kỳ cực đại hóa của thành phần ELBO tương ứng với $\boldsymbol{\phi}$ tương đương với cực tiểu hóa của thành phần độ phân kỳ Kullback-Leibler.
+    Vì vây, ELBO có thể được tối đa hóa như một cách học đại diện để mô hình hóa một cách hoàn hoàn phân phối hậu nghiệm ẩn thực sự.
+    Ngoài ra khi đã được huấn luyện, ELBO cũng có thể được sử dụng để ước lượng khả năng của dữ liệu quan sát hoặc được tạo ra vì đã được học cách xấp xỉ mô hình phân phối dữ liệu là $\log$ của hàm khả năng.
+
+    \subsubsection{Bộ tự mã hóa biến phân (VAEs)}
+
+    Trong công thức của bộ tự mã hóa biến phân (VAE) \cite{kingma2013auto}, ta cực đại hóa trực tiếp ELBO.
+    Cách tiếp cận này là biến phân, vì ta tối ưu hóa $q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})$ tốt nhất trong họ các phân phối hậu nghiệm tiềm năng được tham số hóa bởi $\boldsymbol{\phi}$.
+    Nó được gọi là bộ tự mã hóa vì làm gợi nhớ đến mô hình bộ tự mã hóa kinh điển, trong đó dữ liệu đầu vào được huấn luyện để dự đoán chính nó sau khi trải qua các bước nghẽn cổ chai trung gian.
+    Để làm cho kết nối này rõ ràng, ta phân tích thêm thành phần ELBO:
+
+    \begin{equation}
+        \begin{aligned}
+            \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}, \boldsymbol{z})}{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack &= \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \log \dfrac{p_{\boldsymbol{\theta}}(\boldsymbol{x} \vert \boldsymbol{z}) p (\boldsymbol{z})}{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack \\
+            &= \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x} \vert \boldsymbol{z}) \rbrack + \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \dfrac{p(\boldsymbol{z})}{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack \\
+            &= \underbrace{\mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x} \vert \boldsymbol{z}) \rbrack}_{\mathrm{reconstruction term}} - \underbrace{D_{\mathrm{KL}} \big( q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x}) \Vert p(\boldsymbol{z}) \big)}_{\mathrm{prior matching term}}
+        \end{aligned}
+    \end{equation}
 \end{document}
