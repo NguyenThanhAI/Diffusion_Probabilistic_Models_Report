@@ -1911,11 +1911,29 @@
     Nó được gọi là bộ tự mã hóa vì làm gợi nhớ đến mô hình bộ tự mã hóa kinh điển, trong đó dữ liệu đầu vào được huấn luyện để dự đoán chính nó sau khi trải qua các bước nghẽn cổ chai trung gian.
     Để làm cho kết nối này rõ ràng, ta phân tích thêm thành phần ELBO:
 
-    \begin{equation}
+    \begin{equation} \label{eq:VAEs-Formulation}
         \begin{aligned}
             \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}, \boldsymbol{z})}{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack &= \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \log \dfrac{p_{\boldsymbol{\theta}}(\boldsymbol{x} \vert \boldsymbol{z}) p (\boldsymbol{z})}{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack \\
             &= \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x} \vert \boldsymbol{z}) \rbrack + \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \dfrac{p(\boldsymbol{z})}{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack \\
             &= \underbrace{\mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x} \vert \boldsymbol{z}) \rbrack}_{\mathrm{reconstruction term}} - \underbrace{D_{\mathrm{KL}} \big( q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x}) \Vert p(\boldsymbol{z}) \big)}_{\mathrm{prior matching term}}
         \end{aligned}
     \end{equation}
+
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[scale=0.5]{VAE-Graph.png}
+        \caption{Bộ tự mã hóa biến phân được biểu diễn dạng đồ thị.
+        Bộ mã hóa $q(\boldsymbol{z} \vert \boldsymbol{x})$ xác định phân phối trên biến ẩn $\boldsymbol{z}$ khi cho quan sát $\boldsymbol{x}$ và $p(\boldsymbol{x} \vert \boldsymbol{z})$ giải mã biến ẩn thành các quan sát.}
+        \label{fig:VAE-Graph}
+    \end{figure}
+
+    Trong trường hợp này, ta sẽ học một phân phối nghẽn cổ chai trung gian $q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})$ được xem là bộ mã hóa.
+    Bộ mã hóa biến đổi các đầu vào thành một phân phối trên không gian biến ẩn.
+    Đồng thời, ta học một hàm tất định $p_{\boldsymbol{\phi}} (\boldsymbol{x} \vert \boldsymbol{z})$ để biến đổi một vector ẩn $\boldsymbol{z}$ cho trước thành một quan sát $\boldsymbol{x}$, được xem là bộ giải mã.
+
+    Hai số hạng trong công thức \ref{eq:VAEs-Formulation}, từng số hạng có miêu tả trực quan: thành phần đầu tiên đo lường khả năng tái xây dựng của bộ giải mã từ phân phối biến phân của ta.
+    Điều này đảm bảo rẳng phân phối được học mô hình hóa biến ẩn một cách hiệu quả mà dữ liệu ban đầu có thể tái tạo từ đó.
+    Thành phần thứ hai đo lường phân phối biến phân được học giống như thế nào với biến ẩn mà ta mong đợi.
+    Cực tiểu hóa thành phần này thúc đẩy bộ mã hóa thực sự học phân phối thay vì suy biến thành hàm Delta Dirac.
+    Cực đại hóa ELBO tương đương với cực đại hóa số hạng thứ nhất và cực tiểu hóa số hạng thứ hai.
 \end{document}
