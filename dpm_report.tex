@@ -1915,7 +1915,7 @@
         \begin{aligned}
             \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}, \boldsymbol{z})}{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack &= \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \log \dfrac{p_{\boldsymbol{\theta}}(\boldsymbol{x} \vert \boldsymbol{z}) p (\boldsymbol{z})}{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack \\
             &= \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x} \vert \boldsymbol{z}) \rbrack + \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \lbrack \dfrac{p(\boldsymbol{z})}{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \Bigg \rbrack \\
-            &= \underbrace{\mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x} \vert \boldsymbol{z}) \rbrack}_{\mathrm{reconstruction term}} - \underbrace{D_{\mathrm{KL}} \big( q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x}) \Vert p(\boldsymbol{z}) \big)}_{\mathrm{prior matching term}}
+            &= \underbrace{\mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x} \vert \boldsymbol{z}) \rbrack}_{\mathrm{reconstruction \thickspace term}} - \underbrace{D_{\mathrm{KL}} \big( q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x}) \Vert p(\boldsymbol{z}) \big)}_{\mathrm{prior \thickspace matching \thickspace term}}
         \end{aligned}
     \end{equation}
 
@@ -1936,4 +1936,111 @@
     Thành phần thứ hai đo lường phân phối biến phân được học giống như thế nào với biến ẩn mà ta mong đợi.
     Cực tiểu hóa thành phần này thúc đẩy bộ mã hóa thực sự học phân phối thay vì suy biến thành hàm Delta Dirac.
     Cực đại hóa ELBO tương đương với cực đại hóa số hạng thứ nhất và cực tiểu hóa số hạng thứ hai.
+
+    Một đặc tính của VAE là cách ELBO được tối ưu hóa các tham số $\boldsymbol{\phi}$ và $\boldsymbol{\theta}$ cùng nhau.
+    Bộ mã hóa của VAE thường được chọn để mô hình hóa phân phối Gaussian đa biến với ma trận hiệp phương sai đường chéo và xác suất tiên nghiệm thường được lựa chọn là phân phối Gaussian tiêu chuẩn:
+
+    \begin{equation}
+        \begin{aligned}
+            q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x}) &= \mathcal{N} \big( \boldsymbol{z} \vert \boldsymbol{\mu}_{\boldsymbol{\phi}} (\boldsymbol{x}), \boldsymbol{\sigma}_{\boldsymbol{\phi}}^2 (\boldsymbol{x}) \boldsymbol{I} \big) \\
+            p(\boldsymbol{z}) &= \mathcal{N} (\boldsymbol{z} \vert \boldsymbol{0}, \boldsymbol{I})
+        \end{aligned}
+    \end{equation}
+
+    Khi đó, độ phân kỳ Kullback-Leibler của ELBO có thể được tính theo giải tích, và thành phần tái tạo có thể được xấp xỉ sử dụng ước lượng Monte Carlo.
+    Hàm mục tiêu của ta có thể được viết lại dưới dạng:
+
+    \begin{equation}
+        \underset{\boldsymbol{\phi}, \boldsymbol{\theta}}{\mathrm{argmax}} \mathbb{E}_{q_{\boldsymbol{\phi}}} \lbrack \log p_{\boldsymbol{\theta}} (\boldsymbol{x} \vert \boldsymbol{z}) \rbrack - D_{\mathrm{KL}} \big( q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x}) \Vert p(\boldsymbol{z}) \big) \approx \underset{\boldsymbol{\phi}, \boldsymbol{\theta}}{\mathrm{argmax}} \sum_{l=1}^L \log p_{\boldsymbol{\theta}} (\boldsymbol{x} \vert \boldsymbol{z}^{(l)}) - D_{\mathrm{KL}} \big( q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x}) \Vert p(\boldsymbol{z}) \big)
+    \end{equation}
+
+    với các biến ẩn $\lbrace \boldsymbol{z}^{(l)} \rbrace_{l=1}^L$ được lấy mẫu từ $q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})$ cho từng quan sát $\boldsymbol{x}$ trong tập dữ liệu.
+    Tuy nhiên, một vấn đề phát sinh trong cấu hình mặc định, từng $\boldsymbol{z}^{(l)}$ mà được hàm mục tiêu dùng để tính toán được sinh ra bằng một thủ tục lấy mẫu ngẫu nhiên thường không lấy đạo hàm được.
+    Nhưng rất may mắn, vấn đề này có thể được giải quyết bằng \textit{thủ thuật tái tham số hóa} khi $q_{\boldsymbol{\phi}} (\boldsymbol{z} \vert \boldsymbol{x})$ được thiết kế để mô hình hóa các phân phối nhất định, bao gồm phân phối Gaussian đa biến.
+
+    Thủ thuật tái tham số hóa viết lại một biến ngẫu nhiên thành một hàm tất định của một biến nhiễu.
+    Điều này cho phép quá trình tối ưu hóa của thành phần không ngẫu nhiên qua phương pháp giảm gradient.
+    Ví dụ, lấy mẫu từ một phân phối chuẩn $x \sim \mathcal{N} (x \vert \mu, \sigma^2)$ với trung bình tùy ý $\mu$ và phương sai $\sigma^2$ có thể được viết lại dưới dạng:
+
+    \begin{equation}
+        x = \mu + \sigma \epsilon \text{ với } \epsilon \sim \mathcal{N} (\epsilon \vert 0, 1)
+    \end{equation}
+
+    Nói cách khác, một phân phối Gaussian tùy ý có thể được viết lại dưới dạng một phân phối Gaussian tiêu chuẩn ($\epsilon$ là một mẫu) có trung bình dịch chuyển từ không sang trung bình $\mu$ bằng phép cộng, và phương sai được nhân với phương sai $\sigma^2$.
+    Vì vậy, bằng thủ tục tái tham số hóa, lấy mẫu từ một phân phối Gaussian tùy ý có thể được thực hiện bằng việc lấy mẫu phân phối Gaussian tiêu chuẩn, nhân kết quả với độ lệch chuẩn và dịch chuyển bằng cách cộng với trung bình.
+
+    Trong một VAE, mỗi biến ẩn $\boldsymbol{z}$ được tính toán dựa trên một hàm tất định với đầu vào là quan sát $\boldsymbol{x}$ và một biến nhiễu phụ $\boldsymbol{\epsilon}$:
+
+    \begin{equation}
+        \boldsymbol{z} = \boldsymbol{\mu}_{\boldsymbol{\phi}} (\boldsymbol{x}) + \boldsymbol{\sigma}_{\boldsymbol{\phi}} (\boldsymbol{x}) \odot \boldsymbol{\epsilon} \text{ với } \boldsymbol{\epsilon} \sim \mathcal{N} (\boldsymbol{\epsilon} \vert \boldsymbol{0}, \boldsymbol{I})
+    \end{equation}
+
+    Với $\odot$ biểu diễn tích từng phần tử.
+    Dưới phiên bản tái tham số hóa của $\boldsymbol{z}$, đạo hàm riêng có thể được tính tương ứng với $\boldsymbol{\phi}$ như mong muốn để tối ưu $\boldsymbol{\mu}_{\boldsymbol{\sigma}}$ và $\boldsymbol{\sigma}_{\boldsymbol{\phi}}$.
+    VAE vì vậy tận dụng được thủ thuật tái tham số hóa và ước lượng Monte Carlo để tối ưu hóa ELBO trên $\boldsymbol{\phi}$ và $\boldsymbol{\theta}$ cùng nhau.
+
+    Sau khi huấn luyện VAE, việc tạo ra dữ liệu mới có thể được thực hiện bằng cách lấy mẫu trực tiếp từ không gian của biến ẩn $p(\boldsymbol{z})$ và cho chạy qua bộ giải mã.
+    VAE đặc biệt quan tâm khi số chiều của biến ẩn $\boldsymbol{z}$ nhỏ hơn số chiều của dữ liệu quan sát $\boldsymbol{x}$.
+    Ta có thể đang học một biểu diễn gọn, hữu ích.
+    Hơn nữa, khi một không gian ẩn có ý nghĩa ngữ nghĩa được học, các vector ẩn có thể được chỉnh sửa trước khi đưa qua bộ giải mã để điều khiển quá trình tạo dữ liệu như mong muốn.
+
+    \subsubsection{Bộ tự mã hóa biến phân phân cấp (HVAEs)}
+
+    Một bộ tự mã hóa biến phân phân cấp (HVAE) \cite{kingma2016improved}, \cite{sonderby2016ladder} là một tổng quát hóa của VAE mở rộng ra nhiều phân cấp trên các biến ẩn.
+    Theo cấu hình này, bản thân các biến ẩn được hiểu là được tạo ra từ các biến ẩn cấp cao hơn, trừu tượng hơn.
+
+
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[scale=0.5]{HVAE-Graph.png}
+        \caption{Bộ tự mã hóa biến phân phân cấp Markov (MHVAE) với $N$ mức phân cấp biến ẩn.
+        Quá trình sinh dữ liệu được mô hình hóa bởi một xích Markov, từng biến ẩn $\boldsymbol{z}_n$ được tạo ra chỉ phụ thuộc vào cấp biến ẩn ngay trước đó $\boldsymbol{z}_{n+1}$}
+        \label{fig:HVAE-Graph}
+    \end{figure}
+
+
+    Đối với HVAE tổng quát với $T$ mức phân cấp, từng biến ẩn được phép tạo ra từ tất cả các biến ẩn ở mức trước đó.
+    Nhưng trong tiểu luận này ta tập trung vào một trường hợp đặc biệt ta gọi là HVAE Markov (MHVAE).
+    Trong MHVAE, quá trình sinh dữ liệu là một xích Markov, từng mức dịch chuyển có thuộc tính Markov.
+    Nghĩa là mỗi quá trình chuyển đổi xuống phân cấp là Markov, trong đó giải mã từng biến ẩn $\boldsymbol{z}_n$ chỉ phụ thuộc vào biến ẩn $\boldsymbol{z}_{n+1}$ ngay trước đó.
+    Một cách trực quan, điều này có thể được xem đơn giản là xếp chồng các VAEs lên nhau, như được miêu tả trong hình \ref{fig:HVAE-Graph}.
+    Một thuật ngữ phù hợp khác để miêu tả mô hình này là VAE đệ quy.
+    Về mặt toán học, ta biểu diễn phân phối chung và phân phối hậu nghiệm của một MHVAE theo công thức:
+
+    \begin{equation} \label{eq:HVAE-Formulation}
+        \begin{aligned}
+            p(\boldsymbol{x}, \boldsymbol{z}_{1:N})&=p(\boldsymbol{z}_N) p_{\boldsymbol{\theta}} (\boldsymbol{x} \vert \boldsymbol{z}_1) \prod_{n=2}^N p_{\boldsymbol{\theta}} (\boldsymbol{z}_{n-1} \vert \boldsymbol{z}_n) \\
+            q_{\boldsymbol{\phi}} (\boldsymbol{z}_{1:N} \vert \boldsymbol{x}) &= q_{\boldsymbol{\phi}} (\boldsymbol{z}_1 \vert \boldsymbol{x}) \prod_{n=2}^N q_{\boldsymbol{\phi}} (\boldsymbol{z}_n \vert \boldsymbol{z}_{n-1})
+        \end{aligned}
+    \end{equation}
+
+    Ta có thể dễ dàng thu được ELBO là:
+
+    \begin{equation} \label{eq:HVAE-Elbo}
+        \begin{aligned}
+            \log p(\boldsymbol{x}) &= \log \int p(\boldsymbol{x}, \boldsymbol{z}_{1:N}) d \boldsymbol{z}_{1:N} \\
+            &= \log \int \dfrac{p(\boldsymbol{x}, \boldsymbol{z}_{1:N}) q_{\boldsymbol{\phi}} (\boldsymbol{z}_{1:N} \vert \boldsymbol{x})}{q_{\boldsymbol{\phi}} (\boldsymbol{z}_{1:N} \vert \boldsymbol{x})} d \boldsymbol{z}_{1:N} \\
+            &= \log \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z}_{1:N} \vert \boldsymbol{x})} \Bigg \lbrack \dfrac{p(\boldsymbol{x}, \boldsymbol{z}_{1:N})}{q_{\boldsymbol{\phi}} (\boldsymbol{z}_{1:N} \vert \boldsymbol{x})} \Bigg \rbrack \\
+            & \geq \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z}_{1:N} \vert \boldsymbol{x})} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}, \boldsymbol{z}_{1:N})}{q_{\boldsymbol{\phi}} (\boldsymbol{z}_{1:N} \vert \boldsymbol{x})}  \Bigg \rbrack
+        \end{aligned}
+    \end{equation}
+
+    Ta có thể đưa phân phối chung $p(\boldsymbol{x}, \boldsymbol{z}_{1:N})$ và phân phối hậu nghiệm $p(\boldsymbol{z}_{1:N} \vert \boldsymbol{x})$ vào công thức \ref{eq:HVAE-Elbo} ta có thể thu được dạng thay thế của ELBO:
+
+    \begin{equation}
+        \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z}_{1:N} \vert \boldsymbol{x})} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}, \boldsymbol{z}_{1:N})}{q_{\boldsymbol{\phi}} (\boldsymbol{z}_{1:N} \vert \boldsymbol{x})}  \Bigg \rbrack = \mathbb{E}_{q_{\boldsymbol{\phi}} (\boldsymbol{z}_{1:N} \vert \boldsymbol{x})} \Bigg \lbrack \log \dfrac{p(\boldsymbol{z}_N) p_{\boldsymbol{\theta}} (\boldsymbol{x} \vert \boldsymbol{z}_1) \prod_{n=2}^N p_{\boldsymbol{\theta}} (\boldsymbol{z}_{n-1} \vert \boldsymbol{z}_n)}{q_{\boldsymbol{\phi}} (\boldsymbol{z}_1 \vert \boldsymbol{x}) \prod_{n=2}^N q_{\boldsymbol{\phi}} (\boldsymbol{z}_n \vert \boldsymbol{z}_{n-1})} \Bigg \rbrack
+    \end{equation}
+
+    Ở mục tiếp theo, ta sẽ phân tích mô hình khuếch tán xác suất (VDMs), hàm mục tiêu này có thể được phân tích sâu hơn thành các thành phần có thể diễn giải được.
+
+    \subsubsection{Mô hình xác suất biến phân (VDMs)}
+
+    Cách phù hợp nhất để tưởng tượng mô hình khuếch tán biến phân (VDMs) \cite{sohl2015deep}, \cite{ho2020denoising}, \cite{kingma2021variational} là một bộ tự mã hóa phân cấp Markov (MHVAE) với ba giới hạn:
+
+    \begin{itemize}
+        \item Số chiều của biến ẩn chính xác bằng số chiều của dữ liệu quan sát được.
+        \item Cấu trúc của bộ mã hóa ẩn tại các bước thời gian không được học mà được định nghĩa từ trước là một mô hình Gaussian tuyến tính.
+        Nói cách khác, phân phối Gaussian nằm xung quanh đầu ra của bước thời gian trước đó.
+        \item Các tham số của Gaussian của các bộ mã hóa ẩn theo thời gian theo một cách mà phân phối của biến ẩn tại bước thời gian cuối cùng $N$ là phân phối Gaussian tiêu chuẩn. 
+    \end{itemize}
 \end{document}
