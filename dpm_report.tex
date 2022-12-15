@@ -2047,7 +2047,7 @@
 
     \begin{figure}[h!]
         \centering
-        \includegraphics[scale=0.6]{VDM-Graph.png}
+        \includegraphics[width=\textwidth]{VDM-Graph.png}
         \caption{Minh họa một mô hình khuếch tán biến phân, $\boldsymbol{x}_0$ biểu diễn các quan sát dữ liệu thực như ảnh, $\boldsymbol{x}_N$ biểu diễn nhiễu Gaussian, $\boldsymbol{x}_n$ là một phiên bản nhiễu trung gian của $\boldsymbol{x}_0$.
         Từng $q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})$ được mô hình bởi phân phối Gaussian và sử dụng đầu ra của trạng thái trước làm trung bình.}
         \label{fig:VDM-Graph}
@@ -2129,7 +2129,7 @@
 
     \begin{figure}[h!]
         \centering
-        \includegraphics[scale=0.5]{VDM-Optimize.png}
+        \includegraphics[width=\textwidth]{VDM-Optimize.png}
         \caption{Theo cách tiếp cận đầu tiên, VDM có thể được tối ưu hóa bằng cách đảm bảo cho từng bước trung gian $\boldsymbol{x}_n$, phân phối hậu nghiệm từ biến ẩn sau nó $p_{\boldsymbol{\theta}} (\boldsymbol{x}_n \vert \boldsymbol{x}_{n+1})$ khớp với nhiễu Gaussian của biến ẩn ngay trước nó $q(\boldsymbol{x}_{n} \vert \boldsymbol{x}_{n-1})$.
         Trong hình vẽ này, cho từng $\boldsymbol{x}_n$ trung gian, ta cực tiểu hóa sự khác biệt giữa các phân phối được biểu diễn bởi mũi tên màu hồng và mũi tên màu xanh lá cây.}
         \label{fig:VDM-Optimize}
@@ -2186,4 +2186,22 @@
 
     Ta cần chú ý khi quan sát trong quá trình của cả hai cách để thu được các dạng của ELBO (công thức \ref{eq:ELBO-First-Derivation} và công thức \ref{eq:ELBO-Derivation-KL-divergence}), chỉ có giả định Markov được sử dụng, cũng kết quả cho các công thức trên sẽ đúng với bất kỳ một MHVAE nào.
     Hơn nữa, khi ta đặt $N=1$, giải thích của ELBO cho VDM sẽ quay trở lại giống hệ công thức ELBO cho VAE như được viết trong công thức \ref{eq:VAEs-Formulation}.
+
+    Trong dạng công thức này của ELBO, phần lớn chi phí tối ưu hóa vẫn nằm trong số hạng tổng và lớn hơn nhiều so với thành phần tái tạo.
+    Trong khi mỗi thành phần độ phân kỳ Kullback-Leibler $D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0) \Vert p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \big)$ rất khó để cực tiểu hóa cho một phân phối hậu nghiệm bất kỳ trong một MHVAE phức tạp tùy ý do sự phức tạp của việc học bộ mã hóa.
+    Trong VDM ta có thể tận dụng giả thuyết về các bước chuyển tiếp Gaussian để làm cho quá trình tối ưu hóa dễ hơn.
+    Bằng quy tắc Bayes, ta được:
+
+    \begin{equation}
+        q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0) = \dfrac{q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1}, \boldsymbol{x}_0) q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_0)}{q(\boldsymbol{x}_n \vert \boldsymbol{x}_0)}
+    \end{equation}
+
+    Như ta đã biết $q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1}, \boldsymbol{x}_0)=q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})=\mathcal{N}(\boldsymbol{x}_n \vert \sqrt{\alpha_n}\boldsymbol{x}_{n-1}, (1-\alpha_n)\boldsymbol{I})$ từ giả định về chuyển tiếp bộ mã hóa (trong công thức \ref{eq:Forward-Process-Transition-Distribution}).
+    Vấn đề còn lại ta phải tìm công thức cho $q(\boldsymbol{x}_n \vert \boldsymbol{x}_0)$ và $q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_0)$.
+    May mắn là việc này cũng khá dễ dàng bằng cách tận dụng chuyển tiếp bộ mã hóa của VDM là một mô hình Gaussian tuyến tính.
+    Ta xét lại thủ thuật tái tham số hóa với mẫu $\boldsymbol{x}_n \sim q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})$ có thể được viết lại:
+
+    \begin{equation}
+        \boldsymbol{x}_n = \sqrt{\alpha_n} \boldsymbol{x}_{n-1} + \sqrt{1 - \alpha_n} \boldsymbol{\epsilon} \text{ với } \boldsymbol{\epsilon} \sim \mathcal{N} (\boldsymbol{\epsilon} \vert \boldsymbol{0}, \boldsymbol{I})
+    \end{equation}
 \end{document}
