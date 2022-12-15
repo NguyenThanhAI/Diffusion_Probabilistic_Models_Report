@@ -370,7 +370,7 @@
         q\big( \boldsymbol{x}_n \vert \boldsymbol{x}_{n-1} \big)=\mathcal{N} \big( \boldsymbol{x}_n \vert \sqrt{\alpha}_n \boldsymbol{x}_{n-1}, \beta_n \boldsymbol{I} \big)
     \end{equation}
 
-    Quá trình khuếch tán ngược được học bằng cách cực đại hóa cận dưới (ELBO): $L_{\mathrm{elbo}}=\mathbb{E}_q \log \dfrac{p(\bold{x}_{0:N})}{q(\bold{x}_{1:N}\vert \bold{x}_0)}$ hay tương đương với cực tiểu hóa độ phân kỳ Kullback-Leibler giữa quá trình khuếch tán thuận và quá trình khuếch tán ngược:
+    Quá trình khuếch tán ngược được học bằng cách cực đại hóa cận dưới (ELBO): $L_{\mathrm{elbo}}=\mathbb{E}_q \log \dfrac{p(\boldsymbol{x}_{0:N})}{q(\boldsymbol{x}_{1:N}\vert \boldsymbol{x}_0)}$ hay tương đương với cực tiểu hóa độ phân kỳ Kullback-Leibler giữa quá trình khuếch tán thuận và quá trình khuếch tán ngược:
 
     \begin{equation} \label{eq:ELBO-Maximization}
         \max_{\lbrace \boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n \rbrace_{n=1}^N} L_{\mathrm{elbo}} \Leftrightarrow \min_{\lbrace \boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n \rbrace_{n=1}^N} D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{0:N}) \Vert p(\boldsymbol{x}_{0:N}) \big)
