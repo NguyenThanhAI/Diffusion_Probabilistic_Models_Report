@@ -2033,7 +2033,7 @@
 
     Ở mục tiếp theo, ta sẽ phân tích mô hình khuếch tán xác suất (VDMs), hàm mục tiêu này có thể được phân tích sâu hơn thành các thành phần có thể diễn giải được.
 
-    \subsubsection{Mô hình xác suất biến phân (VDMs)}
+    \subsection{Mô hình xác suất biến phân (VDMs)}
 
     Cách phù hợp nhất để tưởng tượng mô hình khuếch tán biến phân (VDMs) \cite{sohl2015deep}, \cite{ho2020denoising}, \cite{kingma2021variational} là một bộ tự mã hóa phân cấp Markov (MHVAE) với ba giới hạn:
 
@@ -2043,4 +2043,70 @@
         Nói cách khác, phân phối Gaussian nằm xung quanh đầu ra của bước thời gian trước đó.
         \item Các tham số của Gaussian của các bộ mã hóa ẩn theo thời gian theo một cách mà phân phối của biến ẩn tại bước thời gian cuối cùng $N$ là phân phối Gaussian tiêu chuẩn. 
     \end{itemize}
+
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[scale=0.6]{VDM-Graph.png}
+        \caption{Minh họa một mô hình khuếch tán biến phân, $\boldsymbol{x}_0$ biểu diễn các quan sát dữ liệu thực như ảnh, $\boldsymbol{x}_N$ biểu diễn nhiễu Gaussian, $\boldsymbol{x}_n$ là một phiên bản nhiễu trung gian của $\boldsymbol{x}_0$.
+        Từng $q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})$ được mô hình bởi phân phối Gaussian và sử dụng đầu ra của trạng thái trước làm trung bình.}
+        \label{fig:VDM-Graph}
+    \end{figure}
+
+    Hơn nữa, ta duy trì thuộc tính Markov giữa các chuyển tiếp từ một bộ mã hóa biến phân phân cấp Markov (MHVAE) tiêu chuẩn.
+
+    Ta sẽ phân tích ý nghĩa của những giả định này.
+    Từ giả định đầu tiên, ta có thể biểu diễn dữ liệu thực và biến ẩn là $\boldsymbol{x}_n$, với $\boldsymbol{x}_0$ biểu diễn mẫu dữ liệu thực và với $n \in \lbrack 1, N \rbrack$ biểu diễn biến ẩn tương ứng với phân cấp có chỉ số $n$.
+    Phân phối hậu nghiệm của VDM tương tự với phân phối hậu nghiệm của MHVAE trong công thức \ref{eq:HVAE-Formulation}.
+    Ta có thể viết lại thành:
+
+    \begin{equation}
+        q(\boldsymbol{x}_{1:N}\vert \boldsymbol{x}_0) = \prod_{n=1}^N q(\boldsymbol{x}_{n} \vert \boldsymbol{x}_{n-1})
+    \end{equation}
+
+    Từ giả định thứ hai, ta biết rằng phân phối của từng biến ẩn trong bộ mã hóa là một phân phối Gaussian có trung bình nằm xung quanh biến ẩn ngay trước nó.
+    Không như MHVAE, cấu trúc của bộ mã hóa tại mỗi bước thời gian $n$ không được học mà được cố định là một mô hình Gaussian cố định, với trung bình và độ lệch chuẩn có thể được đặt trước và xem như là một siêu tham số \cite{ho2020denoising} hoặc là một tham số được học \cite{kingma2021variational}.
+    Ta tham số hóa bộ mã hóa Gaussian với trung bình $\boldsymbol{\mu}_n = \sqrt{\alpha_n} \boldsymbol{x}_{n-1}$ và phương sai $\boldsymbol{\Sigma}_n (\boldsymbol{x}_n) = (1 - \alpha_n) \boldsymbol{I}$, với dạng của các hệ số được chọn ví dụ phương sai của các biến ẩn ở cùng một thang.
+    Nói cách khác, quá trình mã hóa là \textit{bảo toàn phương sai}.
+    Ta cần chú ý các tham số của phân phối Gaussian dẫn đến cùng dạng tương tự ở các bước thời gian khác nhau.
+    Điểm nổi bật chính là hệ số $\alpha_n$ (có thể được học) biến đổi với các bước thời gian $n$.
+    Về mặt toán hoc, các bước chuyển tiếp của bộ mã hóa được ký hiệu là:
+
+    \begin{equation}
+        q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1}) = \mathcal{N} (\boldsymbol{x}_n \vert \sqrt{\alpha_n} \boldsymbol{x}_{n-1}, (1 - \alpha_n) \boldsymbol{I})
+    \end{equation}
+
+    Từ giả định thứ ba, ta biết rằng $\alpha_t$ biến đổi theo thời gian tương ứng với một lịch trình cố định hoặc được học để sao cho phân phối của biến ẩn cuối cùng $p(\boldsymbol{x}_N)$ là một phân phối Gaussian tiêu chuẩn.
+    Sau đó ta có thể cập nhật phân phối chung của MHVAE (công thức \ref{eq:HVAE-Formulation}) để viết phân phối chung cho một VDM có dạng:
+    
+    \begin{equation}
+        p(\boldsymbol{x}_{0:N}) = p(\boldsymbol{x}_N) \prod_{n=1}^N p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)
+    \end{equation}
+
+    với $p(\boldsymbol{x}_N) = \mathcal{N} (\boldsymbol{x}_N \vert \boldsymbol{0}, \boldsymbol{I})$
+
+    Nói chung, các giả định miêu tả quá trình thêm nhiễu vào một ảnh theo thời gian, ta từ từ làm hỏng hình ảnh bằng cách thêm nhiễu Gaussian đến khi ảnh trở thành nhiễu Gaussian.
+    Một cách trực giác, quá trình được minh họa trên hình \ref{fig:VDM-Graph}.
+
+    Chú ý rằng phân phối của các bộ mã hóa $q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})$ không còn được tham số hóa bởi $\boldsymbol{\phi}$ mà được mô hình hóa bởi nhiễu Gaussian với các tham số trung bình phương sai được định nghĩa trước theo từng bước thời gian.
+    Vì vậy trong VDM, ta chỉ quan tâm học $p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)$ để ta có thể tạo ra dữ liệu mới.
+    Sau khi tối ưu hóa VDM, quá trình lấy mẫu bằng việc lấy mẫu nhiễu Gaussian $p(\boldsymbol{x}_N)$ và chạy lặp lại các chuyển tiếp khử nhiếp $p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)$ cho $N$ bước để tạo ra $\boldsymbol{x}_0$ mới.
+
+    Cũng như bất kỳ HVAE nào, VDM cũng có thể được tối ưu hóa bằng cách cực đại hóa ELBO, có thể được suy ra như sau:
+
+    \begin{equation*}
+        \begin{aligned}
+            \log p(\boldsymbol{x}) &= \log \int p(\boldsymbol{x}_{0:N}) d \boldsymbol{x}_{1:N} \\
+            &= \log \int \dfrac{p(\boldsymbol{x}_{0:N}) q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)}{q(\boldsymbol{x}_{1:N})} d \boldsymbol{x}_{1:N} \\
+            &= \log \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \dfrac{p(\boldsymbol{x}_{0:N})}{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \rbrack \\
+            &\geq \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_{0:N})}{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N) \prod_{n=1}^N p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)}{\prod_{n=1}^N q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N) p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \prod_{n=2}^{N} p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)}{q(\boldsymbol{x}_N \vert \boldsymbol{x}_{N-1})\prod_{n=1}^{N-1} q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N) p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \prod_{n=1}^{N-1} p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n} \vert \boldsymbol{x}_{n+1})}{q(\boldsymbol{x}_N \vert \boldsymbol{x}_{N-1})\prod_{n=1}^{N-1} q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N) p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1)}{q(\boldsymbol{x}_N \vert \boldsymbol{x}_{N-1})} \Bigg \rbrack + \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \prod_{n=1}^{N-1} \dfrac{p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n} \vert \boldsymbol{x}_{n+1})}{q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \rbrack + \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N)}{q(\boldsymbol{x}_N \vert \boldsymbol{x}_{N-1})} \Bigg \rbrack + \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \sum_{n=1}^{N-1} \log \dfrac{p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n} \vert \boldsymbol{x}_{n+1})}{q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \rbrack + \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N)}{q(\boldsymbol{x}_N \vert \boldsymbol{x}_{N-1})} \Bigg \rbrack + \sum_{n=1}^{N-1} \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n} \vert \boldsymbol{x}_{n+1})}{q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1} \vert \boldsymbol{x}_0)} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \rbrack + \mathbb{E}_{q(\boldsymbol{x}_{N-1}, \boldsymbol{x}_{N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N)}{q(\boldsymbol{x}_N \vert \boldsymbol{x}_{N-1})} \Bigg \rbrack + \sum_{n=1}^{N-1} \mathbb{E}_{q(\boldsymbol{x}_{n-1}, \boldsymbol{x}_n, \boldsymbol{x}_{n+1} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n} \vert \boldsymbol{x}_{n+1})}{q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})} \Bigg \rbrack \\
+            &= \underbrace{\mathbb{E}_{q(\boldsymbol{x}_{1} \vert \boldsymbol{x}_0)} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \rbrack}_{\mathrm{reconstruction \thickspace term}} - \underbrace{\mathbb{E}_{q(\boldsymbol{x}_{N-1} \vert \boldsymbol{x}_0)} \lbrack D_{\mathrm{KL}} \big( q(\boldsymbol{x}_N \vert \boldsymbol{x}_{N-1}) \Vert p(\boldsymbol{x}_N) \big) \rbrack}_{\mathrm{prior \thickspace matching \thickspace term}} \\ &- \underbrace{\sum_{n=1}^{N-1} \mathbb{E}_{q(\boldsymbol{x}_{n-1}, \boldsymbol{x}_{n+1} \vert \boldsymbol{x}_0)} \lbrack D_{\mathrm{KL}} \big( q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1}) \Vert p_{\boldsymbol{\theta}} (\boldsymbol{x}_n \vert \boldsymbol{x}_{n+1}) \big) \rbrack}_{\mathrm{consistency \thickspace term}}
+        \end{aligned}
+    \end{equation*}
 \end{document}
