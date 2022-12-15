@@ -29,6 +29,7 @@
 \usepackage{indentfirst}
 \usepackage{multirow}
 \usepackage[natbib,backend=biber,style=ieee, sorting=ynt]{biblatex}
+\usepackage{cancel}
 \bibliography{ref.bib}
 
 \graphicspath{{./figures/}}
@@ -2071,7 +2072,7 @@
     Điểm nổi bật chính là hệ số $\alpha_n$ (có thể được học) biến đổi với các bước thời gian $n$.
     Về mặt toán hoc, các bước chuyển tiếp của bộ mã hóa được ký hiệu là:
 
-    \begin{equation}
+    \begin{equation} \label{eq:Forward-Process-Transition-Distribution}
         q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1}) = \mathcal{N} (\boldsymbol{x}_n \vert \sqrt{\alpha_n} \boldsymbol{x}_{n-1}, (1 - \alpha_n) \boldsymbol{I})
     \end{equation}
 
@@ -2093,7 +2094,7 @@
 
     Cũng như bất kỳ HVAE nào, VDM cũng có thể được tối ưu hóa bằng cách cực đại hóa ELBO, có thể được suy ra như sau:
 
-    \begin{equation*}
+    \begin{equation*} \label{eq:ELBO-First-Derivation}
         \begin{aligned}
             \log p(\boldsymbol{x}) &= \log \int p(\boldsymbol{x}_{0:N}) d \boldsymbol{x}_{1:N} \\
             &= \log \int \dfrac{p(\boldsymbol{x}_{0:N}) q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)}{q(\boldsymbol{x}_{1:N})} d \boldsymbol{x}_{1:N} \\
@@ -2106,7 +2107,66 @@
             &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \rbrack + \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N)}{q(\boldsymbol{x}_N \vert \boldsymbol{x}_{N-1})} \Bigg \rbrack + \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \sum_{n=1}^{N-1} \log \dfrac{p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n} \vert \boldsymbol{x}_{n+1})}{q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})} \Bigg \rbrack \\
             &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \rbrack + \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N)}{q(\boldsymbol{x}_N \vert \boldsymbol{x}_{N-1})} \Bigg \rbrack + \sum_{n=1}^{N-1} \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n} \vert \boldsymbol{x}_{n+1})}{q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})} \Bigg \rbrack \\
             &= \mathbb{E}_{q(\boldsymbol{x}_{1} \vert \boldsymbol{x}_0)} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \rbrack + \mathbb{E}_{q(\boldsymbol{x}_{N-1}, \boldsymbol{x}_{N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N)}{q(\boldsymbol{x}_N \vert \boldsymbol{x}_{N-1})} \Bigg \rbrack + \sum_{n=1}^{N-1} \mathbb{E}_{q(\boldsymbol{x}_{n-1}, \boldsymbol{x}_n, \boldsymbol{x}_{n+1} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n} \vert \boldsymbol{x}_{n+1})}{q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})} \Bigg \rbrack \\
-            &= \underbrace{\mathbb{E}_{q(\boldsymbol{x}_{1} \vert \boldsymbol{x}_0)} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \rbrack}_{\mathrm{reconstruction \thickspace term}} - \underbrace{\mathbb{E}_{q(\boldsymbol{x}_{N-1} \vert \boldsymbol{x}_0)} \lbrack D_{\mathrm{KL}} \big( q(\boldsymbol{x}_N \vert \boldsymbol{x}_{N-1}) \Vert p(\boldsymbol{x}_N) \big) \rbrack}_{\mathrm{prior \thickspace matching \thickspace term}} \\ &- \underbrace{\sum_{n=1}^{N-1} \mathbb{E}_{q(\boldsymbol{x}_{n-1}, \boldsymbol{x}_{n+1} \vert \boldsymbol{x}_0)} \lbrack D_{\mathrm{KL}} \big( q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1}) \Vert p_{\boldsymbol{\theta}} (\boldsymbol{x}_n \vert \boldsymbol{x}_{n+1}) \big) \rbrack}_{\mathrm{consistency \thickspace term}}
+            &= \underbrace{\mathbb{E}_{q(\boldsymbol{x}_{1} \vert \boldsymbol{x}_0)} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \rbrack}_{\mathrm{reconstruction \thickspace term}} - \underbrace{\mathbb{E}_{q(\boldsymbol{x}_{N-1} \vert \boldsymbol{x}_0)} \lbrack D_{\mathrm{KL}} \big( q(\boldsymbol{x}_N \vert \boldsymbol{x}_{N-1}) \Vert p(\boldsymbol{x}_N) \big) \rbrack}_{\mathrm{prior \thickspace matching \thickspace term}} \\ &- \sum_{n=1}^{N-1} \underbrace{\mathbb{E}_{q(\boldsymbol{x}_{n-1}, \boldsymbol{x}_{n+1} \vert \boldsymbol{x}_0)} \lbrack D_{\mathrm{KL}} \big( q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1}) \Vert p_{\boldsymbol{\theta}} (\boldsymbol{x}_n \vert \boldsymbol{x}_{n+1}) \big) \rbrack}_{\mathrm{consistency \thickspace term}}
+        \end{aligned}
+    \end{equation*}
+
+    Dạng thu được của ELBO có thể được giải thích theo ba thành phần riêng biệt:
+
+    \begin{enumerate}
+        \item $\mathbb{E}_{q(\boldsymbol{x}_{1} \vert \boldsymbol{x}_0)} \lbrack p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \rbrack$ là thành phần tái tạo dự đoán $\log$ xác suất của dữ liệu gốc khi cho biến ẩn ở bước thứ nhất.
+        Thành phần này cũng xuất hiện trong VAE, và được huấn luyện tương tự.
+        \item $\mathbb{E}_{q(\boldsymbol{x}_{N-1} \vert \boldsymbol{x}_0)} \lbrack D_{\mathrm{KL}} \big( q(\boldsymbol{x}_N \vert \boldsymbol{x}_{N-1}) \Vert p(\boldsymbol{x}_N) \big) \rbrack$ là thành phần khớp tiên nghiệm.
+        Thành phần này được cực tiểu hóa khi phân phối của biến ẩn ở bước cuối cùng khớp với phân phối Gaussian tiên nghiệm.
+        Thành phần này không cần tối ưu vì không có tham số được huấn luyện.
+        Mặt khác, ta giả định với $N$ đủ lớn thì phân phối của biến ẩn cuối trở thành phân phối Gaussian, thành phần này sẽ trở thành 0.
+        \item $\sum_{n=1}^{N-1} \mathbb{E}_{q(\boldsymbol{x}_{n-1}, \boldsymbol{x}_{n+1} \vert \boldsymbol{x}_0)} \lbrack D_{\mathrm{KL}} \big( q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1}) \Vert p_{\boldsymbol{\theta}} (\boldsymbol{x}_n \vert \boldsymbol{x}_{n+1}) \big) \rbrack$ là thành phần nhất quán.
+        Thành phần này cố gắng làm cho phân phối của $\boldsymbol{x}_n$ nhất quán từ cả quá trình khuếch tán thuận và quá trình khuếch tán ngược.
+        Bước khử nhiễu từ một ảnh nhiễu hơn phải khớp với bước làm nhiễu tương ứng từ một ảnh ít nhiễu hơn cho mọi bước thời gian trung gian.
+        Việc này phản ánh bản chất toán học của độ phân kỳ Kullback-Leibler.
+        Thành phần này được cực tiểu hóa khi ta huấn luyện $p_{\boldsymbol{\theta}} (\boldsymbol{x}_n \vert \boldsymbol{x}_{n+1})$ khớp với phân phối Gaussian $q(\boldsymbol{x}_{n} \vert \boldsymbol{x}_{n-1})$ được định nghĩa trong công thức \ref{eq:Forward-Process-Transition-Distribution}.
+    \end{enumerate}
+
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[scale=0.5]{VDM-Optimize.png}
+        \caption{Theo cách tiếp cận đầu tiên, VDM có thể được tối ưu hóa bằng cách đảm bảo cho từng bước trung gian $\boldsymbol{x}_n$, phân phối hậu nghiệm từ biến ẩn sau nó $p_{\boldsymbol{\theta}} (\boldsymbol{x}_n \vert \boldsymbol{x}_{n+1})$ khớp với nhiễu Gaussian của biến ẩn ngay trước nó $q(\boldsymbol{x}_{n} \vert \boldsymbol{x}_{n-1})$.
+        Trong hình vẽ này, cho từng $\boldsymbol{x}_n$ trung gian, ta cực tiểu hóa sự khác biệt giữa các phân phối được biểu diễn bởi mũi tên màu hồng và mũi tên màu xanh lá cây.}
+        \label{fig:VDM-Optimize}
+    \end{figure}
+
+    Một cách trực quan, ý nghĩa của ELBO được minh họa trong hình \ref{fig:VDM-Optimize}.
+    Chi phí của việc tối ưu hóa VDM phụ thuộc chủ yếu vào thành phần thứ ba, khi ta phải tối ưu hóa trên tất cả các bước thời gian $n$.
+
+    Dưới dạng công thức này, tất cả các thành phần của ELBO được tính bằng kỳ vọng, và có thể xấp xỉ được sử dụng ước lượng Monte Carlo.
+    Tuy nhiên, thực tế khi ta tối ưu ELBO sử dụng các thành phần này ta chỉ thu được nghiệm cận tối ưu.
+    Bởi vì thành phần nhất quán được tính toán dựa trên kỳ vọng của hai biến ngẫu nhiên $\lbrace \boldsymbol{x}_{n-1}, \boldsymbol{x}_{n+1} \rbrace$, phương sai của ước lượng Monte Carlo của thành phần này có thể lớn hơn thành phần được ước lượng sử dụng duy nhất một biến ngẫu nhiên trên từng bước thời gian.
+    Thành phần này được tính bằng cách tổng $N-1$ thành phần nhất quán đơn lẻ, kết quả ước lượng cuối cùng của ELBO có thể có phương sai lớn hơn với giá trị $N$ lớn.
+
+    Ta có thể thu được một dạng của ELBO với mỗi thành phần được tính là kỳ vọng chỉ trên một biến ngẫu nhiên tại một bước thời gian.
+    Bản chất cốt lõi là ta có thể viết lại bước chuyển tiếp mã hóa thành $q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})=q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1}, \boldsymbol{x}_0)$ với điều kiện bổ sung là không cần thiết vì thuộc tính Markov.
+    Theo quy tắc Bayes, ta có thể viết từng bước chuyển tiếp là:
+
+    \begin{equation}
+        q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1}, \boldsymbol{x}_0) = \dfrac{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0) q(\boldsymbol{x}_n \vert \boldsymbol{x}_0)}{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_0)}
+    \end{equation}
+
+    Khi được trang bị công thức mới này, ta có thể viết lại công thức mới của ELBO từ công thức \ref{eq:ELBO-First-Derivation}:
+
+    \begin{equation*}
+        \begin{aligned}
+            \log p(\boldsymbol{x}) &\geq \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_{0:N})}{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N) \prod_{n=1}^N p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)}{\prod_{n=1}^N q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N) p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \prod_{n=2}^{N} p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)}{q(\boldsymbol{x}_1 \vert \boldsymbol{x}_0)\prod_{n=2}^N q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N) p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \prod_{n=2}^{N} p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)}{q(\boldsymbol{x}_1 \vert \boldsymbol{x}_0)\prod_{n=2}^N q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1}, \boldsymbol{x}_0)} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N) p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1)}{q(\boldsymbol{x}_1 \vert \boldsymbol{x}_0)} + \log \prod_{n=2}^N \dfrac{p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)}{q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1}, \boldsymbol{x}_0)} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N) p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1)}{q(\boldsymbol{x}_1 \vert \boldsymbol{x}_0)} + \log \prod_{n=2}^N \dfrac{p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)}{\dfrac{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0) q(\boldsymbol{x}_n \vert \boldsymbol{x}_0)}{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_0)}} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N) p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1)}{q(\boldsymbol{x}_1 \vert \boldsymbol{x}_0)} + \log \prod_{n=2}^N \dfrac{p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)}{\dfrac{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0) \cancel{q(\boldsymbol{x}_n \vert \boldsymbol{x}_0)}}{\cancel{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_0)}}} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N) p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1)}{\cancel{q(\boldsymbol{x}_1 \vert \boldsymbol{x}_0)}} + \log \dfrac{\cancel{q(\boldsymbol{x}_1 \vert \boldsymbol{x}_0)}}{q(\boldsymbol{x}_T \vert \boldsymbol{x}_0)} + \log \prod_{n=2}^N \dfrac{p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)}{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0)} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N) p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1)}{q(\boldsymbol{x}_T \vert \boldsymbol{x}_0)} + \sum_{n=2}^N \log \dfrac{p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)}{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0)} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \lbrack \log p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \rbrack + \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N)}{q(\boldsymbol{x}_N \vert \boldsymbol{x}_0)} \Bigg \rbrack + \sum_{n=2}^N \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \dfrac{p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)}{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0)} \Bigg \rbrack \\
+            &= \mathbb{E}_{q(\boldsymbol{x}_1 \vert \boldsymbol{x}_0)} \lbrack \log p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \rbrack + \mathbb{E}_{q(\boldsymbol{x}_N \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N)}{q(\boldsymbol{x}_N \vert \boldsymbol{x}_0)} \Bigg \rbrack + \sum_{n=2}^N \mathbb{E}_{q(\boldsymbol{x}_n, q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_0)} \Bigg \lbrack \dfrac{p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)}{q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0)} \Bigg \rbrack \\
+            &= \underbrace{\mathbb{E}_{q(\boldsymbol{x}_1 \vert \boldsymbol{x}_0)} \lbrack \log p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \rbrack}_{\mathrm{reconstruction \thickspace term}} - \underbrace{D_{\mathrm{KL}} \big( q(\boldsymbol{x}_N \vert \boldsymbol{x}_0) \Vert p(\boldsymbol{x}_N) \big)}_{\mathrm{prior \thickspace matching \thickspace term}} - \sum_{n=2}^N \underbrace{\mathbb{E}_{q(\boldsymbol{x}_n \vert \boldsymbol{x}_0)} \lbrack D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0) \Vert p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \big) \rbrack}_{\mathrm{denoising \thickspace matching \thickspace term}}
         \end{aligned}
     \end{equation*}
 \end{document}
