@@ -2120,7 +2120,7 @@
         Thành phần này được cực tiểu hóa khi phân phối của biến ẩn ở bước cuối cùng khớp với phân phối Gaussian tiên nghiệm.
         Thành phần này không cần tối ưu vì không có tham số được huấn luyện.
         Mặt khác, ta giả định với $N$ đủ lớn thì phân phối của biến ẩn cuối trở thành phân phối Gaussian, thành phần này sẽ trở thành 0.
-        \item $\sum_{n=1}^{N-1} \mathbb{E}_{q(\boldsymbol{x}_{n-1}, \boldsymbol{x}_{n+1} \vert \boldsymbol{x}_0)} \lbrack D_{\mathrm{KL}} \big( q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1}) \Vert p_{\boldsymbol{\theta}} (\boldsymbol{x}_n \vert \boldsymbol{x}_{n+1}) \big) \rbrack$ là thành phần nhất quán.
+        \item $\mathbb{E}_{q(\boldsymbol{x}_{n-1}, \boldsymbol{x}_{n+1} \vert \boldsymbol{x}_0)} \lbrack D_{\mathrm{KL}} \big( q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1}) \Vert p_{\boldsymbol{\theta}} (\boldsymbol{x}_n \vert \boldsymbol{x}_{n+1}) \big) \rbrack$ là thành phần nhất quán.
         Thành phần này cố gắng làm cho phân phối của $\boldsymbol{x}_n$ nhất quán từ cả quá trình khuếch tán thuận và quá trình khuếch tán ngược.
         Bước khử nhiễu từ một ảnh nhiễu hơn phải khớp với bước làm nhiễu tương ứng từ một ảnh ít nhiễu hơn cho mọi bước thời gian trung gian.
         Việc này phản ánh bản chất toán học của độ phân kỳ Kullback-Leibler.
@@ -2153,7 +2153,7 @@
 
     Khi được trang bị công thức mới này, ta có thể viết lại công thức mới của ELBO từ công thức \ref{eq:ELBO-First-Derivation}:
 
-    \begin{equation*}
+    \begin{equation*} \label{eq:ELBO-Second-Derivation}
         \begin{aligned}
             \log p(\boldsymbol{x}) &\geq \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_{0:N})}{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \rbrack \\
             &= \mathbb{E}_{q(\boldsymbol{x}_{1:N} \vert \boldsymbol{x}_0)} \Bigg \lbrack \log \dfrac{p(\boldsymbol{x}_N) \prod_{n=1}^N p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)}{\prod_{n=1}^N q(\boldsymbol{x}_n \vert \boldsymbol{x}_{n-1})} \Bigg \rbrack \\
@@ -2169,4 +2169,21 @@
             &= \underbrace{\mathbb{E}_{q(\boldsymbol{x}_1 \vert \boldsymbol{x}_0)} \lbrack \log p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \rbrack}_{\mathrm{reconstruction \thickspace term}} - \underbrace{D_{\mathrm{KL}} \big( q(\boldsymbol{x}_N \vert \boldsymbol{x}_0) \Vert p(\boldsymbol{x}_N) \big)}_{\mathrm{prior \thickspace matching \thickspace term}} - \sum_{n=2}^N \underbrace{\mathbb{E}_{q(\boldsymbol{x}_n \vert \boldsymbol{x}_0)} \lbrack D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0) \Vert p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \big) \rbrack}_{\mathrm{denoising \thickspace matching \thickspace term}}
         \end{aligned}
     \end{equation*}
+
+    Ta đã thu được một giả thích khác của ELBO với ước lượng có phương sai nhỏ hơn khi từng thành phần được tính với kỳ vọng của nhiều nhất một biến ngẫu nhiên tại mỗi bước thời gian.
+    Công thức này còn có cách giải thích rất tốt, biểu hiện rõ khi ta xem xét từng thành phần riêng lẻ:
+
+    \begin{enumerate}
+        \item $\mathbb{E}_{q(\boldsymbol{x}_1 \vert \boldsymbol{x}_0)} \lbrack \log p_{\boldsymbol{\theta}} (\boldsymbol{x}_0 \vert \boldsymbol{x}_1) \rbrack$ có thể được giải thích là thành phần tái tạo giống như trong ELBO của VAE.
+        Thành phần này có thể được xấp xỉ và tối ưu sử dụng ước lượng Monte Carlo.
+        \item $D_{\mathrm{KL}} \big( q(\boldsymbol{x}_N \vert \boldsymbol{x}_0) \Vert p(\boldsymbol{x}_N) \big)$ biểu diễn mức độ gần nhau của phân phối đầu vào bị nhiễu ở bước thời gian cuối cùng với phân phối Gaussian tiêu chuẩn tiên nghiệm.
+        Thành phần này không có tham số huấn luyện được và cũng bằng không trong giả đỉnh của ta.
+        \item $\mathbb{E}_{q(\boldsymbol{x}_n \vert \boldsymbol{x}_0)} \lbrack D_{\mathrm{KL}} \big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0) \Vert p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \big) \rbrack$ là thành phần khớp và khử nhiễu.
+        Ta học một bước chuyển tiếp khử nhiễu $p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)$ là một xấp xỉ của một bước chuyển tiếp khử nhiễu thực sự và rất dễ để tính $q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0)$.
+        Bước chuyển tiếp $q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0)$ có thể được xem là tín hiệu thực tế dùng để huấn luyện mô hình khi bước khử nhiễu này định nghĩa làm sao để khử nhiễu khỏi một ảnh $\boldsymbol{x}_n$ đến khi thu được ảnh được khử nhiễu hoàn toàn $\boldsymbol{x}_0$.
+        Thành phần này vì vậy được cực tiểu hóa khi hai bước khử nhiễu khớp với nhau càng gần càng tốt, được đo bởi độ phân kỳ Kullback-Leibler.
+    \end{enumerate}
+
+    Ta cần chú ý khi quan sát trong quá trình của cả hai cách để thu được các dạng của ELBO (công thức \ref{eq:ELBO-First-Derivation} và công thức \ref{eq:ELBO-Derivation-KL-divergence}), chỉ có giả định Markov được sử dụng, cũng kết quả cho các công thức trên sẽ đúng với bất kỳ một MHVAE nào.
+    Hơn nữa, khi ta đặt $N=1$, giải thích của ELBO cho VDM sẽ quay trở lại giống hệ công thức ELBO cho VAE như được viết trong công thức \ref{eq:VAEs-Formulation}.
 \end{document}
