@@ -2265,4 +2265,77 @@
             & \propto \mathcal{N} \Bigg( \boldsymbol{x}_{n-1} \vert \underbrace{\dfrac{\sqrt{\alpha_n}(1 - \overline{\alpha}_{n-1})\boldsymbol{x}_n + \sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \boldsymbol{x}_0}{1 - \overline{\alpha}_n}}_{\tilde{\mu}_n (\boldsymbol{x}_n, \boldsymbol{x}_0)}, \underbrace{\dfrac{(1 - \alpha_n)(1 - \overline{\alpha}_{n-1})}{1 - \overline{\alpha}_n} \boldsymbol{I}}_{\boldsymbol{\Sigma}_n} \Bigg)
         \end{aligned}
     \end{equation*}
+
+    Thành phần $C(\boldsymbol{x}_n, \boldsymbol{x}_0)$ là một hằng số với $\boldsymbol{x}_{n-1}$ được tính từ $\boldsymbol{x}_n$, $\boldsymbol{x}_0$ và các giá trị $\alpha$.
+
+    Với mỗi bước $\boldsymbol{x}_{n-1} \sim q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0)$ là phân phối chuẩn, với trung bình $\tilde{boldsymbol{\mu}}_n (\boldsymbol{x}_n, \boldsymbol{x}_0)$ là một hàm của $\boldsymbol{x}_n$ và $\boldsymbol{x}_0$.
+    Phương sai $\boldsymbol{\Sigma}_n$ là một hàm của các hệ số $\alpha$.
+    Các hệ số $\alpha$ này biết trước và được cố định với từng bước thời gian.
+    Các hệ số $\alpha$ có thể được đặt cố định khi được xem là siêu tham số hoặc có thể là đầu ra của một mạng mô hình hóa các hệ số này.
+    Từ công thức trên, ta có phương trình ma trận phương sai của quá trình ngược là $\boldsymbol{\Sigma}_n = \lambda_n^2 \boldsymbol{I}$ với:
+
+    \begin{equation}
+        \lambda_n^2 = \dfrac{(1 - \alpha_n)(1 - \overline{\alpha}_{n-1})}{1 - \overline{\alpha}_n} = \dfrac{\overline{\beta}_{n-1}}{\overline{\beta}_n} \beta_n = \tilde{\beta}_n
+    \end{equation}
+
+    Để khớp mô hình khử nhiễu $p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)$ với phân phối chuyển tiếp khử nhiễu thực sự $q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0)$ càng gần nhau càng tốt, ta có thể giả thiết mô hình này theo phân phối Gaussian.
+    Hơn nữa, tất cả các hệ số $\alpha$ biết trước và cố định tại từng bước thời gian, ta có thể xây dựng phương sai xấp xỉ của bước chuyển tiếp khử nhiễu của mô hình khử nhiễu cũng là $\boldsymbol{\Sigma}_n = \lambda_n^2 \boldsymbol{I}$.
+    Ta phải tham số hóa trung bình của mô hình này $\boldsymbol{\mu}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)$ là một hàm của $\boldsymbol{x}_n$.
+    Tuy nhiên $p_{\boldsymbol{\theta}}(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)$ không có điều kiện trên $\boldsymbol{x}_0$.
+
+    Ta đã biết không thức tính độ phân kỳ Kullback-Leibler giữa hai phân phối Gaussian là:
+
+    \begin{equation}
+        D_{\mathrm{KL}} \Big( \mathcal{N} (\boldsymbol{x} \vert \boldsymbol{\mu}_{\boldsymbol{x}}), \boldsymbol{\Sigma}_{\boldsymbol{x}} \Vert \mathcal{N} (\boldsymbol{y} \vert \boldsymbol{\mu}_{\boldsymbol{y}}, \boldsymbol{\Sigma}_{\boldsymbol{y}}) \Big) = \dfrac{1}{2} \Bigg \lbrack \log \dfrac{\lvert \boldsymbol{\Sigma}_{\boldsymbol{y}} \rvert}{\lvert \boldsymbol{\Sigma}_{\boldsymbol{x}} \rvert} - d + \mathrm{tr} \big( \boldsymbol{\Sigma}_{\boldsymbol{y}}^{-1} \boldsymbol{\Sigma}_{\boldsymbol{x}} \big) + \big( \boldsymbol{\mu}_{\boldsymbol{y}} - \boldsymbol{\mu}_{\boldsymbol{x}} \big)^T \boldsymbol{\Sigma}_{\boldsymbol{y}}^{-1} \big( \boldsymbol{\mu}_{\boldsymbol{y}} - \boldsymbol{\mu}_{\boldsymbol{x}} \big) \Bigg \rbrack
+    \end{equation}
+
+    Trong trường hợp của ta, ta có thể đặt phương sai của hai phân phối Gaussian bằng nhau, vì vậy việc tối ưu hóa độ phân kỳ Kullback-Leibler trở thành cực tiểu sự khác nhau giữa trung bình của hai phân phối:
+
+    \begin{equation}
+        \begin{aligned}
+            &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} D_{\mathrm{KL}} \Big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0) \Vert p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \Big) \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} D_{\mathrm{KL}} \Big( \mathcal{N} \big( \boldsymbol{x}_{-1} \vert \tilde{\boldsymbol{\mu}}_{n}, \boldsymbol{\Sigma}_n \big) \Vert \mathcal{N} \big( \boldsymbol{x}_{n-1} \vert \boldsymbol{\mu}_{\boldsymbol{\theta}}, \boldsymbol{\Sigma}_n \big) \Big) \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2} \Big \lbrack \log \dfrac{\lvert \boldsymbol{\Sigma}_n \rvert}{\lvert \boldsymbol{\Sigma}_n \rvert} -d + \mathrm{tr} \big( \boldsymbol{\Sigma}_n^{-1} \boldsymbol{\Sigma}_n \big) + \big( \boldsymbol{\mu}_{\boldsymbol{\theta}} - \tilde{\boldsymbol{\mu}}_n \big)^T \boldsymbol{\Sigma}_n^{-1} \big( \boldsymbol{\mu}_{\boldsymbol{\theta}} - tilde{\boldsymbol{\mu}}_n \big) \Bigg \rbrack \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2} \big \lbrack \log 1 - d + d + \big( \boldsymbol{\mu}_{\boldsymbol{\theta}} - \tilde{\boldsymbol{\mu}}_n \big)^T \boldsymbol{\Sigma}_n^{-1} \big( \boldsymbol{\mu}_{\boldsymbol{\theta}} - \tilde{\boldsymbol{\mu}}_n \big) \big \rbrack \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2} \big( \big( \boldsymbol{\mu}_{\boldsymbol{\theta}} - \tilde{\boldsymbol{\mu}}_n \big)^T \boldsymbol{\Sigma}_n^{-1} \big( \boldsymbol{\mu}_{\boldsymbol{\theta}} - \tilde{\boldsymbol{\mu}}_n \big) \big) \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2} \big( \big( \boldsymbol{\mu}_{\boldsymbol{\theta}} - \tilde{\boldsymbol{\mu}}_n \big)^T \big( \lambda_n^2 \boldsymbol{I} \big)^{-1} \big( \boldsymbol{\mu}_{\boldsymbol{\theta}} - \tilde{\boldsymbol{\mu}}_n \big) \big) \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \Big \lbrack \lVert \boldsymbol{\mu}_{\boldsymbol{\theta}} - \tilde{\boldsymbol{\mu}}_n \rVert_2^2 \Big \rbrack
+        \end{aligned}
+    \end{equation}
+
+    Với $\tilde{\boldsymbol{\mu}}_n$ là viết tắt của $\tilde{\boldsymbol{\mu}} (\boldsymbol{x}_n, \boldsymbol{x}_0)$ và $\boldsymbol{\mu}_{\boldsymbol{\theta}}$ là viết tắt của $\boldsymbol{\mu}_{\boldsymbol{\theta}}(\boldsymbol{x}_n, n)$.
+    Nói cách khác, ta muốn tối ưu hóa $\boldsymbol{\mu}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)$ khớp với $\tilde{\boldsymbol{\mu}}_n (\boldsymbol{x}_n, \boldsymbol{x}_0)$ có công thức:
+
+    \begin{equation}
+        \tilde{\boldsymbol{\mu}}_n (\boldsymbol{x}_n, \boldsymbol{x}_0) = \dfrac{\sqrt{\alpha_n}(1 - \overline{\alpha}_{n-1})\boldsymbol{x}_n + \sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \boldsymbol{x}_0}{1 - \overline{\alpha}_n}
+    \end{equation}
+
+    $\boldsymbol{\mu}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)$ cũng có điều kiện trên $\boldsymbol{x}_n$, ta có thể khớp $\tilde{\boldsymbol{\mu}}_n (\boldsymbol{x}_n, \boldsymbol{x}_0)$ gần nhau bằng cách đặt $\boldsymbol{\mu}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)$ có dạng sau:
+
+    \begin{equation}
+        \boldsymbol{\mu}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) = \dfrac{\sqrt{\alpha_n}(1 - \overline{\alpha}_{n-1})\boldsymbol{x}_n + \sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \widehat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)}{1 - \overline{\alpha}_n}
+    \end{equation}
+
+    Với $\widehat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)$ được tham số hóa bởi một mạng để dự đoán $\boldsymbol{x}_0$ từ ảnh bị nhiễu $\boldsymbol{x}_n$ và chỉ số bước thời gian $n$.
+    Khi đó bài toán tối ưu hóa trở thành:
+
+    \begin{equation}
+        \begin{aligned}
+            &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} D_{\mathrm{KL}} \Big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0) \Vert p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \Big) \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} D_{\mathrm{KL}} \Big( \mathcal{N} \big( \boldsymbol{x}_{-1} \vert \tilde{\boldsymbol{\mu}}_{n}, \boldsymbol{\Sigma}_n \big) \Vert \mathcal{N} \big( \boldsymbol{x}_{n-1} \vert \boldsymbol{\mu}_{\boldsymbol{\theta}}, \boldsymbol{\Sigma}_n \big) \Big) \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \Bigg \lbrack \Bigg \lVert \dfrac{\sqrt{\alpha_n}(1 - \overline{\alpha}_{n-1})\boldsymbol{x}_n + \sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \widehat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)}{1 - \overline{\alpha}_n} - \dfrac{\sqrt{\alpha_n}(1 - \overline{\alpha}_{n-1})\boldsymbol{x}_n + \sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \boldsymbol{x}_0}{1 - \overline{\alpha}_n} \Bigg \rVert_2^2 \Bigg \rbrack \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \Bigg \lbrack \Bigg \lVert \dfrac{\sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \widehat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)}{1 - \overline{\alpha}_n} - \dfrac{\sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \boldsymbol{x}_0}{1 - \overline{\alpha}_n} \Bigg \rVert_2^2 \Bigg \rbrack \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \Bigg \lbrack \Bigg \lVert \dfrac{\sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n)}{1 - \overline{\alpha}_n} \big( \widehat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) - \boldsymbol{x}_0 \big)^2 \Bigg \rVert_2^2 \Bigg \rbrack \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \dfrac{\overline{\alpha}_{n-1}(1 - \alpha_n)^2}{(1 - \overline{\alpha}_n)^2} \big \lbrack \lVert \widehat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) - \boldsymbol{x}_0 \rVert_2^2 \big \rbrack
+        \end{aligned}
+    \end{equation}
+
+    Vì vậy, việc tối ưu hóa một VDM trở thành việc huấn luyện một mạng để dự đoán ảnh ban đầu thực sự (khi chưa bị nhiễu) từ một phiên bản đã bị làm nhiễu của ảnh này \cite{ho2020denoising}.
+    Hơn nữa, việc cực tiểu hóa thành phẩn tổng thu được từ công thức \ref{eq:ELBO-Second-Derivation} trên tất cả các mức nhiễu có thể được xấp xỉ bằng việc cực tiểu hóa kỳ vọng trên tất cả các bước thời gian:
+
+    \begin{equation}
+        \underset{\boldsymbol{\theta}}{\mathrm{argmin}} \mathbb{E}_{n \sim \mathcal{U}\lbrace 2, N \rbrace} \Big \lbrack D_{\mathrm{KL}} \Big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0) \Vert p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \Big) \Big \rbrack
+    \end{equation}
+    
+    có thể được tối ưu hóa bằng việc lấy mẫu một số bước bất kỳ.
 \end{document}
