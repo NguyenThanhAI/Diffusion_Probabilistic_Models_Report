@@ -2313,20 +2313,20 @@
     $\boldsymbol{\mu}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)$ cũng có điều kiện trên $\boldsymbol{x}_n$, ta có thể khớp $\tilde{\boldsymbol{\mu}}_n (\boldsymbol{x}_n, \boldsymbol{x}_0)$ gần nhau bằng cách đặt $\boldsymbol{\mu}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)$ có dạng sau:
 
     \begin{equation}
-        \boldsymbol{\mu}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) = \dfrac{\sqrt{\alpha_n}(1 - \overline{\alpha}_{n-1})\boldsymbol{x}_n + \sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \widehat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)}{1 - \overline{\alpha}_n}
+        \boldsymbol{\mu}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) = \dfrac{\sqrt{\alpha_n}(1 - \overline{\alpha}_{n-1})\boldsymbol{x}_n + \sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \hat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)}{1 - \overline{\alpha}_n}
     \end{equation}
 
-    Với $\widehat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)$ được tham số hóa bởi một mạng để dự đoán $\boldsymbol{x}_0$ từ ảnh bị nhiễu $\boldsymbol{x}_n$ và chỉ số bước thời gian $n$.
+    Với $\hat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)$ được tham số hóa bởi một mạng để dự đoán $\boldsymbol{x}_0$ từ ảnh bị nhiễu $\boldsymbol{x}_n$ và chỉ số bước thời gian $n$.
     Khi đó bài toán tối ưu hóa trở thành:
 
     \begin{equation}
         \begin{aligned}
             &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} D_{\mathrm{KL}} \Big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0) \Vert p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \Big) \\
             = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} D_{\mathrm{KL}} \Big( \mathcal{N} \big( \boldsymbol{x}_{-1} \vert \tilde{\boldsymbol{\mu}}_{n}, \boldsymbol{\Sigma}_n \big) \Vert \mathcal{N} \big( \boldsymbol{x}_{n-1} \vert \boldsymbol{\mu}_{\boldsymbol{\theta}}, \boldsymbol{\Sigma}_n \big) \Big) \\
-            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \Bigg \lbrack \Bigg \lVert \dfrac{\sqrt{\alpha_n}(1 - \overline{\alpha}_{n-1})\boldsymbol{x}_n + \sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \widehat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)}{1 - \overline{\alpha}_n} - \dfrac{\sqrt{\alpha_n}(1 - \overline{\alpha}_{n-1})\boldsymbol{x}_n + \sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \boldsymbol{x}_0}{1 - \overline{\alpha}_n} \Bigg \rVert_2^2 \Bigg \rbrack \\
-            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \Bigg \lbrack \Bigg \lVert \dfrac{\sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \widehat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)}{1 - \overline{\alpha}_n} - \dfrac{\sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \boldsymbol{x}_0}{1 - \overline{\alpha}_n} \Bigg \rVert_2^2 \Bigg \rbrack \\
-            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \Bigg \lbrack \Bigg \lVert \dfrac{\sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n)}{1 - \overline{\alpha}_n} \big( \widehat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) - \boldsymbol{x}_0 \big)^2 \Bigg \rVert_2^2 \Bigg \rbrack \\
-            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \dfrac{\overline{\alpha}_{n-1}(1 - \alpha_n)^2}{(1 - \overline{\alpha}_n)^2} \big \lbrack \lVert \widehat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) - \boldsymbol{x}_0 \rVert_2^2 \big \rbrack
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \Bigg \lbrack \Bigg \lVert \dfrac{\sqrt{\alpha_n}(1 - \overline{\alpha}_{n-1})\boldsymbol{x}_n + \sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \hat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)}{1 - \overline{\alpha}_n} - \dfrac{\sqrt{\alpha_n}(1 - \overline{\alpha}_{n-1})\boldsymbol{x}_n + \sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \boldsymbol{x}_0}{1 - \overline{\alpha}_n} \Bigg \rVert_2^2 \Bigg \rbrack \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \Bigg \lbrack \Bigg \lVert \dfrac{\sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \hat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)}{1 - \overline{\alpha}_n} - \dfrac{\sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n) \boldsymbol{x}_0}{1 - \overline{\alpha}_n} \Bigg \rVert_2^2 \Bigg \rbrack \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \Bigg \lbrack \Bigg \lVert \dfrac{\sqrt{\overline{\alpha}_{n-1}}(1 - \alpha_n)}{1 - \overline{\alpha}_n} \big( \hat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) - \boldsymbol{x}_0 \big)^2 \Bigg \rVert_2^2 \Bigg \rbrack \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \dfrac{\overline{\alpha}_{n-1}(1 - \alpha_n)^2}{(1 - \overline{\alpha}_n)^2} \big \lbrack \lVert \hat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) - \boldsymbol{x}_0 \rVert_2^2 \big \rbrack
         \end{aligned}
     \end{equation}
 
@@ -2368,7 +2368,7 @@
     Vì vậy ta có thể đặt trung bình $\boldsymbol{\mu}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)$ của mô hình khử nhiễu xấp xỉ là:
 
     \begin{equation}
-        \boldsymbol{\mu}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) = \dfrac{1}{\sqrt{\alpha_n}} \boldsymbol{x}_n - \dfrac{(1 - \alpha_n)}{\sqrt{1 - \overline{\alpha}_n}\sqrt{\alpha_n}} \widehat{\boldsymbol{\epsilon}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)
+        \boldsymbol{\mu}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) = \dfrac{1}{\sqrt{\alpha_n}} \boldsymbol{x}_n - \dfrac{(1 - \alpha_n)}{\sqrt{1 - \overline{\alpha}_n}\sqrt{\alpha_n}} \hat{\boldsymbol{\epsilon}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)
     \end{equation}
 
     Bài toán tối ưu hóa tương ứng trở thành:
@@ -2377,10 +2377,10 @@
         \begin{aligned}
             &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} D_{\mathrm{KL}} \Big( q(\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, \boldsymbol{x}_0) \Vert p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n) \Big) \\
             = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} D_{\mathrm{KL}} \Big( \mathcal{N} \big( \boldsymbol{x}_{-1} \vert \tilde{\boldsymbol{\mu}}_{n}, \boldsymbol{\Sigma}_n \big) \Vert \mathcal{N} \big( \boldsymbol{x}_{n-1} \vert \boldsymbol{\mu}_{\boldsymbol{\theta}}, \boldsymbol{\Sigma}_n \big) \Big) \\
-            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \Bigg \lbrack \Bigg \lVert \dfrac{1}{\sqrt{\alpha_n}} \boldsymbol{x}_n - \dfrac{(1 - \alpha_n)}{\sqrt{1 - \overline{\alpha}_n}\sqrt{\alpha_n}} \widehat{\boldsymbol{\epsilon}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) - \dfrac{1}{\sqrt{\alpha_n}} \boldsymbol{x}_n + \dfrac{(1 - \alpha_n)}{\sqrt{1 - \overline{\alpha}_n}\sqrt{\alpha_n}} \boldsymbol{\epsilon}_0 \Bigg \rVert_2^2 \Bigg \rbrack \\
-            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \Bigg \lbrack \Bigg \lVert \dfrac{(1 - \alpha_n)}{\sqrt{1 - \overline{\alpha}_n}\sqrt{\alpha_n}} \boldsymbol{\epsilon}_0 - \dfrac{(1 - \alpha_n)}{\sqrt{1 - \overline{\alpha}_n}\sqrt{\alpha_n}} \widehat{\boldsymbol{\epsilon}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) \Bigg \rVert_2^2 \Bigg \rbrack \\
-            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \Bigg \lbrack \Bigg \lVert \dfrac{(1 - \alpha_n)}{\sqrt{1 - \overline{\alpha}_n}\sqrt{\alpha_n}} \big( \boldsymbol{\epsilon}_0 - \widehat{\boldsymbol{\epsilon}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) \big) \Bigg \rVert_2^2 \Bigg \rbrack \\
-            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \dfrac{(1 - \alpha_n)^2}{(1 - \overline{\alpha}_n)\alpha_n} \big \lbrack \big \lVert \boldsymbol{\epsilon}_0 - \widehat{\boldsymbol{\epsilon}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) \big \rVert_2^2 \big \rbrack \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \Bigg \lbrack \Bigg \lVert \dfrac{1}{\sqrt{\alpha_n}} \boldsymbol{x}_n - \dfrac{(1 - \alpha_n)}{\sqrt{1 - \overline{\alpha}_n}\sqrt{\alpha_n}} \hat{\boldsymbol{\epsilon}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) - \dfrac{1}{\sqrt{\alpha_n}} \boldsymbol{x}_n + \dfrac{(1 - \alpha_n)}{\sqrt{1 - \overline{\alpha}_n}\sqrt{\alpha_n}} \boldsymbol{\epsilon}_0 \Bigg \rVert_2^2 \Bigg \rbrack \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \Bigg \lbrack \Bigg \lVert \dfrac{(1 - \alpha_n)}{\sqrt{1 - \overline{\alpha}_n}\sqrt{\alpha_n}} \boldsymbol{\epsilon}_0 - \dfrac{(1 - \alpha_n)}{\sqrt{1 - \overline{\alpha}_n}\sqrt{\alpha_n}} \hat{\boldsymbol{\epsilon}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) \Bigg \rVert_2^2 \Bigg \rbrack \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \Bigg \lbrack \Bigg \lVert \dfrac{(1 - \alpha_n)}{\sqrt{1 - \overline{\alpha}_n}\sqrt{\alpha_n}} \big( \boldsymbol{\epsilon}_0 - \hat{\boldsymbol{\epsilon}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) \big) \Bigg \rVert_2^2 \Bigg \rbrack \\
+            = &\underset{\boldsymbol{\theta}}{\mathrm{argmin}} \dfrac{1}{2\lambda_n^2} \dfrac{(1 - \alpha_n)^2}{(1 - \overline{\alpha}_n)\alpha_n} \big \lbrack \big \lVert \boldsymbol{\epsilon}_0 - \hat{\boldsymbol{\epsilon}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n) \big \rVert_2^2 \big \rbrack \\
         \end{aligned}
     \end{equation}
 
@@ -2449,5 +2449,5 @@
 
     \subsubsection{Classifier Guidance}
 
-    
+
 \end{document}
