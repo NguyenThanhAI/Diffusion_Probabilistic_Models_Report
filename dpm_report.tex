@@ -2079,7 +2079,7 @@
     Từ giả định thứ ba, ta biết rằng $\alpha_t$ biến đổi theo thời gian tương ứng với một lịch trình cố định hoặc được học để sao cho phân phối của biến ẩn cuối cùng $p(\boldsymbol{x}_N)$ là một phân phối Gaussian tiêu chuẩn.
     Sau đó ta có thể cập nhật phân phối chung của MHVAE (công thức \ref{eq:HVAE-Formulation}) để viết phân phối chung cho một VDM có dạng:
     
-    \begin{equation}
+    \begin{equation} \label{eq:MHVAE-Joint-Distribution}
         p(\boldsymbol{x}_{0:N}) = p(\boldsymbol{x}_N) \prod_{n=1}^N p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)
     \end{equation}
 
@@ -2387,4 +2387,67 @@
     Ở đây $\hat{\boldsymbol{\epsilon}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)$ là một mạng học để dự đoán nhiễu nguồn $\boldsymbol{\epsilon}_0 \sim \mathcal{N} (\boldsymbol{\epsilon} \vert \boldsymbol{0}, \boldsymbol{I})$ xác định $\boldsymbol{x}_n$ từ $\boldsymbol{x}_0$.
     Vì vậy ta đã chỉ ra rằng việc học một VDM bằng cách dự đoán ảnh gốc $\boldsymbol{x}_0$ tương đương với việc học để dự đoán nhiễu.
     Về mặt thực nghiệm, một số công trình đã chỉ ra rằng việc dự đoán nhiễu cho kết quả tốt hơn \cite{ho2020denoising}, \cite{saharia2022photorealistic}.
+
+    Trong phần nội dung chính ta sử dụng cách viết tắt $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ thay cho $\hat{\boldsymbol{\epsilon}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n)$.
+
+    \begin{algorithm}[h!]
+        \DontPrintSemicolon
+        \KwIn{Mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ và tham số được huấn luyện $\boldsymbol{\theta}$}
+        \Repeat{hội tụ}{
+            $\boldsymbol{x}_0 \sim q(\boldsymbol{x}_0)$\;
+            $n \sim \mathrm{Uniform}\big( \lbrace 1, 2, \dots, N \rbrace\big)$\;
+            $\boldsymbol{\epsilon} \sim \mathcal{N}(\boldsymbol{0}, \boldsymbol{I})$\;
+            $\boldsymbol{x}_n \gets \sqrt{\overline{\alpha}_n} \boldsymbol{x}_0 + \sqrt{\overline{\beta}_n} \boldsymbol{\epsilon}$\;
+            Chỉnh định $\boldsymbol{\theta}$ dựa trên đạo hàm riêng $\nabla_{\boldsymbol{\theta}}  \lVert \boldsymbol{\epsilon}^2 - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \rVert_2^2$
+        }
+        \caption{Thủ tục huấn luyện VDM}
+        \label{alg:Learning-of-VDM}
+    \end{algorithm}
+
+    \begin{algorithm}[h!]
+        \DontPrintSemicolon
+        \KwIn{Mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ và tham số đã được huấn luyện $\boldsymbol{\theta}$}
+        $\boldsymbol{x}_N \sim \mathcal{N} (\boldsymbol{0}, \boldsymbol{I})$\;
+        \For {$t \gets N, \dots, 1$} {
+            \If {$n > 1$} {
+                $\boldsymbol{\epsilon} \sim \mathcal{N}(\boldsymbol{0}, \boldsymbol{I})$\;
+            } \Else {
+                $\boldsymbol{\epsilon} \gets \boldsymbol{0}$\;
+            }
+        $\boldsymbol{x}_{n-1} \gets \dfrac{1}{\sqrt{\alpha_n}} \Big( \boldsymbol{x}_n - \dfrac{1 - \alpha_n}{\sqrt{1 - \overline{\alpha}_n}} \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \Big) + \lambda_n \boldsymbol{\epsilon}$\;
+        }
+        \Return{$\boldsymbol{x}_0$}\;
+        \caption{Thủ tục lấy mẫu từ một VDM đã được huấn luyện}
+        \label{alg:Sampling-of-VDM}
+    \end{algorithm}
+
+    \subsection{Sinh dữ liệu có điều kiện}
+
+    Ta đã tập trung vào việc mô hình phân phối dữ liệu $p(\boldsymbol{x})$.
+    Tuy nhiên, ta cũng hay quan tâm đến việc học phân phối có điều kiện $p(\boldsymbol{x} \vert y)$ cho phép chúng ta điều khiển dữ liệu chúng ta tạo ra thông qua thông tin điều kiện $y$.
+    Dạng phân phối này giúp chúng ta tạo ra các mô hình như tăng độ phân giải ảnh \cite{ho2022cascaded} cũng như các mô hình sinh ảnh từ văn bản như DALL-E 2 \cite{ramesh2022hierarchical} và Imagen \cite{saharia2021image}.
+
+    Một cách tự nhiên để thêm các thông tin điều kiện là thêm các thông tin này xuyên suốt các bước thời gian.
+    Ta xét lại phân phối chung trong công thức \ref{eq:MHVAE-Joint-Distribution}
+
+    \begin{equation*}
+        p(\boldsymbol{x}_{0:N}) = p(\boldsymbol{x}_N) \prod_{n=1}^N p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n)
+    \end{equation*}
+
+    Khi ta chuyển công thức trên về dạng mô hình khuếch tán có điều kiện, ta có thể thêm thông tin điều kiện $y$ tùy ý vào từng bước chuyển tiếp:
+
+    \begin{equation}
+        p(\boldsymbol{x}_{0:N} \vert y) = p(\boldsymbol{x}_T) \prod_{n=1}^N p_{\boldsymbol{\theta}} (\boldsymbol{x}_{n-1} \vert \boldsymbol{x}_n, y)
+    \end{equation}
+
+    Ví dụ, $y$ có thể là mã hóa của văn bản trong ứng dụng sinh ảnh từ văn bản, hoặc một ảnh độ phân giải thấp được tăng độ phân giả.
+    Ta có thể học một mạng của VDM trước khi thực hiện tác vụ bằng cách huấn luyện mạng dự đoán $\hat{\boldsymbol{x}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n, y) \approx \boldsymbol{x}_0$, $\hat{\boldsymbol{\epsilon}}_{\boldsymbol{\theta}} (\boldsymbol{x}_n, n, y) \approx \boldsymbol{\epsilon}_0$ cho cho từng cách giải thích.
+
+    Một điểm yếu của công thức này là mô hình khuếch tán có điều kiện được huấn luyện theo cách này có thể học để bỏ qua các thông tin điều kiện được đưa.
+    Vì vậy cách điều khiển trọng số mô hình dành cho thông tin điều kiện với chi phí là độ đa dạng các mẫu giảm đi.
+    Hai dạng phổ biến nhất của học có định hướng là Classifier Guidance \cite{song2020score}, \cite{dhariwal2021diffusion} và Classifier-Free Guidance \cite{ho2021classifier}.
+
+    \subsubsection{Classifier Guidance}
+
+    
 \end{document}
