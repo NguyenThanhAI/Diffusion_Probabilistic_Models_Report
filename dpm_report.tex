@@ -118,6 +118,11 @@
 	name={HVAE},
 	description={Hierachical Variational Auto Encoder}
 }
+\newglossaryentry{MHVAE}
+{
+	name={MHVAE},
+	description={Markovian Hierachical Variational Auto Encoder}
+}
 \newglossaryentry{VDM}
 {
 	name={VDM},
@@ -2464,5 +2469,61 @@
 
     \subsubsection{Classifier Guidance}
 
+    Ta bắt đầu với công thức dựa trên điểm của mô hình khuếch tán, mục tiêu của ta là học điểm cả mô hình có điều kiện $\nabla \log p (\boldsymbol{x}_n \vert y)$ tại một mức nhiễu bất kỳ $n$.
+    $\nabla$ là viết tắt của $\nabla_{\boldsymbol{x}_n}$.
+    Theo quy tắc Bayes, ta thu được dạng tương đương sau đây:
 
+    \begin{equation} \label{eq:Classifier-Guidance-Score}
+        \begin{aligned}
+            \nabla \log p(\boldsymbol{x}_n \vert y) &= \nabla \log \Bigg( \dfrac{p(\boldsymbol{x}_n)p(y \vert \boldsymbol{x}_n)}{p(y)} \Bigg) \\
+            &= \nabla \log p(\boldsymbol{x}_n) + \nabla \log p(y \vert \boldsymbol{x}_n) - \nabla \log p(y) \\
+            &= \underbrace{\nabla \log p(\boldsymbol{x}_n)}_{\mathrm{conditional \thickspace score}} + \underbrace{\nabla \log p(y \vert \boldsymbol{x}_n)}_{\mathrm{adversarial \thickspace gradient}}
+        \end{aligned}
+    \end{equation}
+
+    Ta tận dụng đạo hàm riêng của $\log p(y)$ tương ứng $\boldsymbol{x}_n$ bằng $\boldsymbol{0}$.
+
+    Kết quả ta thu được cuối cùng gồm hai thành phần gồm thành phần đạo hàm riêng của $\log$ ước lượng hợp lý không có điều kiện và đạo hàm riêng đối kháng của một mô hình phân loại $p(y \vert \boldsymbol{x}_n)$.
+    Vì vậy, Classifier Guidance \cite{song2020score}, \cite{dhariwal2021diffusion}, điểm của mô hình khuếch tán có điều kiện được học bao gồm thành phần không điều kiện và điểm của bộ phân loại tại một mức nhiễu bất kỳ $\boldsymbol{x}_n$ dự đoán thông tin điều kiện $y$.
+    Trong quá trình lấy mẫu, điểm có điều kiện tổng thể được sử dụng cho động học Langevin được tính là tổng của hàm điểm không có điều kiện và đạo hàm riêng đối kháng của bộ phân lớp.
+
+    Để đưa ra biện pháp kiểm soát chi tiết nhằm khuyến khích hoặc không khuyến khích mô hình sử dụng thông tin điều kiện.
+    Classifier Guidance chia tỷ lệ đạo hàm riêng đối nghịch của bộ phân lớp bằng một siêu tham số $\gamma$.
+    Hàm điểm được học sử dụng Classifier Guidance có thể được tóm tắt như sau:
+
+    \begin{equation} \label{eq:Gamma-Classifier-Guidance}
+        \nabla \log p(\boldsymbol{x}_n \vert y) = \nabla p(\boldsymbol{x}_n) + \gamma \nabla \log p (y \vert \boldsymbol{x}_n)
+    \end{equation}
+
+    Khi $\gamma=0$, mô hình khuếch tán có điều kiện khi được huấn luyện bỏ qua hoàn toàn thông tin có điều kiện, và khi $\gamma$ lớn mô hình có điều kiện sẽ học cách tạo ra các mẫu gắn chặt vào thông tin điều kiện.
+    Nhưng việc này sẽ phải đánh đổi bằng sự đa dạng của mẫu, mô hình sẽ chỉ tạo ra dữ liệu dễ dàng tạo lại thông tin điều kiện từ ngay cả tại các mức nhiễu cao.
+
+    Một nhược điểm khá lơn của Classifier Guidance là sự phụ thuộc vào một mô hình phân loại riêng biệt được học riêng.
+    Bởi vì bộ phân loại phải xử lý các đầu vào ở mức nhiễu tùy ý mà hầu hết các mô hình phân loại không được tối ưu để thực hiện, nên phải được huấn luyện cùng với mô hình khuếch tán.
+
+    \subsubsection{Classifier-Free Guidance}
+
+    Trong Classifier-Free Guidance \cite{ho2021classifier}, các tác giả bỏ qua việc huấn luyện một mô hình phân loại riêng biệt.
+    Để thu được hàm điểm theo Classifier-Free Guidance, ta có thể sắp xếp lại phương trình \ref{eq:Classifier-Guidance-Score}:
+
+    \begin{equation}
+        \nabla \log p(y \vert \boldsymbol{x}_n) = \nabla \log p (\boldsymbol{x}_n \vert y) - \nabla \log p(\boldsymbol{x}_n)
+    \end{equation}
+
+    Ta thế vào phương trình \ref{eq:Gamma-Classifier-Guidance}, ta thu được:
+
+    \begin{equation}
+        \begin{aligned}
+            \nabla \log p(\boldsymbol{x}_n \vert y) &= \nabla \log p(\boldsymbol{x}_n) + \gamma \big( \nabla \log p(\boldsymbol{x}_n \vert y) - \nabla \log p(\boldsymbol{x}_n) \big) \\
+            &= \nabla \log p(\boldsymbol{x}_n) + \gamma \nabla \log p(\boldsymbol{x}_n \vert y) - \gamma \nabla \log p(\boldsymbol{x}_n) \\
+            &= \gamma \nabla \log p(\boldsymbol{x}_n \vert y) + (1 - \gamma) \nabla \log p(\boldsymbol{x}_n)
+        \end{aligned}
+    \end{equation}
+
+    Một lần nữa $\gamma$ là thành phần kiểm soát mô hình có điều kiện quan tâm bao nhiêu về thông tin điều kiện.
+    Khi $\gamma = 0$, mô hình có điều kiện được huấn luyện hoàn toàn bỏ qua thông tin điều kiện và học một mô hình khuếch tán không có điều kiện.
+    Khi $\gamma=1$, mô hình sẽ học một phân phối có điều kiện mà không cần hướng dẫn.
+    Khi $\gamma > 1$, mô hình khuếch tán không chỉ ưu tiên hàm điểm có điều kiện mà còn di chuyển theo hướng làm giảm hàm điểm không có điều kiện.
+    Nói cách khác, điều này làm giảm xác suất tạo ra các mẫu mà không sử dụng thông tin điều kiện mà ưu tiên tạo ra các mẫu sử dụng thông tin có điều kiện.
+    Điều này cũng có tác dụng làm giảm tính đa dạng của các mẫu chính là chi phí thỏa hiệp để tạo ra các mẫu khớp với thông tin điều kiện.
 \end{document}
