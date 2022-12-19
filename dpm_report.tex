@@ -1261,7 +1261,7 @@
     \begin{equation}
         \begin{aligned}
             \boldsymbol{\mu}_{s \vert t}^{\ast} &= \mathbb{E}_{q(\boldsymbol{x}_s \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{x}_s \rbrack = \dfrac{1}{\sqrt{\alpha_{t \vert s}}} \big( \boldsymbol{x}_t - \dfrac{\beta_{t \vert s}}{\sqrt{\beta_{t \vert 0}}} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack \big) \\
-            \boldsymbol{\sigma}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2 &= \mathrm{diag} \big( \mathrm{Cov}_{q(\boldsymbol{x}_s) \vert \boldsymbol{x}_t} \lbrack \boldsymbol{x}_s \rbrack \big) = \overline{\beta}_{s \vert t} \boldsymbol{1} + \dfrac{\beta_{t \vert s}^2}{\beta_{t \vert 0} \alpha_{t \vert s}} \big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t) \lbrack \boldsymbol{\epsilon}_t^2 \rbrack} - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t) \lbrack \boldsymbol{\epsilon}_t \rbrack^2} \big)
+            \boldsymbol{\sigma}_{s \vert t}^{\ast} (\boldsymbol{x}_t)^2 &= \mathrm{diag} \big( \mathrm{Cov}_{q(\boldsymbol{x}_s) \vert \boldsymbol{x}_t} \lbrack \boldsymbol{x}_s \rbrack \big) = \overline{\beta}_{s \vert t} \boldsymbol{1} + \dfrac{\beta_{t \vert s}^2}{\beta_{t \vert 0} \alpha_{t \vert s}} \big( \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t^2 \rbrack - \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_t)} \lbrack \boldsymbol{\epsilon}_t \rbrack^2 \big)
         \end{aligned}
     \end{equation}
 
