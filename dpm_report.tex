@@ -632,7 +632,8 @@
 
     Ta cần chú ý rằng phương pháp tiền huấn luyện cho giai đoạn hai chỉ cần chỉnh định một mạng nhỏ $\mathrm{NN}_2$ mà không cần chỉnh định $\mathrm{UNet}$.
     Thuật toán \ref{alg:Learning-of-the-SN-prediction-network} và thuật toán \ref{alg:Learning-of-the-NPR-prediction-network} trình bày thủ tục huấn luyện hai giai đoạn.
-    
+    Thuật toán \ref{alg:Sampling-of-SN} và thuật toán \ref{alg:Sampling-of-NPR} trình bày thủ tục lấy mẫu sinh dữ liệu sau khi đã huấn luyện mô hình.
+
     \begin{algorithm}[h!]
         \DontPrintSemicolon
         \KwIn{Mạng dự đoán bình phương nhiễu (SN) $\boldsymbol{h}_n (\boldsymbol{x}_n)$ và tham số được huấn luyện $\boldsymbol{\phi}_2$}
@@ -649,6 +650,24 @@
 
     \begin{algorithm}[h!]
         \DontPrintSemicolon
+        \KwIn{Mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ với tham số $\boldsymbol{\phi}_1$ và mạng dự đoán bình phương nhiễu (SN) $\boldsymbol{h}_n (\boldsymbol{x}_n)$ với tham số $\boldsymbol{\phi}_2$}
+        $\boldsymbol{x}_N \sim \mathcal{N} (\boldsymbol{0}, \boldsymbol{I})$\;
+        \For {$t \gets N, \dots, 1$} {
+            \If {$n > 1$} {
+                $\boldsymbol{\epsilon} \sim \mathcal{N}(\boldsymbol{0}, \boldsymbol{I})$\;
+            } \Else {
+                $\boldsymbol{\epsilon} \gets \boldsymbol{0}$\;
+            }
+            $\hat{\boldsymbol{\sigma}}_n (\boldsymbol{x}_n)^2 \gets \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \big( \boldsymbol{h}_n (\boldsymbol{x}_n) - \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)^2 \big)$\;
+        $\boldsymbol{x}_{n-1} \gets \dfrac{1}{\sqrt{\alpha_n}} \Big( \boldsymbol{x}_n - \dfrac{1 - \alpha_n}{\sqrt{1 - \overline{\alpha}_n}} \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \Big) + \hat{\boldsymbol{\sigma}}_n (\boldsymbol{x}_n) \odot \boldsymbol{\epsilon}$\;
+        }
+        \Return{$\boldsymbol{x}_0$}\;
+        \caption{Thủ tục lấy mẫu từ một SN-DPM đã được huấn luyện}
+        \label{alg:Sampling-of-SN}
+    \end{algorithm}
+
+    \begin{algorithm}[h!]
+        \DontPrintSemicolon
         \KwIn{Mạng dự đoán phần dư nhiễu (NPR) $\boldsymbol{g}_n (\boldsymbol{x}_n)$ và tham số được huấn luyện $\boldsymbol{\phi}_2$;
         mạng dự đoán nhiễu đã được tiền huấn luyện $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$}
         \Repeat{hội tụ}{
@@ -660,6 +679,24 @@
         }
         \caption{Thủ tục huấn luyện mạng dự đoán phần dư nhiễu (NPR)}
         \label{alg:Learning-of-the-NPR-prediction-network}
+    \end{algorithm}
+
+    \begin{algorithm}[h!]
+        \DontPrintSemicolon
+        \KwIn{Mạng dự đoán nhiễu $\hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n)$ với tham số $\boldsymbol{\phi}_1$ và mạng dự đoán phần dư nhiễu (NPR) $\boldsymbol{g}_n (\boldsymbol{x}_n)$ với tham số $\boldsymbol{\phi}_2$}
+        $\boldsymbol{x}_N \sim \mathcal{N} (\boldsymbol{0}, \boldsymbol{I})$\;
+        \For {$t \gets N, \dots, 1$} {
+            \If {$n > 1$} {
+                $\boldsymbol{\epsilon} \sim \mathcal{N}(\boldsymbol{0}, \boldsymbol{I})$\;
+            } \Else {
+                $\boldsymbol{\epsilon} \gets \boldsymbol{0}$\;
+            }
+            $\hat{\tilde{\boldsymbol{\sigma}}}_n (\boldsymbol{x}_n)^2 \gets \lambda_n^2 \boldsymbol{1} + \gamma_n^2 \dfrac{\overline{\beta}_n}{\overline{\alpha}_n} \boldsymbol{g}_n (\boldsymbol{x}_n)$\;
+        $\boldsymbol{x}_{n-1} \gets \dfrac{1}{\sqrt{\alpha_n}} \Big( \boldsymbol{x}_n - \dfrac{1 - \alpha_n}{\sqrt{1 - \overline{\alpha}_n}} \hat{\boldsymbol{\epsilon}}_n (\boldsymbol{x}_n) \Big) + \hat{\tilde{\boldsymbol{\sigma}}}_n (\boldsymbol{x}_n) \odot \boldsymbol{\epsilon}$\;
+        }
+        \Return{$\boldsymbol{x}_0$}\;
+        \caption{Thủ tục lấy mẫu từ một NPR-DPM đã được huấn luyện}
+        \label{alg:Sampling-of-NPR}
     \end{algorithm}
 
     \section{Mở rộng sang mô hình khuếch tán xác suất với bước thời gian liên tục} \label{Extension-to-DPMs-with-Continuous-Timesteps}
