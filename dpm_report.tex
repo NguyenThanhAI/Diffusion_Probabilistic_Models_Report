@@ -295,6 +295,7 @@
     Bằng cách học để đảo ngược quá trình khuếch tán sử dụng mô hình Markov, DPMs có khả năng tạo ra các ảnh chất lượng cao \cite{ho2020denoising}, \cite{song2020score}, \cite{dhariwal2021diffusion},
     các âm thanh chất lượng cao \cite{chen2020wavegrad}, \cite{kong2020diffwave}. 
     Các mô hình này hoàn toàn có khả năng cạnh tranh với các mô hình sinh tân tiến nhất hiện tại \cite{brock2018large}, \cite{wu2019logan}, \cite{karras2020analyzing}, \cite{binkowski2019high}, \cite{kalchbrenner2018efficient}.
+    Lý thuyết về các mô hình sinh và mô hình khuếch tán xác suất được giới thiệu chi tiết trong phụ lục \ref{Section:Generative-Models-Introduction}.
 
     Tuy nhiên, quá trình sinh phải sử dụng một vòng lặp với số bước lớn và trên toàn bộ số bước của DPMs làm cho DPMs yêu cầu chi phí tính toán lớn hơn nhiều và kém hiệu quả hơn so với mô hình sinh đối kháng (GANs) \cite{goodfellow2014generative}.
     Vì vậy khả năng và chất lượng sinh dữ liệu của DPMs trên một tập con các bước là rất quan trọng.
@@ -1830,7 +1831,7 @@
         \label{table:FID-Comparision-Normalization}
     \end{table}
 
-    \section{Một số nền tảng cơ bản về các mô hình sinh}
+    \section{Một số nền tảng cơ bản về các mô hình sinh} \label{Section:Generative-Models-Introduction}
 
     \subsection{Giới thiệu mô hình sinh}
 
