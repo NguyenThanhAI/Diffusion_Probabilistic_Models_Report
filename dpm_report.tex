@@ -508,7 +508,7 @@
     Đại lượng này không thể được tính chính xác do sai lệch xấp xỉ và sai lệch của quá trình tối ưu hóa,
     điều này gợi ý ta có thể cải thiện các ước lượng này khi xem xét đến sai lệch.
 
-    Ta nhận thấy rằng trong định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}, trung bình tối ưu không phù hợp với ma trận hiệp phương sai tối ưu khi mà ma trận hiệp phương sai tối ưu được biểu diễn qua trung bình tối ưu.
+    Ta nhận thấy rằng trong định lý \ref{dl:Optimal-Solution-To-Joint-Optimization}, trung bình tối ưu không ảnh hưởng đến ma trận hiệp phương sai tối ưu khi mà ma trận hiệp phương sai tối ưu được biểu diễn qua trung bình tối ưu.
     Một cách tự nhiên, ta sẽ tối ưu duy nhất trung bình để thu được ước lượng của trung bình tối ưu $\hat{\boldsymbol{\mu}}_n$ và sau đó với tối ưu ma trận hiệp phương sai khi đã biết trung bình tối ưu $\hat{\boldsymbol{\mu}}_n$.
     Cách tiếp cận hai giai đoạn này ít nhất không tệ hơn so với cách tiếp cận ở mục \ref{Optimal-Solution-Covariance-Beyond-Isotropic-Covariance} theo khía cạnh ước lượng hợp lý bởi vì:
 
@@ -537,7 +537,7 @@
             \boldsymbol{\mu}_n^{\ast} (\boldsymbol{x}_n)=\tilde{\boldsymbol{\mu}}_n \Bigg( \boldsymbol{x}_n, \dfrac{1}{\sqrt{\overline{\alpha}_n}} \Big( \boldsymbol{x}_n - \sqrt{\overline{\beta}_n} \mathbb{E}_{q(\boldsymbol{x}_0 \vert \boldsymbol{x}_n)} \lbrack \boldsymbol{\epsilon}_n \rbrack \Big) \Bigg)
         \end{equation*}
 
-        không phù hợp với $\boldsymbol{\Sigma}_n$.
+        không ảnh hưởng đến $\boldsymbol{\Sigma}_n$.
     \end{restatable}
 
     Định lý \ref{dl:Solely-Optimal-Mean} cho thấy rằng trung bình tối ưu không phụ thuộc vào ma trận hiệp phương sai và vì vậy ta sẽ học trung bình theo công thức \ref{eq:Noise-Prediction} mà không cần biết thông tin về ma trận hiệp phương sai.
@@ -617,7 +617,7 @@
 
     \subsubsection{Quá trình học hai giai đoạn và tiền huấn luyện} \label{Subsection:Two-Stage-Learning-and-Pretraining}
 
-    Ta nhắc lại trung bình tối ưu của bài toán trong công thức \ref{eq:Arbitrary-Covariance-Optimize-Mean} không phù hợp với ma trận hiệp phương sai.
+    Ta nhắc lại trung bình tối ưu của bài toán trong công thức \ref{eq:Arbitrary-Covariance-Optimize-Mean} không ảnh hưởng đến ma trận hiệp phương sai.
     Vì vậy, một cách tự nhiên học trung bình và phương sai có thể chia làm hai giai đoạn.
     Trong giai đoạn đầu tiên, ta học trung bình bằng cách huấn luyện mạng dự đoán nhiễu ở công thức \ref{eq:Noise-Prediction},
     hoặc chỉ cần sử dụng một mạng đã được tiền huấn luyện từ các công trình trước.
@@ -753,7 +753,7 @@
         \text{Cho trung bình bất kỳ } \boldsymbol{\mu}_{s \vert t}, \min_{\boldsymbol{\Sigma}_{s \vert t}} \ell_{s, t}
     \end{equation}
 
-    Trung bình tối ưu của bài toán trong công thức \ref{eq:Continuous-Arbitrary-Covariance-Optimize-Mean} cũng là công thức \ref{eq:Continuous-Optimal-Mean}, trung bình tối ưu này không phù hợp với $\boldsymbol{\Sigma}_{s \vert t}$.
+    Trung bình tối ưu của bài toán trong công thức \ref{eq:Continuous-Arbitrary-Covariance-Optimize-Mean} cũng là công thức \ref{eq:Continuous-Optimal-Mean}, trung bình tối ưu này ảnh hưởng đến với $\boldsymbol{\Sigma}_{s \vert t}$.
     Ma trận hiệp phương sai tối ưu của bài toán trong công thức \ref{eq:Continuous-Arbitrary-Mean-Optimize-Covariance} được trình bày trong mệnh đề \ref{md:Continuous-Corrected-Optimal-Covariance}.
 
     \begin{restatable}{md}{continuouscorrectedoptimalcovariance} \label{md:Continuous-Corrected-Optimal-Covariance}
