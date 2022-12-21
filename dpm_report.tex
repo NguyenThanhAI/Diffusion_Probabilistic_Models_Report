@@ -611,7 +611,7 @@
     \end{equation}
 
     Với $\mathrm{UNet}$ là một trong những cấu trong rất phổ biến trong DPMs \cite{ho2020denoising}, \cite{song2020score} và được tham số hóa bởi tham số được chia sẻ $\boldsymbol{\theta}$,
-    $\mathrm{NN}_1$ và $\mathrm{NN}_2$ là hai mạng nhỏ ví dụ mạng bao gồm một bài lớp tích chập và được tham số hóa bởi $\boldsymbol{\phi}_1$ và $\boldsymbol{\phi}_2$ tương ứng.
+    $\mathrm{NN}_1$ và $\mathrm{NN}_2$ là hai mạng nhỏ ví dụ mạng bao gồm một vài lớp tích chập và được tham số hóa bởi $\boldsymbol{\phi}_1$ và $\boldsymbol{\phi}_2$ tương ứng.
 
     So với DPMs thông thường với cùng cấu trúc $\mathrm{UNet}$, cả SN-DPM và NPR-DPM đều yêu cầu thêm chi phí bộ nhớ không lớn và thêm khoảng 10\% chi phí tính toán (chi tiết ở phụ lục \ref{Appen:Subsection:Details-of-Memory-and-Time-Cost}).
 
@@ -952,11 +952,11 @@
                     \multirow{4}{*}{ET} & DDPM, $\tilde{\beta}_n$ & 74.95 & 24.98 & 12.01 & 7.08 & 5.03 & 3.73 & & 75.96 & 24.94 & 11.96 & 7.04 & 4.95 & 3.60 \\
                     & DDIM $\beta_n$ & 6.99 & 6.11 & 5.44 & 4.86 & 4.39 & 3.75 & & 6.51 & 5.55 & 4.92 & 4.41 & 4.03 & 3.54 \\
                     & A-DDPM & 5.47 & 4.79 & 4.38 & 4.07 & 3.84 & 3.59 & & 5.08 & 4.45 & 4.09 & 3.83 & 3.64 & 3.42 \\
-                    & NPR-DDPM & 5.40 & 4.64 & 4.25 & 3.98 & 3.79 & 3.57 & & 5.03 & 4.33 & 3.99 & 3.76 & 3.59 & 3.41 \\
+                    & NPR-DDPM & \textbf{5.40} & \textbf{4.64} & \textbf{4.25} & \textbf{3.98} & \textbf{3.79} & \textbf{3.57} & & \textbf{5.03} & \textbf{4.33} & \textbf{3.99} & \textbf{3.76} & \textbf{3.59} & \textbf{3.41} \\
                     \hline
                     \multirow{3}{*}{OT} & DDPM, $\tilde{\beta}_n$ & 5.38 & 4.34 & 3.97 & 3.82 & 3.77 & 3.75 & & 5.51 & 4.30 & 3.86 & 3.65 & 3.57 & 3.54 \\
                     & A-DDPM & 4.11 & 3.68 & 3.61 & 3.59 & 3.59 & 3.59 & & 3.99 & 3.56 & 3.47 & 3.44 & 3.43 & 3.42 \\
-                    & NPR-DDPM & 3.91 & 3.64 & 3.59 & 3.58 & 3.57 & 3.57 & & 3.88 & 3.52 & 3.45 & 3.42 & 3.41 & 3.41 \\
+                    & NPR-DDPM & \textbf{3.91} & \textbf{3.64} & \textbf{3.59} & \textbf{3.58} & \textbf{3.57} & \textbf{3.57} & & \textbf{3.88} & \textbf{3.52} & \textbf{3.45} & \textbf{3.42} & \textbf{3.41} & \textbf{3.41} \\
                     \hline
                 \end{tabular}
             }
